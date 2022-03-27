@@ -47,34 +47,4 @@ _go_image_repos()
 # load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
 
 # pip_deps()
-    
-load("@io_bazel_rules_docker//toolchains/docker:toolchain.bzl",
-    docker_toolchain_configure="toolchain_configure"
-)
-docker_toolchain_configure(
-    name = "docker_config",
-    # OPTIONAL: Bazel target for the build_tar tool, must be compatible with build_tar.py
-#   build_tar_target="<enter absolute path (i.e., must start with repo name @...//:...) to an executable build_tar target>",
-    # OPTIONAL: Path to a directory which has a custom docker client config.json.
-    # See https://docs.docker.com/engine/reference/commandline/cli/#configuration-files
-    # for more details.
-#   client_config="<enter absolute path to your docker config directory here>",
-    # OPTIONAL: Path to the docker binary.
-    # Should be set explicitly for remote execution.
-#   docker_path="<enter absolute path to the docker binary (in the remote exec env) here>",
-    # OPTIONAL: Path to the gzip binary.
-#   gzip_path="<enter absolute path to the gzip binary (in the remote exec env) here>",
-    # OPTIONAL: Bazel target for the gzip tool.
-#   gzip_target="<enter absolute path (i.e., must start with repo name @...//:...) to an executable gzip target>",
-    # OPTIONAL: Path to the xz binary.
-    # Should be set explicitly for remote execution.
-    xz_path="/opt/homebrew/bin/xz",
-    # OPTIONAL: Bazel target for the xz tool.
-    # Either xz_path or xz_target should be set explicitly for remote execution.
-#   xz_target="<enter absolute path (i.e., must start with repo name @...//:...) to an executable xz target>",
-    # OPTIONAL: List of additional flags to pass to the docker command.
-#   docker_flags = [
-#     "--tls",
-#     "--log-level=info",
-#   ],
-)
+ 

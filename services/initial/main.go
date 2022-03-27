@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/grigoryevandrey/logistics-app/services/initial/server"
 )
@@ -11,13 +12,28 @@ import (
 func main() {
 	message := server.Server()
 
-	log.Println(message)
+	log.Println("Init")
 
     http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request){
         fmt.Fprint(w, message)
     })
 
-	if err := http.ListenAndServe("0.0.0.0:8080", nil); err != nil {
-        log.Fatal(err)
-    }
+	log.Println("Created endpoint")
+	log.Println("Trying")
+
+	fmt.Println("Var1:", os.Getenv("var1"))
+
+    http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request){
+        fmt.Fprintf(w, "Hi")
+    })
+
+	log.Println("Starting")
+    log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
+
+
+	// if err := http.ListenAndServe("0.0.0.0:8080", nil); err != nil {
+	// 	log.Println("Errored")
+    //     log.Fatal(err)
+    // }
+
 }

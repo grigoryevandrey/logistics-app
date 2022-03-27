@@ -13,4 +13,11 @@
 ## Run 
 `bazel run //services/initial`
 
+## Build image
+`docker system prune -a -f --volumes && sudo bazel run //services/initial:image`
+
 [Troubleshooting](https://www.tweag.io/blog/2021-09-08-rules_go-gazelle/)
+
+[Images troubleshooting](https://stackoverflow.com/questions/68273018/starting-container-process-caused-exec-bin-bash-stat-bin-bash-no-such-fi)
+
+[Container image bazel config](https://github.com/bazelbuild/rules_docker/blob/master/docs/container.md#container_image)

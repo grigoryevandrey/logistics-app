@@ -20,13 +20,17 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 go_image(
     name = "base_image",
     embed = [":go_default_library"],
-    goos = "darwin",
-    goarch = "arm",
     visibility = ["//visibility:public"],
+    goos = "linux",
+    goarch = "amd64",
 )
 
 container_image(
     name = "image",
     base = ":base_image",
     visibility = ["//visibility:public"],
+    ports = ["8080", "8080"],
+    env = {
+        "var1": "lol",
+    },
 )

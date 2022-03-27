@@ -1,0 +1,6 @@
+version: '3.2'
+services:
+  initial:
+    image: bazel/services/initial:image
+    ports: 
+    - "8080:8080"
