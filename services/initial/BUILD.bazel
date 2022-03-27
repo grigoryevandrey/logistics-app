@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "initial_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/initial",
+    visibility = ["//visibility:private"],
+    deps = ["//services/initial/server"],
+)
+
+go_binary(
+    name = "initial",
+    embed = [":initial_lib"],
+    visibility = ["//visibility:public"],
+)
