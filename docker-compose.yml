@@ -1,6 +1,17 @@
 version: '3.2'
 services:
   initial:
+    container_name: initial
     image: bazel/services/initial:image
     ports: 
     - "8080:8080"
+
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: database
