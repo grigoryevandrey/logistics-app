@@ -17,13 +17,18 @@ default: help
 help: ## help information about make commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: gazelle
+gazelle: ## update dependency management with gazelle
+	bazel run //:gazelle      
+	gazelle update-repos --from_file=go.mod -to_macro=go_third_party.bzl%go_deps
+
 .PHONY: run
 run: ## run the API server
 	bazel run //services/initial
 
 .PHONY: build
 build:  ## build the API server binary
-	bazel run //services/initial
+	bazel build //services/initial
 
 .PHONY: build-docker
 build-docker: ## build the API server as a docker image with bazel

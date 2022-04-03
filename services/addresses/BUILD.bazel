@@ -5,6 +5,11 @@ go_library(
     srcs = ["main.go"],
     importpath = "github.com/grigoryevandrey/logistics-app/services/addresses",
     visibility = ["//visibility:private"],
+    deps = [
+        "//services/addresses/app/service",
+        "//services/addresses/app/transport",
+        "@com_github_lib_pq//:pq",
+    ],
 )
 
 go_binary(
