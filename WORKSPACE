@@ -20,6 +20,10 @@ http_archive(
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 load("//:go_third_party.bzl", "go_deps")
+load("//:deps.bzl", "go_dependencies")
+
+# gazelle:repository_macro deps.bzl%go_dependencies
+go_dependencies()
 
 # gazelle:repository_macro go_third_party.bzl%go_deps
 go_deps()
@@ -36,15 +40,19 @@ http_archive(
     strip_prefix = "rules_docker-0.23.0",
     urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.23.0/rules_docker-v0.23.0.tar.gz"],
 )
-    
+
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories = "repositories")
+
 container_repositories()
+
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
 container_deps()
+
 load("@io_bazel_rules_docker//go:image.bzl", _go_image_repos = "repositories")
+
 _go_image_repos()
-    
+
 # load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
 
 # pip_deps()
- 

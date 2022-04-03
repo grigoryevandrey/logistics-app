@@ -5,4 +5,7 @@ go_library(
     srcs = ["server.go"],
     importpath = "github.com/grigoryevandrey/logistics-app/services/initial/server",
     visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_lib_pq//:go_default_library"
+    ]
 )

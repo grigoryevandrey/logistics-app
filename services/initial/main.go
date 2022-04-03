@@ -10,12 +10,10 @@ import (
 )
 
 func main() {
-	message := server.Server()
-
 	log.Println("Init")
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, message)
+		fmt.Fprint(w, server.Server())
 	})
 
 	log.Println("Created endpoint")
@@ -24,6 +22,7 @@ func main() {
 	fmt.Println("Var11:", os.Getenv("var1"))
 
 	http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("hi")
 		fmt.Fprintf(w, "Hi")
 	})
 
