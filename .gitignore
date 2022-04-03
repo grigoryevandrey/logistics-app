@@ -39,3 +39,14 @@ go.work
 ### Go Patch ###
 /vendor/
 /Godeps/
+
+# PID file generated to support live reload
+.pid
+
+# Sensitive
+.env
+.env.production
+.env.staging
+
+# postgres data volume used by postgres server container for testing purpose
+database/postgres
