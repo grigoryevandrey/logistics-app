@@ -14,7 +14,7 @@ CREATE TABLE vehicles
 (
     id                  BIGSERIAL,
     vehicle_car_number  VARCHAR(31) NOT NULL,
-    vehicle_volume      VARCHAR(255) NOT NULL,
+    vehicle_tonnage     REAL NOT NULL,
     vehicle_address_id  BIGINT,
     is_disabled         BOOLEAN NOT NULL,
     PRIMARY KEY (id),

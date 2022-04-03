@@ -1,5 +1,5 @@
 package server
 
 func Server() string {
-	return "gotchaa"
+	return "gotchaas"
 }
