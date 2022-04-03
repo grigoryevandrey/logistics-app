@@ -10,7 +10,7 @@ go_library(
 
 go_binary(
     name = "initial",
-    embed = [":go_default_library"],
+    embed = [":initial_lib"],
     visibility = ["//visibility:public"],
 )
 
@@ -20,17 +20,28 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 go_image(
     name = "base_image",
     embed = [":go_default_library"],
-    visibility = ["//visibility:public"],
-    goos = "linux",
     goarch = "amd64",
+    goos = "linux",
+    visibility = ["//visibility:public"],
 )
 
 container_image(
     name = "image",
     base = ":base_image",
-    visibility = ["//visibility:public"],
-    ports = ["8080", "8080"],
     env = {
         "var1": "lol",
     },
+    ports = [
+        "8080",
+        "8080",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "initial_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/initial",
+    visibility = ["//visibility:private"],
+    deps = ["//services/initial/server"],
 )

@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "addresses_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/addresses",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "addresses",
+    embed = [":addresses_lib"],
+    visibility = ["//visibility:public"],
+)
