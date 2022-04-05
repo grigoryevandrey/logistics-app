@@ -1,7 +1,7 @@
 package app
 
 type Service interface {
-	GetAddresses() ([]GetAddressesResponse, error)
+	GetAddresses(offset int, limit int) ([]GetAddressesResponse, error)
 	AddAddress() string
 	UpdateAddress() string
 	DeleteAddress() string

@@ -7,6 +7,6 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//services/addresses/app",
-        "@com_github_matryer_way//:way",
+        "@com_github_julienschmidt_httprouter//:go_default_library",
     ],
 )

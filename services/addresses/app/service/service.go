@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 )
@@ -18,18 +17,15 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAddresses() ([]app.GetAddressesResponse, error) {
+func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesResponse, error) {
 	var result []app.GetAddressesResponse
-
-	limit := 10
-	offset := 10
 
 	query := fmt.Sprintf("SELECT id FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE, offset, limit)
 
 	rows, err := s.db.Query(query)
 
 	if (err != nil) {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -38,7 +34,7 @@ func (s *service) GetAddresses() ([]app.GetAddressesResponse, error) {
 		var id int
 
         if err := rows.Scan(&id); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		element := app.GetAddressesResponse{ Id: id }
@@ -46,7 +42,7 @@ func (s *service) GetAddresses() ([]app.GetAddressesResponse, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return result, nil

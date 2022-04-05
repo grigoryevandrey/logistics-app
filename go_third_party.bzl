@@ -2,6 +2,13 @@ load("@bazel_gazelle//:deps.bzl", "go_repository")
 
 def go_deps():
     go_repository(
+        name = "com_github_julienschmidt_httprouter",
+        importpath = "github.com/julienschmidt/httprouter",
+        sum = "h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=",
+        version = "v1.3.0",
+    )
+
+    go_repository(
         name = "com_github_lib_pq",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/lib/pq",
