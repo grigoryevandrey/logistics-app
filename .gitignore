@@ -53,3 +53,6 @@ database/postgres
 
 # Env
 .env.local
+
+# Folder for ignored stuff
+/dump
