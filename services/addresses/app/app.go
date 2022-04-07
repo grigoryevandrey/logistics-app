@@ -9,4 +9,7 @@ type Service interface {
 
 type GetAddressesResponse struct {
 	Id int
+	Address string
+	Latitude, Longitude float64
+	IsDisabled bool
 }

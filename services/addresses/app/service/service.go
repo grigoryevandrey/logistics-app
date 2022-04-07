@@ -20,11 +20,14 @@ func New(db *sql.DB) app.Service {
 func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesResponse, error) {
 	var result []app.GetAddressesResponse
 
-	query := fmt.Sprintf("SELECT id FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE, offset, limit)
+	query := fmt.Sprintf(
+		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE,
+		offset,
+		limit,
+	)
 
 	rows, err := s.db.Query(query)
-
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -32,12 +35,21 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesRespons
 
 	for rows.Next() {
 		var id int
+		var address string
+		var latitute, longitude float64
+		var isDisabled bool
 
-        if err := rows.Scan(&id); err != nil {
+		if err := rows.Scan(&id, &address, &latitute, &longitude, &isDisabled); err != nil {
 			return nil, err
 		}
 
-		element := app.GetAddressesResponse{ Id: id }
+		element := app.GetAddressesResponse{
+			Id:         id,
+			Address:    address,
+			Latitude:   latitute,
+			Longitude:  longitude,
+			IsDisabled: isDisabled,
+		}
 		result = append(result, element)
 	}
 
