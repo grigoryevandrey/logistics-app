@@ -57,7 +57,7 @@ lint: ## run golint on all Go package
 fmt: ## run "go fmt" on all Go packages
 	@go fmt $(PACKAGES)
 
-# ========================== Database ========================================
+# ===================== Database management ========================================
 
 .PHONY: db-start
 db-start: ## start the database server
