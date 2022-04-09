@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 	"gopkg.in/validator.v2"
@@ -128,7 +129,7 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 	response, err := handlerRef.UpdateAddress(address)
 
 	if err != nil {
-		if err == app.Error404 {
+		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find address with id: %d", address.Id)
 
 			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
@@ -161,7 +162,7 @@ func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
 	response, err := handlerRef.DeleteAddress(id)
 
 	if err != nil {
-		if err == app.Error404 {
+		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find address with id: %d", id)
 
 			ctx.JSON(http.StatusNotFound, gin.H{"error": message})

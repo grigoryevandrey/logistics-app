@@ -5,5 +5,8 @@ go_library(
     srcs = ["service.go"],
     importpath = "github.com/grigoryevandrey/logistics-app/services/addresses/app/service",
     visibility = ["//visibility:public"],
-    deps = ["//services/addresses/app"],
+    deps = [
+        "//lib/errors",
+        "//services/addresses/app",
+    ],
 )
