@@ -1,9 +1,7 @@
 package transport
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -145,10 +143,34 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 }
 
 func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
-	answ, err := json.Marshal(handlerRef.DeleteAddress())
+	query := ctx.Request.URL.Query()
+
+	id, err := strconv.Atoi(query.Get("id"))
+
 	if err != nil {
-		log.Fatal(err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	ctx.JSON(http.StatusOK, answ)
+	if id <= 0 {
+		message := fmt.Sprintf("Id should be an int more than 0, recieved: %d", id)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": message})
+		return
+	}
+
+	response, err := handlerRef.DeleteAddress(id)
+
+	if err != nil {
+		if err == app.Error404 {
+			message := fmt.Sprintf("Can not find address with id: %d", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }

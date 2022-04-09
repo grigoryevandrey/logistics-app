@@ -10,7 +10,7 @@ type Service interface {
 	GetAddresses(offset int, limit int) ([]GetAddressesResponseDto, error)
 	AddAddress(address PostAddressDto) (*PostAddressResponseDto, error)
 	UpdateAddress(address UpdateAddressDto) (*UpdateAddressResponseDto, error)
-	DeleteAddress() string
+	DeleteAddress(id int) (*DeleteAddressResponseDto, error)
 }
 
 type GetAddressesResponseDto struct {
@@ -42,6 +42,13 @@ type UpdateAddressDto struct {
 }
 
 type UpdateAddressResponseDto struct {
+	Id                  int
+	Address             string
+	Latitude, Longitude float64
+	IsDisabled          bool
+}
+
+type DeleteAddressResponseDto struct {
 	Id                  int
 	Address             string
 	Latitude, Longitude float64
