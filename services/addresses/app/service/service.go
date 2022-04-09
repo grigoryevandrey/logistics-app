@@ -17,8 +17,8 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesResponse, error) {
-	var result []app.GetAddressesResponse
+func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesResponseDto, error) {
+	var result []app.GetAddressesResponseDto
 
 	query := fmt.Sprintf(
 		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE,
@@ -43,7 +43,7 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesRespons
 			return nil, err
 		}
 
-		element := app.GetAddressesResponse{
+		element := app.GetAddressesResponseDto{
 			Id:         id,
 			Address:    address,
 			Latitude:   latitute,
@@ -60,8 +60,43 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesRespons
 	return result, nil
 }
 
-func (s *service) AddAddress() string {
-	return "post"
+func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressResponseDto, error) {
+	var response app.PostAddressResponseDto
+
+	isDisabled := false
+
+	query := "INSERT INTO addresses (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id"
+
+	rows, err := s.db.Query(
+		query,
+		address.Address,
+		address.Latitude,
+		address.Longitude,
+		isDisabled,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+
+		response = app.PostAddressResponseDto{
+			Id: id,
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }
 
 func (s *service) UpdateAddress() string {

@@ -15,30 +15,6 @@ type handler struct {
 	app.Service
 }
 
-type AddressPostDto struct {
-	Address   string  `validate:"min=3,regexp=^[a-zA-Z,.:;]$,nonnil"`
-	Latitude  float64 `validate:"min=-90,max=90,nonnil"`
-	Longitude float64 `validate:"min=-180,max=180,nonnil"`
-}
-
-// router := gin.New()
-// router.Use(gin.Logger())
-// router.Use(gin.Recovery())
-
-// superGroup := router.Group("api")
-
-// {
-// 	v1 := superGroup.Group("v1")
-// 	{
-// 		addressesGroup := v1.Group("addresses")
-// 		{
-// 			addressesGroup.GET("/:id", user.Retrieve)
-// 		}
-// 	}
-// }
-
-// return router
-
 func Handler(service app.Service) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
@@ -74,27 +50,30 @@ func (handlerRef *handler) health(ctx *gin.Context) {
 }
 
 func (handlerRef *handler) addAddress(ctx *gin.Context) {
-	// b, _ := ioutil.ReadAll(request.Body)
-	decoder := json.NewDecoder(ctx.Request.Body)
+	var address app.PostAddressDto
 
-	var body AddressPostDto
+	err := ctx.ShouldBindJSON(&address)
 
-	// nur := NewUserRequest{Username: "something", Age: 20}
-	// if errs := validator.Validate(nur); errs != nil {
-	// 	// values not valid, deal with errors here
-	// }
-
-	decoder.Decode(&body)
-
-	log.Println(body)
-
-	if errs := validator.Validate(body); errs != nil {
-		log.Println(errs)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	// log.Println(ioutil.NopCloser(bytes.NewBuffer(b)))
+	err = validator.Validate(address)
 
-	ctx.JSON(http.StatusOK, handlerRef.AddAddress())
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := handlerRef.AddAddress(address)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (handlerRef *handler) getAddresses(ctx *gin.Context) {
