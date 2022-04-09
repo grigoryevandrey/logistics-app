@@ -65,7 +65,7 @@ func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressRespon
 
 	isDisabled := false
 
-	query := "INSERT INTO addresses (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id"
+	query := "INSERT INTO addresses (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id, address, latitude, longitude, is_disabled"
 
 	rows, err := s.db.Query(
 		query,
@@ -82,13 +82,20 @@ func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressRespon
 
 	for rows.Next() {
 		var id int
+		var address string
+		var latitute, longitude float64
+		var isDisabled bool
 
-		if err := rows.Scan(&id); err != nil {
+		if err := rows.Scan(&id, &address, &latitute, &longitude, &isDisabled); err != nil {
 			return nil, err
 		}
 
 		response = app.PostAddressResponseDto{
-			Id: id,
+			Id:         id,
+			Address:    address,
+			Latitude:   latitute,
+			Longitude:  longitude,
+			IsDisabled: isDisabled,
 		}
 	}
 
@@ -99,8 +106,45 @@ func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressRespon
 	return &response, nil
 }
 
-func (s *service) UpdateAddress() string {
-	return "patch"
+func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.UpdateAddressResponseDto, error) {
+	var id int
+	var addressText string
+	var latitute, longitude float64
+	var isDisabled bool
+
+	query := "UPDATE addresses SET address = $1, latitude = $2, longitude = $3, is_disabled = $4 WHERE id = $5 RETURNING id, address, latitude, longitude, is_disabled"
+
+	err := s.db.QueryRow(
+		query,
+		address.Address,
+		address.Latitude,
+		address.Longitude,
+		address.IsDisabled,
+		address.Id,
+	).Scan(
+		&id,
+		&addressText,
+		&latitute,
+		&longitude,
+		&isDisabled,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, app.Error404
+	case err != nil:
+		return nil, err
+	default:
+		response := app.UpdateAddressResponseDto{
+			Id:         id,
+			Address:    addressText,
+			Latitude:   latitute,
+			Longitude:  longitude,
+			IsDisabled: isDisabled,
+		}
+
+		return &response, nil
+	}
 }
 
 func (s *service) DeleteAddress() string {

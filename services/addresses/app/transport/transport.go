@@ -2,11 +2,13 @@ package transport
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 	"gopkg.in/validator.v2"
 )
@@ -19,6 +21,7 @@ func Handler(service app.Service) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(jsonmw.JSONMiddleware())
 
 	injectedHandler := &handler{service}
 
@@ -81,13 +84,13 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -101,7 +104,7 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 
 	addresses, err := handlerRef.GetAddresses(offset, limit)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -109,7 +112,36 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 }
 
 func (handlerRef *handler) updateAddress(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, handlerRef.UpdateAddress())
+	var address app.UpdateAddressDto
+
+	err := ctx.BindJSON(&address)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = validator.Validate(address)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := handlerRef.UpdateAddress(address)
+
+	if err != nil {
+		if err == app.Error404 {
+			message := fmt.Sprintf("Can not find address with id: %d", address.Id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
