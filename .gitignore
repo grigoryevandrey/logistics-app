@@ -50,3 +50,9 @@ go.work
 
 # postgres data volume used by postgres server container for testing purpose
 database/postgres
+
+# Env
+.env.local
+
+# Folder for ignored stuff
+/dump
