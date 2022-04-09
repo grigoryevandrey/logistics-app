@@ -64,7 +64,7 @@ db-start: ## start the database server
 	@mkdir -p database/postgres
 	docker run --rm --name postgres -v $(shell pwd)/database:/database \
 		-v $(shell pwd)/database/postgres:/var/lib/postgresql/data \
-		-e POSTGRES_PASSWORD=${PG_PASSWORD} -e POSTGRES_DB=${PG_DB} -e POSTGRES_HOST=${PG_HOST} -e POSTGRES_USER=${PG_USER} -e POSTGRES_PORT=${PG_PORT} -d -p '${PG_PORT}:${PG_PORT}' postgres:14
+		-e POSTGRES_PASSWORD=${PG_PASSWORD} -e POSTGRES_DB=${PG_DB} -e POSTGRES_HOST=${PG_HOST} -e POSTGRES_USER=${PG_USER} -e POSTGRES_PORT=${PG_PORT} -d -p '${PG_PORT}:${PG_PORT}' postgres:14 -c stats_temp_directory=/tmp
 
 .PHONY: db-stop
 db-stop: ## stop the database server
