@@ -36,6 +36,10 @@ addresses-run: ## run addresses service
 vehicles-run: ## run vehicles service
 	bazel run //services/vehicles
 
+.PHONY: drivers-run
+drivers-run: ## run drivers service
+	bazel run //services/drivers
+
 # ========================= Building ===============================
 
 .PHONY: build
