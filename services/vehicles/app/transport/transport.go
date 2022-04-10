@@ -101,6 +101,11 @@ func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 		limit = 10
 	}
 
+	if limit > 100 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "limit param is too big"})
+		return
+	}
+
 	vehicles, err := handlerRef.GetVehicles(offset, limit)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

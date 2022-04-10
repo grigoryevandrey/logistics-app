@@ -57,14 +57,14 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&address)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	err = validator.Validate(address)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -83,13 +83,13 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
 
@@ -99,6 +99,11 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 
 	if limit <= 0 {
 		limit = 10
+	}
+
+	if limit > 100 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "limit param is too big"})
+		return
 	}
 
 	addresses, err := handlerRef.GetAddresses(offset, limit)
