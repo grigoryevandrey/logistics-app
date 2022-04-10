@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "database",
+    srcs = ["database.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/vehicles/app/database",
+    visibility = ["//visibility:public"],
+    deps = ["@com_github_lib_pq//:pq"],
+)

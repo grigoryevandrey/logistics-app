@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/grigoryevandrey/logistics-app/services/addresses/app/config"
-	"github.com/grigoryevandrey/logistics-app/services/addresses/app/database"
-	"github.com/grigoryevandrey/logistics-app/services/addresses/app/service"
-	"github.com/grigoryevandrey/logistics-app/services/addresses/app/transport"
+	"github.com/grigoryevandrey/logistics-app/services/vehicles/app/config"
+	"github.com/grigoryevandrey/logistics-app/services/vehicles/app/database"
+	"github.com/grigoryevandrey/logistics-app/services/vehicles/app/service"
+	"github.com/grigoryevandrey/logistics-app/services/vehicles/app/transport"
 	"github.com/spf13/viper"
 )
 
 func main() {
 	config.Init()
 
-	port := viper.GetString("ADDRESSES_PORT")
-	host := viper.GetString("ADDRESSES_HOST")
+	port := viper.GetString("VEHICLES_PORT")
+	host := viper.GetString("VEHICLES_HOST")
 
 	serverAddress := fmt.Sprintf("%s:%s", host, port)
 

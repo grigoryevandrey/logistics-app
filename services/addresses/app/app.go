@@ -8,10 +8,11 @@ type Service interface {
 }
 
 type AddressEntity struct {
-	Id                  int
-	Address             string
-	Latitude, Longitude float64
-	IsDisabled          bool
+	Id         int     `json:"id"`
+	Address    string  `json:"address"`
+	Latitude   float64 `json:"latitude"`
+	Longitude  float64 `json:"longitude"`
+	IsDisabled bool    `json:"isDisabled"`
 }
 
 type PostAddressDto struct {

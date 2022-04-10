@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
-	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
+	"github.com/grigoryevandrey/logistics-app/services/vehicles/app"
 	"gopkg.in/validator.v2"
 )
 
@@ -29,14 +29,14 @@ func Handler(service app.Service) *gin.Engine {
 	{
 		v1 := superGroup.Group("v1")
 		{
-			addressesGroup := v1.Group("addresses")
+			vehiclesGroup := v1.Group("vehicles")
 			{
-				addressesGroup.GET("/", injectedHandler.getAddresses)
-				addressesGroup.POST("/", injectedHandler.addAddress)
-				addressesGroup.PUT("/", injectedHandler.updateAddress)
-				addressesGroup.DELETE("/", injectedHandler.deleteAddress)
+				vehiclesGroup.GET("/", injectedHandler.getVehicles)
+				vehiclesGroup.POST("/", injectedHandler.addVehicle)
+				vehiclesGroup.PUT("/", injectedHandler.updateVehicle)
+				vehiclesGroup.DELETE("/", injectedHandler.deleteVehicle)
 
-				healthGroup := addressesGroup.Group("health")
+				healthGroup := vehiclesGroup.Group("health")
 				{
 					healthGroup.GET("/", injectedHandler.health)
 				}
@@ -51,24 +51,24 @@ func (handlerRef *handler) health(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "UP"})
 }
 
-func (handlerRef *handler) addAddress(ctx *gin.Context) {
-	var address app.PostAddressDto
+func (handlerRef *handler) addVehicle(ctx *gin.Context) {
+	var vehicle app.PostVehicleDto
 
-	err := ctx.ShouldBindJSON(&address)
+	err := ctx.ShouldBindJSON(&vehicle)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err = validator.Validate(address)
+	err = validator.Validate(vehicle)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	response, err := handlerRef.AddAddress(address)
+	response, err := handlerRef.AddVehicle(vehicle)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -78,18 +78,18 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (handlerRef *handler) getAddresses(ctx *gin.Context) {
+func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 	query := ctx.Request.URL.Query()
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
 
@@ -101,36 +101,36 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 		limit = 10
 	}
 
-	addresses, err := handlerRef.GetAddresses(offset, limit)
+	vehicles, err := handlerRef.GetVehicles(offset, limit)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"addresses": addresses, "total": len(addresses), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"vehicles": vehicles, "total": len(vehicles), "offset": offset})
 }
 
-func (handlerRef *handler) updateAddress(ctx *gin.Context) {
-	var address app.UpdateAddressDto
+func (handlerRef *handler) updateVehicle(ctx *gin.Context) {
+	var vehicle app.UpdateVehicleDto
 
-	err := ctx.BindJSON(&address)
+	err := ctx.BindJSON(&vehicle)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err = validator.Validate(address)
+	err = validator.Validate(vehicle)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	response, err := handlerRef.UpdateAddress(address)
+	response, err := handlerRef.UpdateVehicle(vehicle)
 
 	if err != nil {
 		if err == errors.Error404 {
-			message := fmt.Sprintf("Can not find address with id: %d", address.Id)
+			message := fmt.Sprintf("Can not find vehicle with id: %d", vehicle.Id)
 
 			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
 			return
@@ -143,7 +143,7 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
+func (handlerRef *handler) deleteVehicle(ctx *gin.Context) {
 	query := ctx.Request.URL.Query()
 
 	id, err := strconv.Atoi(query.Get("id"))
@@ -159,11 +159,11 @@ func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
 		return
 	}
 
-	response, err := handlerRef.DeleteAddress(id)
+	response, err := handlerRef.DeleteVehicle(id)
 
 	if err != nil {
 		if err == errors.Error404 {
-			message := fmt.Sprintf("Can not find address with id: %d", id)
+			message := fmt.Sprintf("Can not find vehicle with id: %d", id)
 
 			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
 			return
