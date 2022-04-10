@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/vehicles/app"
@@ -65,8 +64,6 @@ func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, er
 	var vehicleEntity app.VehicleEntity
 
 	query := fmt.Sprintf("INSERT INTO %s (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", VEHICLES_TABLE, ENTITY_FIELDS)
-
-	log.Println(query)
 
 	err := s.db.QueryRow(
 		query,
