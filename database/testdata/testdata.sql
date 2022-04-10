@@ -1,8 +1,8 @@
 INSERT INTO addresses (address, latitude, longitude, is_disabled) 
 VALUES ('Склад на Парнасе', 60.065809, 30.349630, false), ('Склад на Маяковской', 59.934009, 30.352789, false);
 
-INSERT INTO vehicles (vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled)
-VALUES ('с065ме78', 5, 1, false);
+INSERT INTO vehicles (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled)
+VALUES ('Камаз', 'с065ме78', 5, 1, false);
 
 INSERT INTO drivers (driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled)
 VALUES ('Рябов', 'Роман', 'Станиславович', 1, false);

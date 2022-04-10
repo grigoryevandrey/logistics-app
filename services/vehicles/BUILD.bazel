@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "vehicles_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/vehicles",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//lib/database",
+        "//services/vehicles/app/config",
+        "//services/vehicles/app/service",
+        "//services/vehicles/app/transport",
+        "@com_github_spf13_viper//:viper",
+    ],
+)
+
+go_binary(
+    name = "vehicles",
+    embed = [":vehicles_lib"],
+    visibility = ["//visibility:public"],
+)

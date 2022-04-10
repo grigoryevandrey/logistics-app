@@ -6,9 +6,11 @@ go_library(
     importpath = "github.com/grigoryevandrey/logistics-app/services/addresses",
     visibility = ["//visibility:private"],
     deps = [
-        "//services/addresses/app/database",
+        "//lib/database",
+        "//services/addresses/app/config",
         "//services/addresses/app/service",
         "//services/addresses/app/transport",
+        "@com_github_spf13_viper//:viper",
     ],
 )
 

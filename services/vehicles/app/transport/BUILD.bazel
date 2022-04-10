@@ -3,12 +3,12 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "transport",
     srcs = ["transport.go"],
-    importpath = "github.com/grigoryevandrey/logistics-app/services/addresses/app/transport",
+    importpath = "github.com/grigoryevandrey/logistics-app/services/vehicles/app/transport",
     visibility = ["//visibility:public"],
     deps = [
         "//lib/errors",
         "//lib/middlewares/json",
-        "//services/addresses/app",
+        "//services/vehicles/app",
         "@com_github_gin_gonic_gin//:gin",
         "@in_gopkg_validator_v2//:validator_v2",
     ],

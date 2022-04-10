@@ -3,10 +3,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "service",
     srcs = ["service.go"],
-    importpath = "github.com/grigoryevandrey/logistics-app/services/addresses/app/service",
+    importpath = "github.com/grigoryevandrey/logistics-app/services/vehicles/app/service",
     visibility = ["//visibility:public"],
     deps = [
         "//lib/errors",
-        "//services/addresses/app",
+        "//services/vehicles/app",
     ],
 )

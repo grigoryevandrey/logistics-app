@@ -32,11 +32,16 @@ gazelle: ## update dependency management with gazelle
 addresses-run: ## run addresses service
 	bazel run //services/addresses
 
+.PHONY: vehicles-run
+vehicles-run: ## run vehicles service
+	bazel run //services/vehicles
+
 # ========================= Building ===============================
 
-.PHONY: addresses-build
-addresses-build:  ## build all services binaries
+.PHONY: build
+build:  ## build all services binaries
 	bazel build //services/addresses
+	bazel build //services/vehicles
 
 .PHONY: build-docker
 build-docker: ## build all services as a docker image with bazel

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 )
 
@@ -17,8 +18,8 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesResponseDto, error) {
-	var result []app.GetAddressesResponseDto
+func (s *service) GetAddresses(offset int, limit int) ([]app.AddressEntity, error) {
+	var result []app.AddressEntity
 
 	query := fmt.Sprintf(
 		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE,
@@ -34,23 +35,19 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesRespons
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int
-		var address string
-		var latitute, longitude float64
-		var isDisabled bool
+		var addressEntity app.AddressEntity
 
-		if err := rows.Scan(&id, &address, &latitute, &longitude, &isDisabled); err != nil {
+		if err := rows.Scan(
+			&addressEntity.Id,
+			&addressEntity.Address,
+			&addressEntity.Latitude,
+			&addressEntity.Longitude,
+			&addressEntity.IsDisabled,
+		); err != nil {
 			return nil, err
 		}
 
-		element := app.GetAddressesResponseDto{
-			Id:         id,
-			Address:    address,
-			Latitude:   latitute,
-			Longitude:  longitude,
-			IsDisabled: isDisabled,
-		}
-		result = append(result, element)
+		result = append(result, addressEntity)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -60,13 +57,10 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.GetAddressesRespons
 	return result, nil
 }
 
-func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressResponseDto, error) {
-	var id int
-	var addressText string
-	var latitute, longitude float64
-	var isDisabled bool
+func (s *service) AddAddress(address app.PostAddressDto) (*app.AddressEntity, error) {
+	var addressEntity app.AddressEntity
 
-	query := "INSERT INTO addresses (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id, address, latitude, longitude, is_disabled"
+	query := fmt.Sprintf("INSERT INTO %s (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,
@@ -75,35 +69,24 @@ func (s *service) AddAddress(address app.PostAddressDto) (*app.PostAddressRespon
 		address.Longitude,
 		false,
 	).Scan(
-		&id,
-		&addressText,
-		&latitute,
-		&longitude,
-		&isDisabled,
+		&addressEntity.Id,
+		&addressEntity.Address,
+		&addressEntity.Latitude,
+		&addressEntity.Longitude,
+		&addressEntity.IsDisabled,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	response := app.PostAddressResponseDto{
-		Id:         id,
-		Address:    addressText,
-		Latitude:   latitute,
-		Longitude:  longitude,
-		IsDisabled: isDisabled,
-	}
-
-	return &response, nil
+	return &addressEntity, nil
 }
 
-func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.UpdateAddressResponseDto, error) {
-	var id int
-	var addressText string
-	var latitute, longitude float64
-	var isDisabled bool
+func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.AddressEntity, error) {
+	var addressEntity app.AddressEntity
 
-	query := "UPDATE addresses SET address = $1, latitude = $2, longitude = $3, is_disabled = $4 WHERE id = $5 RETURNING id, address, latitude, longitude, is_disabled"
+	query := fmt.Sprintf("UPDATE %s SET address = $1, latitude = $2, longitude = $3, is_disabled = $4 WHERE id = $5 RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,
@@ -113,64 +96,45 @@ func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.UpdateAddres
 		address.IsDisabled,
 		address.Id,
 	).Scan(
-		&id,
-		&addressText,
-		&latitute,
-		&longitude,
-		&isDisabled,
+		&addressEntity.Id,
+		&addressEntity.Address,
+		&addressEntity.Latitude,
+		&addressEntity.Longitude,
+		&addressEntity.IsDisabled,
 	)
 
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, app.Error404
+		return nil, errors.Error404
 	case err != nil:
 		return nil, err
 	default:
-		response := app.UpdateAddressResponseDto{
-			Id:         id,
-			Address:    addressText,
-			Latitude:   latitute,
-			Longitude:  longitude,
-			IsDisabled: isDisabled,
-		}
-
-		return &response, nil
+		return &addressEntity, nil
 	}
 }
 
-func (s *service) DeleteAddress(id int) (*app.DeleteAddressResponseDto, error) {
-	var deletedId int
-	var addressText string
-	var latitute, longitude float64
-	var isDisabled bool
+func (s *service) DeleteAddress(id int) (*app.AddressEntity, error) {
+	var addressEntity app.AddressEntity
 
-	query := "DELETE FROM addresses WHERE id = $1 RETURNING id, address, latitude, longitude, is_disabled"
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,
 		id,
 	).Scan(
-		&deletedId,
-		&addressText,
-		&latitute,
-		&longitude,
-		&isDisabled,
+		&addressEntity.Id,
+		&addressEntity.Address,
+		&addressEntity.Latitude,
+		&addressEntity.Longitude,
+		&addressEntity.IsDisabled,
 	)
 
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, app.Error404
+		return nil, errors.Error404
 	case err != nil:
 		return nil, err
 	default:
-		response := app.DeleteAddressResponseDto{
-			Id:         id,
-			Address:    addressText,
-			Latitude:   latitute,
-			Longitude:  longitude,
-			IsDisabled: isDisabled,
-		}
-
-		return &response, nil
+		return &addressEntity, nil
 	}
 }

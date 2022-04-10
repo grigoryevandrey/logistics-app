@@ -13,6 +13,7 @@ CREATE TABLE addresses
 CREATE TABLE vehicles
 (
     id                  BIGSERIAL,
+    vehicle             VARCHAR(255) NOT NULL,
     vehicle_car_number  VARCHAR(31) NOT NULL,
     vehicle_tonnage     REAL NOT NULL,
     vehicle_address_id  BIGINT,

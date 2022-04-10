@@ -7,8 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Connect() *sql.DB {
-	connStr := "postgresql://postgres:secret@0.0.0.0:5432/database?sslmode=disable"
+func Connect(connStr string) *sql.DB {
 	database, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalln(err)
