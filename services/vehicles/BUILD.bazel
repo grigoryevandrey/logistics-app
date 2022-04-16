@@ -7,9 +7,9 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//lib/database",
-        "//services/vehicles/app/config",
         "//services/vehicles/app/service",
         "//services/vehicles/app/transport",
+        "//services/vehicles/config",
         "@com_github_spf13_viper//:viper",
     ],
 )

@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/grigoryevandrey/logistics-app/lib/database"
-	"github.com/grigoryevandrey/logistics-app/services/drivers/app/config"
 	"github.com/grigoryevandrey/logistics-app/services/drivers/app/service"
 	"github.com/grigoryevandrey/logistics-app/services/drivers/app/transport"
+	"github.com/grigoryevandrey/logistics-app/services/drivers/config"
 	"github.com/spf13/viper"
 )
 
