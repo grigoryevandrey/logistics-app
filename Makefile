@@ -5,7 +5,8 @@ DATABASE_CONNECTION_STRING=postgresql://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${P
 PID_FILE := './.pid'
 FSWATCH_FILE := './fswatch.cfg'
 
-MIGRATE := docker run -v $(shell pwd)/migrations:/migrations --network host migrate/migrate:v4.10.0 -path=/migrations/ -database "$(DATABASE_CONNECTION_STRING)"
+MIGRATE := docker run -v $(shell pwd)/migrations:/migrations --network host \
+migrate/migrate:v4.10.0 -path=/migrations/ -database "$(DATABASE_CONNECTION_STRING)"
 
 .PHONY: default
 default: help
@@ -40,6 +41,10 @@ vehicles-run: ## run vehicles service
 drivers-run: ## run drivers service
 	bazel run //services/drivers
 
+.PHONY: managers-run
+managers-run: ## run managers service
+	bazel run //services/managers
+
 # ========================= Building ===============================
 
 .PHONY: build
@@ -73,7 +78,10 @@ db-start: ## start the database server
 	@mkdir -p database/postgres
 	docker run --rm --name postgres -v $(shell pwd)/database:/database \
 		-v $(shell pwd)/database/postgres:/var/lib/postgresql/data \
-		-e POSTGRES_PASSWORD=${PG_PASSWORD} -e POSTGRES_DB=${PG_DB} -e POSTGRES_HOST=${PG_HOST} -e POSTGRES_USER=${PG_USER} -e POSTGRES_PORT=${PG_PORT} -d -p '${PG_PORT}:${PG_PORT}' postgres:14 -c stats_temp_directory=/tmp
+		-e POSTGRES_PASSWORD=${PG_PASSWORD} -e POSTGRES_DB=${PG_DB} \
+		-e POSTGRES_HOST=${PG_HOST} -e POSTGRES_USER=${PG_USER} \
+		-e POSTGRES_PORT=${PG_PORT} -d -p '${PG_PORT}:${PG_PORT}' \
+		postgres:14 -c stats_temp_directory=/tmp
 
 .PHONY: db-stop
 db-stop: ## stop the database server
