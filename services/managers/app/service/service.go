@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/managers/app"
@@ -94,7 +95,7 @@ func (s *service) GetManagers(offset int, limit int) ([]app.ManagerEntity, error
 func (s *service) AddManager(manager app.PostManagerDto) (*app.ManagerEntity, error) {
 	var managerEntity app.ManagerEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (manager_login, manager_password, manager_last_name, manager_first_name, manager_patronymic, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", MANAGERS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("INSERT INTO %s (manager_login, manager_password, manager_last_name, manager_first_name, manager_patronymic, is_disabled) VALUES ($1, $2, $3, $4, $5, $6) RETURNING %s", MANAGERS_TABLE, ENTITY_FIELDS)
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(manager.Password), HASHING_COST)
 
@@ -119,6 +120,10 @@ func (s *service) AddManager(manager app.PostManagerDto) (*app.ManagerEntity, er
 	)
 
 	if err != nil {
+		if strings.Contains(err.Error(), errors.UNIQUE_CONSTRAINT_VIOLATION_SUBSTRING) {
+			return nil, errors.Error409
+		}
+
 		return nil, err
 	}
 
@@ -156,6 +161,8 @@ func (s *service) UpdateManager(manager app.UpdateManagerDto) (*app.ManagerEntit
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, errors.Error404
+	case err != nil && strings.Contains(err.Error(), errors.UNIQUE_CONSTRAINT_VIOLATION_SUBSTRING):
+		return nil, errors.Error409
 	case err != nil:
 		return nil, err
 	default:

@@ -698,8 +698,8 @@ def go_deps():
     go_repository(
         name = "org_golang_x_crypto",
         importpath = "golang.org/x/crypto",
-        sum = "h1:tkVvjkPTB7pnW3jnid7kNyAMPVWllTNOf/qKDze4p9o=",
-        version = "v0.0.0-20220331220935-ae2d96664a29",
+        sum = "h1:kUhD7nTDoI3fVd9G4ORWrbV5NY0liEs/Jg2pv5f+bBA=",
+        version = "v0.0.0-20220411220226-7b82a4e95df4",
     )
     go_repository(
         name = "org_golang_x_exp",

@@ -37,7 +37,7 @@ CREATE TABLE drivers
 CREATE TABLE admins
 (
     id                  BIGSERIAL,
-    admin_login         VARCHAR(255) NOT NULL,
+    admin_login         VARCHAR(255) UNIQUE NOT NULL,
     admin_password      VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -45,7 +45,7 @@ CREATE TABLE admins
 CREATE TABLE managers
 (
     id                  BIGSERIAL,
-    manager_login       VARCHAR(255) NOT NULL,
+    manager_login       VARCHAR(255) UNIQUE NOT NULL,
     manager_password    VARCHAR(1023) NOT NULL,
     manager_last_name   VARCHAR(255) NOT NULL,
     manager_first_name  VARCHAR(255) NOT NULL,

@@ -8,5 +8,6 @@ go_library(
     deps = [
         "//lib/errors",
         "//services/managers/app",
+        "@org_golang_x_crypto//bcrypt",
     ],
 )

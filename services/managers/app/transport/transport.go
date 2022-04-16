@@ -72,6 +72,11 @@ func (handlerRef *handler) addManager(ctx *gin.Context) {
 	response, err := handlerRef.AddManager(manager)
 
 	if err != nil {
+		if err == errors.Error409 {
+			ctx.JSON(http.StatusConflict, gin.H{"error": "user with this login already exists."})
+			return
+		}
+
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -164,6 +169,12 @@ func (handlerRef *handler) updateManager(ctx *gin.Context) {
 			message := fmt.Sprintf("Can not find manager with id: %d", manager.Id)
 
 			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		if err == errors.Error409 {
+			message := fmt.Sprintf("User with login %s already exists.", manager.Login)
+			ctx.JSON(http.StatusConflict, gin.H{"error": message})
 			return
 		}
 
