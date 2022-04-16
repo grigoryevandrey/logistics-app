@@ -46,7 +46,7 @@ CREATE TABLE managers
 (
     id                  BIGSERIAL,
     manager_login       VARCHAR(255) NOT NULL,
-    manager_password    VARCHAR(255) NOT NULL,
+    manager_password    VARCHAR(1023) NOT NULL,
     manager_last_name   VARCHAR(255) NOT NULL,
     manager_first_name  VARCHAR(255) NOT NULL,
     manager_patronymic  VARCHAR(255),
