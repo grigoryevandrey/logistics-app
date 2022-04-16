@@ -1,7 +1,7 @@
 package app
 
 type Service interface {
-	GetManager(id int) (ManagerEntity, error)
+	GetManager(id string) (*ManagerEntity, error)
 	GetManagers(offset int, limit int) ([]ManagerEntity, error)
 	AddManager(manager PostManagerDto) (*ManagerEntity, error)
 	UpdateManager(manager UpdateManagerDto) (*ManagerEntity, error)

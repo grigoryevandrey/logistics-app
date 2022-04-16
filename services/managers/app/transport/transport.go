@@ -31,6 +31,7 @@ func Handler(service app.Service) *gin.Engine {
 		{
 			managersGroup := v1.Group("managers")
 			{
+				managersGroup.GET("/:id", injectedHandler.getManager)
 				managersGroup.GET("/", injectedHandler.getManagers)
 				managersGroup.POST("/", injectedHandler.addManager)
 				managersGroup.PUT("/", injectedHandler.updateManager)
@@ -76,6 +77,31 @@ func (handlerRef *handler) addManager(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, response)
+}
+
+func (handlerRef *handler) getManager(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad id param"})
+		return
+	}
+
+	manager, err := handlerRef.GetManager(id)
+
+	if err != nil {
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find manager with id: %s", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, manager)
 }
 
 func (handlerRef *handler) getManagers(ctx *gin.Context) {
