@@ -45,6 +45,10 @@ drivers-run: ## run drivers service
 managers-run: ## run managers service
 	bazel run //services/managers
 
+.PHONY: admins-run
+admins-run: ## run admins service
+	bazel run //services/admins
+
 # ========================= Building ===============================
 
 .PHONY: build

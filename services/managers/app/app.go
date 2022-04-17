@@ -17,7 +17,7 @@ type ManagerEntity struct {
 }
 
 type PostManagerDto struct {
-	Login      string `json:"login" validate:"min=6,max=255,regexp=^[a-zA-Z0-9]*$"`
+	Login      string `json:"login" validate:"min=3,max=255,regexp=^[a-zA-Z0-9]*$"`
 	Password   string `json:"password" validate:"min=6,max=255,regexp=^[a-zA-Z0-9]*$"`
 	LastName   string `json:"lastName" validate:"min=1,max=255,regexp=^[a-zA-Zа-яА-Я]*$"`
 	FirstName  string `json:"firstName" validate:"min=1,max=255,regexp=^[a-zA-Zа-яА-Я]*$"`
@@ -26,7 +26,7 @@ type PostManagerDto struct {
 
 type UpdateManagerDto struct {
 	Id         int    `json:"id" validate:"min=1,nonzero"`
-	Login      string `json:"login" validate:"min=6,max=255,regexp=^[a-zA-Z0-9]*$"`
+	Login      string `json:"login" validate:"min=3,max=255,regexp=^[a-zA-Z0-9]*$"`
 	Password   string `json:"password" validate:"min=6,max=255,regexp=^[a-zA-Z0-9]*$"`
 	LastName   string `json:"lastName" validate:"min=1,max=255,regexp=^[a-zA-Zа-яА-Я]*$"`
 	FirstName  string `json:"firstName" validate:"min=1,max=255,regexp=^[a-zA-Zа-яА-Я]*$"`
