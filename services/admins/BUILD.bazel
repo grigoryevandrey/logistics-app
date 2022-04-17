@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "admins_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/admins",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//lib/database",
+        "//services/admins/app/service",
+        "//services/admins/app/transport",
+        "//services/admins/config",
+        "@com_github_spf13_viper//:viper",
+    ],
+)
+
+go_binary(
+    name = "admins",
+    embed = [":admins_lib"],
+    visibility = ["//visibility:public"],
+)

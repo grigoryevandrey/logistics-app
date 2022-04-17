@@ -7,8 +7,8 @@ VALUES ('Камаз', 'с065ме78', 5, 1, false);
 INSERT INTO drivers (driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled)
 VALUES ('Рябов', 'Роман', 'Станиславович', 1, false);
 
-INSERT INTO admins (admin_login, admin_password)
-VALUES ('test', '$2a$10$JWLAPYmMgRY7CtkNlmjb1eewe8fYJhUfxN/bwpdEXdEybSYGeMVcO');
+INSERT INTO admins (admin_login, admin_password, admin_last_name, admin_first_name, admin_patronymic, admin_role, is_disabled)
+VALUES ('test', '$2a$10$JWLAPYmMgRY7CtkNlmjb1eewe8fYJhUfxN/bwpdEXdEybSYGeMVcO', 'Смирнов', 'Семен', 'Геннадиевич', 'super', false);
 
 INSERT INTO managers (manager_login, manager_password, manager_last_name, manager_first_name, manager_patronymic, is_disabled)
 VALUES ('test', '$2a$10$JWLAPYmMgRY7CtkNlmjb1eewe8fYJhUfxN/bwpdEXdEybSYGeMVcO', 'Кудрявцев', 'Карим', 'Сергеевич', false);

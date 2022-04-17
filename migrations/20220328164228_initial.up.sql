@@ -1,4 +1,5 @@
 CREATE TYPE delivery_status AS ENUM ('not started', 'on the way', 'delivered', 'cancelled');
+CREATE TYPE admin_role AS ENUM ('regular', 'super');
 
 CREATE TABLE addresses
 (
@@ -38,7 +39,12 @@ CREATE TABLE admins
 (
     id                  BIGSERIAL,
     admin_login         VARCHAR(255) UNIQUE NOT NULL,
-    admin_password      VARCHAR(255) NOT NULL,
+    admin_password      VARCHAR(1023) NOT NULL,
+    admin_last_name     VARCHAR(255) NOT NULL,
+    admin_first_name    VARCHAR(255) NOT NULL,
+    admin_patronymic    VARCHAR(255),
+    admin_role          admin_role NOT NULL,
+    is_disabled         BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
     
