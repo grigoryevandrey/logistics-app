@@ -17,7 +17,7 @@ CREATE TABLE vehicles
     vehicle             VARCHAR(255) NOT NULL,
     vehicle_car_number  VARCHAR(31) NOT NULL,
     vehicle_tonnage     REAL NOT NULL,
-    vehicle_address_id  BIGINT,
+    vehicle_address_id  BIGINT NOT NULL,
     is_disabled         BOOLEAN NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (vehicle_address_id) REFERENCES addresses (id)
