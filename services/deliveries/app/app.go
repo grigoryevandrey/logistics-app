@@ -10,7 +10,7 @@ type Service interface {
 	DeleteDelivery(id int) (*DeliveryEntity, error)
 
 	GetDeliveryStatuses() ([]string, error)
-	UpdateDeliveryStatus(id int, status string) error
+	UpdateDeliveryStatus(delivery UpdateDeliveryStatusDto) (*DeliveryEntity, error)
 }
 
 // Check if from and to is not the same
@@ -68,4 +68,9 @@ type UpdateDeliveryDto struct {
 	Contents    string `json:"contents" validate:"min=3,regexp=^[a-zA-Zа-яА-Я0-9 .;]*$"`
 	Eta         string `json:"eta" validate:"min=1"`
 	Status      string `json:"status" validate:"min=1,max=255,regexp=^[a-z ]*$"`
+}
+
+type UpdateDeliveryStatusDto struct {
+	Id     int    `json:"id"`
+	Status string `json:"status" validate:"min=1,max=255,regexp=^[a-z ]*$"`
 }

@@ -220,6 +220,53 @@ func (handlerRef *handler) deleteDelivery(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (handlerRef *handler) getDeliveryStatuses(ctx *gin.Context) {}
+func (handlerRef *handler) getDeliveryStatuses(ctx *gin.Context) {
+	response, err := handlerRef.GetDeliveryStatuses()
 
-func (handlerRef *handler) updateDeliveryStatus(ctx *gin.Context) {}
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handlerRef *handler) updateDeliveryStatus(ctx *gin.Context) {
+	var delivery app.UpdateDeliveryStatusDto
+
+	err := ctx.BindJSON(&delivery)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = validator.Validate(delivery)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := handlerRef.UpdateDeliveryStatus(delivery)
+
+	if err != nil {
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find delivery with id: %d", delivery.Id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		if err == errors.Error409 {
+			message := fmt.Sprintf("Can not modify delivery status (status 'delivered' is immutable) with id: %d", delivery.Id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
