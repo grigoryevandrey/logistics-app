@@ -9,6 +9,7 @@ import (
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
+	"gopkg.in/validator.v2"
 )
 
 type handler struct {
@@ -126,11 +127,98 @@ func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"deliveries": deliveries, "total": len(deliveries), "offset": offset})
 }
 
-func (handlerRef *handler) addDelivery(ctx *gin.Context) {}
+func (handlerRef *handler) addDelivery(ctx *gin.Context) {
+	var delivery app.PostDeliveryDto
 
-func (handlerRef *handler) updateDelivery(ctx *gin.Context) {}
+	err := ctx.ShouldBindJSON(&delivery)
 
-func (handlerRef *handler) deleteDelivery(ctx *gin.Context) {}
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = validator.Validate(delivery)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := handlerRef.AddDelivery(delivery)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handlerRef *handler) updateDelivery(ctx *gin.Context) {
+	var delivery app.UpdateDeliveryDto
+
+	err := ctx.BindJSON(&delivery)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = validator.Validate(delivery)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := handlerRef.UpdateDelivery(delivery)
+
+	if err != nil {
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find delivery with id: %d", delivery.Id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handlerRef *handler) deleteDelivery(ctx *gin.Context) {
+	query := ctx.Request.URL.Query()
+
+	id, err := strconv.Atoi(query.Get("id"))
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if id <= 0 {
+		message := fmt.Sprintf("Id should be an int more than 0, recieved: %d", id)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": message})
+		return
+	}
+
+	response, err := handlerRef.DeleteDelivery(id)
+
+	if err != nil {
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find delivery with id: %d", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
 
 func (handlerRef *handler) getDeliveryStatuses(ctx *gin.Context) {}
 

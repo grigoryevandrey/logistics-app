@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	errs "github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
@@ -106,18 +107,116 @@ func (s *service) GetDeliveries(offset int, limit int) ([]app.DeliveryJoinedEnti
 	return result, nil
 }
 
-func (s *service) AddDelivery(delivery app.PostDeliveryDto) (*app.DeliveryJoinedEntity, error) {
-	return nil, errors.New("not implemented")
+func (s *service) AddDelivery(delivery app.PostDeliveryDto) (*app.DeliveryEntity, error) {
+	updatedAt := time.Now()
+	var deliveryEntity app.DeliveryEntity
+
+	query := fmt.Sprintf("INSERT INTO %s (vehicle_id, address_from, address_to, driver_id, manager_id, contents, eta, updated_at, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+
+	err := s.db.QueryRow(
+		query,
+		delivery.VehicleId,
+		delivery.AddressFrom,
+		delivery.AddressTo,
+		delivery.DriverId,
+		delivery.ManagerId,
+		delivery.Contents,
+		delivery.Eta,
+		updatedAt,
+		delivery.Status,
+	).Scan(
+		&deliveryEntity.Id,
+		&deliveryEntity.VehicleId,
+		&deliveryEntity.AddressFrom,
+		&deliveryEntity.AddressTo,
+		&deliveryEntity.DriverId,
+		&deliveryEntity.ManagerId,
+		&deliveryEntity.Contents,
+		&deliveryEntity.Eta,
+		&deliveryEntity.UpdatedAt,
+		&deliveryEntity.Status,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &deliveryEntity, nil
 }
 
-func (s *service) UpdateDelivery(delivery app.UpdateDeliveryDto) (*app.DeliveryJoinedEntity, error) {
-	return nil, errors.New("not implemented")
+func (s *service) UpdateDelivery(delivery app.UpdateDeliveryDto) (*app.DeliveryEntity, error) {
+	updatedAt := time.Now()
+	var deliveryEntity app.DeliveryEntity
+
+	query := fmt.Sprintf("UPDATE %s SET vehicle_id = $1, address_from = $2, address_to = $3, driver_id = $4, manager_id = $5, contents = $6, eta = $7, updated_at = $8, status = $9 WHERE id = $10 RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+
+	err := s.db.QueryRow(
+		query,
+		delivery.VehicleId,
+		delivery.AddressFrom,
+		delivery.AddressTo,
+		delivery.DriverId,
+		delivery.ManagerId,
+		delivery.Contents,
+		delivery.Eta,
+		updatedAt,
+		delivery.Status,
+		delivery.Id,
+	).Scan(
+		&deliveryEntity.Id,
+		&deliveryEntity.VehicleId,
+		&deliveryEntity.AddressFrom,
+		&deliveryEntity.AddressTo,
+		&deliveryEntity.DriverId,
+		&deliveryEntity.ManagerId,
+		&deliveryEntity.Contents,
+		&deliveryEntity.Eta,
+		&deliveryEntity.UpdatedAt,
+		&deliveryEntity.Status,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errs.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &deliveryEntity, nil
+	}
 }
 
-func (s *service) DeleteDelivery(id int) (*app.DeliveryJoinedEntity, error) {
-	return nil, errors.New("not implemented")
+func (s *service) DeleteDelivery(id int) (*app.DeliveryEntity, error) {
+	var deliveryEntity app.DeliveryEntity
+
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+
+	err := s.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&deliveryEntity.Id,
+		&deliveryEntity.VehicleId,
+		&deliveryEntity.AddressFrom,
+		&deliveryEntity.AddressTo,
+		&deliveryEntity.DriverId,
+		&deliveryEntity.ManagerId,
+		&deliveryEntity.Contents,
+		&deliveryEntity.Eta,
+		&deliveryEntity.UpdatedAt,
+		&deliveryEntity.Status,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errs.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &deliveryEntity, nil
+	}
 }
 
+// SELECT unnest(enum_range(NULL::myenum))
 func (s *service) GetDeliveryStatuses() ([]string, error) {
 	return nil, errors.New("not implemented")
 }
