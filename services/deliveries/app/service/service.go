@@ -11,7 +11,9 @@ import (
 
 const DELIVERIES_TABLE = "deliveries"
 const ENTITY_FIELDS = "id, vehicle_id, address_from, address_to, driver_id, manager_id, contents, eta, updated_at, status"
-const JOINED_ENTITY_FIELDS = "id, vehicle, vehicle_car_number, address_from, driver_last_name, driver_first_name, manager_first_name, manager_last_name, contents, eta, updated_at, status"
+const JOINED_ENTITY_FIELDS = "id, vehicle, vehicle_car_number, address_from, address_to, driver_last_name, driver_first_name, manager_first_name, manager_last_name, contents, eta, updated_at, status"
+
+const JOIN_QUERY = "SELECT deliveries.id, vehicles.vehicle, vehicles.vehicle_car_number, from_addr.address AS address_from, to_addr.address AS address_to, drivers.driver_last_name, drivers.driver_first_name, managers.manager_first_name, managers.manager_last_name, deliveries.contents, deliveries.eta, deliveries.updated_at, deliveries.status FROM deliveries LEFT JOIN vehicles ON vehicles.id = deliveries.vehicle_id LEFT JOIN addresses from_addr ON from_addr.id = deliveries.address_from LEFT JOIN addresses to_addr ON to_addr.id = deliveries.address_to LEFT JOIN drivers ON drivers.id = deliveries.driver_id LEFT JOIN managers ON managers.id = deliveries.manager_id"
 
 type service struct {
 	db *sql.DB
@@ -57,7 +59,51 @@ func (s *service) GetDelivery(id int) (*app.DeliveryEntity, error) {
 }
 
 func (s *service) GetDeliveries(offset int, limit int) ([]app.DeliveryJoinedEntity, error) {
-	return nil, errors.New("not implemented")
+	var result []app.DeliveryJoinedEntity
+
+	query := fmt.Sprintf(
+		"%s OFFSET %d LIMIT %d",
+		JOIN_QUERY,
+		offset,
+		limit,
+	)
+
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var deliveryJoinedEntity app.DeliveryJoinedEntity
+
+		if err := rows.Scan(
+			&deliveryJoinedEntity.Id,
+			&deliveryJoinedEntity.Vehicle,
+			&deliveryJoinedEntity.VehicleCarNumber,
+			&deliveryJoinedEntity.AddressFrom,
+			&deliveryJoinedEntity.AddressTo,
+			&deliveryJoinedEntity.DriverLastName,
+			&deliveryJoinedEntity.DriverFirstName,
+			&deliveryJoinedEntity.ManagerFirstName,
+			&deliveryJoinedEntity.ManagerLastName,
+			&deliveryJoinedEntity.Contents,
+			&deliveryJoinedEntity.Eta,
+			&deliveryJoinedEntity.UpdatedAt,
+			&deliveryJoinedEntity.Status,
+		); err != nil {
+			return nil, err
+		}
+
+		result = append(result, deliveryJoinedEntity)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (s *service) AddDelivery(delivery app.PostDeliveryDto) (*app.DeliveryJoinedEntity, error) {

@@ -89,7 +89,42 @@ func (handlerRef *handler) getDelivery(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, delivery)
 }
 
-func (handlerRef *handler) getDeliveries(ctx *gin.Context) {}
+func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
+	query := ctx.Request.URL.Query()
+
+	limit, err := strconv.Atoi(query.Get("limit"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
+		return
+	}
+
+	offset, err := strconv.Atoi(query.Get("offset"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
+		return
+	}
+
+	if offset < 0 {
+		offset = 0
+	}
+
+	if limit <= 0 {
+		limit = 10
+	}
+
+	if limit > 100 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "limit param is too big"})
+		return
+	}
+
+	deliveries, err := handlerRef.GetDeliveries(offset, limit)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"deliveries": deliveries, "total": len(deliveries), "offset": offset})
+}
 
 func (handlerRef *handler) addDelivery(ctx *gin.Context) {}
 
