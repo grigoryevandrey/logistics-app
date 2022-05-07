@@ -1,9 +1,12 @@
 package transport
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
 )
@@ -55,7 +58,36 @@ func (handlerRef *handler) health(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "UP"})
 }
 
-func (handlerRef *handler) getDelivery(ctx *gin.Context) {}
+func (handlerRef *handler) getDelivery(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if id <= 0 {
+		message := fmt.Sprintf("Id should be an int more than 0, recieved: %d", id)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": message})
+		return
+	}
+
+	delivery, err := handlerRef.GetDelivery(id)
+
+	if err != nil {
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find delivery with id: %d", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, delivery)
+}
 
 func (handlerRef *handler) getDeliveries(ctx *gin.Context) {}
 

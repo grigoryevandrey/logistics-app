@@ -1,5 +1,7 @@
 package app
 
+import "time"
+
 type Service interface {
 	GetDelivery(id int) (*DeliveryEntity, error)
 	GetDeliveries(offset int, limit int) ([]DeliveryJoinedEntity, error)
@@ -17,53 +19,53 @@ type Service interface {
 // EDITING/DELETING RETURN: Joined entity
 
 type DeliveryJoinedEntity struct {
-	Id               int    `json:"id"`
-	Vehicle          string `json:"vehicle"`
-	VehicleCarNumber string `json:"vehicleCarNumber"`
-	AddressFrom      string `json:"addressFrom"`
-	AddressTo        string `json:"addressTo"`
-	DriverLastName   string `json:"driverLastName"`
-	DriverFirstName  string `json:"driverFirstName"`
-	ManagerFirstName string `json:"managerFirstName"`
-	ManagerLastName  string `json:"managerLastName"`
-	Contents         string `json:"contents"`
-	Eta              int    `json:"eta"`
-	UpdatedAt        int    `json:"updatedAt"`
-	Status           string `json:"status"`
+	Id               int       `json:"id"`
+	Vehicle          string    `json:"vehicle"`
+	VehicleCarNumber string    `json:"vehicleCarNumber"`
+	AddressFrom      string    `json:"addressFrom"`
+	AddressTo        string    `json:"addressTo"`
+	DriverLastName   string    `json:"driverLastName"`
+	DriverFirstName  string    `json:"driverFirstName"`
+	ManagerFirstName string    `json:"managerFirstName"`
+	ManagerLastName  string    `json:"managerLastName"`
+	Contents         string    `json:"contents"`
+	Eta              time.Time `json:"eta"`
+	UpdatedAt        time.Time `json:"updatedAt"`
+	Status           string    `json:"status"`
 }
 
 type DeliveryEntity struct {
-	Id          int    `json:"id"`
-	VehicleId   int    `json:"vehicleId"`
-	AddressFrom int    `json:"addressFrom"`
-	AddressTo   int    `json:"addressTo"`
-	DriverId    int    `json:"driverId"`
-	ManagerId   int    `json:"managerId"`
-	Contents    string `json:"contents"`
-	Eta         int    `json:"eta"`
-	UpdatedAt   int    `json:"updatedAt"`
-	Status      string `json:"role"`
+	Id          int       `json:"id"`
+	VehicleId   int       `json:"vehicleId"`
+	AddressFrom int       `json:"addressFrom"`
+	AddressTo   int       `json:"addressTo"`
+	DriverId    int       `json:"driverId"`
+	ManagerId   int       `json:"managerId"`
+	Contents    string    `json:"contents"`
+	Eta         time.Time `json:"eta"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	Status      string    `json:"role"`
 }
 
 type PostDeliveryDto struct {
-	VehicleId   int    `json:"vehicleId" validate:"min=1"`
-	AddressFrom int    `json:"addressFrom" validate:"min=1"`
-	AddressTo   int    `json:"addressTo" validate:"min=1"`
-	DriverId    int    `json:"driverId" validate:"min=1"`
-	ManagerId   int    `json:"managerId" validate:"min=1"`
-	Contents    string `json:"contents" validate:"min=3,regexp=^[a-zA-Zа-яА-Я0-9 .;]*$"`
-	Eta         int    `json:"eta" validate:"min=1"`
-	Status      string `json:"role" validate:"min=1,max=255,regexp=^[a-z ]*$"`
+	VehicleId   int       `json:"vehicleId" validate:"min=1"`
+	AddressFrom int       `json:"addressFrom" validate:"min=1"`
+	AddressTo   int       `json:"addressTo" validate:"min=1"`
+	DriverId    int       `json:"driverId" validate:"min=1"`
+	ManagerId   int       `json:"managerId" validate:"min=1"`
+	Contents    string    `json:"contents" validate:"min=3,regexp=^[a-zA-Zа-яА-Я0-9 .;]*$"`
+	Eta         time.Time `json:"eta" validate:"min=1"`
+	Status      string    `json:"role" validate:"min=1,max=255,regexp=^[a-z ]*$"`
 }
 
 type UpdateDeliveryDto struct {
-	Id          int    `json:"id"`
-	VehicleId   int    `json:"vehicleId" validate:"min=1"`
-	AddressFrom int    `json:"addressFrom" validate:"min=1"`
-	AddressTo   int    `json:"addressTo" validate:"min=1"`
-	DriverId    int    `json:"driverId" validate:"min=1"`
-	ManagerId   int    `json:"managerId" validate:"min=1"`
-	Contents    string `json:"contents" validate:"min=3,regexp=^[a-zA-Zа-яА-Я0-9 .;]*$"`
-	Eta         int    `json:"eta" validate:"min=1"`
-	Status      string `json:"role" validate:"min=1,max=255,regexp=^[a-z ]*$"`
+	Id          int       `json:"id"`
+	VehicleId   int       `json:"vehicleId" validate:"min=1"`
+	AddressFrom int       `json:"addressFrom" validate:"min=1"`
+	AddressTo   int       `json:"addressTo" validate:"min=1"`
+	DriverId    int       `json:"driverId" validate:"min=1"`
+	ManagerId   int       `json:"managerId" validate:"min=1"`
+	Contents    string    `json:"contents" validate:"min=3,regexp=^[a-zA-Zа-яА-Я0-9 .;]*$"`
+	Eta         time.Time `json:"eta" validate:"min=1"`
+	Status      string    `json:"role" validate:"min=1,max=255,regexp=^[a-z ]*$"`
 }

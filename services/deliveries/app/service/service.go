@@ -3,7 +3,9 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
+	errs "github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
 )
 
@@ -20,7 +22,38 @@ func New(db *sql.DB) app.Service {
 }
 
 func (s *service) GetDelivery(id int) (*app.DeliveryEntity, error) {
-	return nil, errors.New("not implemented")
+	var result app.DeliveryEntity
+
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE id = $1",
+		ENTITY_FIELDS,
+		DELIVERIES_TABLE,
+	)
+
+	err := s.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&result.Id,
+		&result.VehicleId,
+		&result.AddressFrom,
+		&result.AddressTo,
+		&result.DriverId,
+		&result.ManagerId,
+		&result.Contents,
+		&result.Eta,
+		&result.UpdatedAt,
+		&result.Status,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errs.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &result, nil
+	}
 }
 
 func (s *service) GetDeliveries(offset int, limit int) ([]app.DeliveryJoinedEntity, error) {
