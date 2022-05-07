@@ -49,6 +49,10 @@ managers-run: ## run managers service
 admins-run: ## run admins service
 	bazel run //services/admins
 
+.PHONY: deliveries-run
+deliveries-run: ## run deliveries service
+	bazel run //services/deliveries
+
 # ========================= Building ===============================
 
 .PHONY: build
