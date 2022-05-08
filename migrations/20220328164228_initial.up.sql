@@ -44,6 +44,7 @@ CREATE TABLE admins
     admin_first_name    VARCHAR(255) NOT NULL,
     admin_patronymic    VARCHAR(255),
     admin_role          admin_role NOT NULL,
+    refresh_token       VARCHAR(1023),
     is_disabled         BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
@@ -56,6 +57,7 @@ CREATE TABLE managers
     manager_last_name   VARCHAR(255) NOT NULL,
     manager_first_name  VARCHAR(255) NOT NULL,
     manager_patronymic  VARCHAR(255),
+    refresh_token       VARCHAR(1023),
     is_disabled         BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );

@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "transport",
+    srcs = ["transport.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/auth/app/transport",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//lib/middlewares/json",
+        "//services/auth/app",
+        "@com_github_gin_gonic_gin//:gin",
+    ],
+)

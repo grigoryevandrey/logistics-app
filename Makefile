@@ -53,6 +53,10 @@ admins-run: ## run admins service
 deliveries-run: ## run deliveries service
 	bazel run //services/deliveries
 
+.PHONY: auth-run
+auth-run: ## run auth service
+	bazel run //services/auth
+
 # ========================= Building ===============================
 
 .PHONY: build

@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "auth_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/services/auth",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//lib/database",
+        "//services/auth/app/service",
+        "//services/auth/app/transport",
+        "//services/auth/config",
+        "@com_github_spf13_viper//:viper",
+    ],
+)
+
+go_binary(
+    name = "auth",
+    embed = [":auth_lib"],
+    visibility = ["//visibility:public"],
+)
