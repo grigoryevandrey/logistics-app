@@ -5,5 +5,12 @@ go_library(
     srcs = ["service.go"],
     importpath = "github.com/grigoryevandrey/logistics-app/services/auth/app/service",
     visibility = ["//visibility:public"],
-    deps = ["//services/auth/app"],
+    deps = [
+        "//lib/errors",
+        "//services/auth/app",
+        "//services/auth/app/transport",
+        "@com_github_golang_jwt_jwt//:jwt",
+        "@com_github_spf13_viper//:viper",
+        "@org_golang_x_crypto//bcrypt",
+    ],
 )
