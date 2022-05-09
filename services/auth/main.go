@@ -14,8 +14,8 @@ import (
 func main() {
 	config.Init()
 
-	port := viper.GetString("LOGIN_PORT")
-	host := viper.GetString("LOGIN_HOST")
+	port := viper.GetString("AUTH_PORT")
+	host := viper.GetString("AUTH_HOST")
 
 	serverAddress := fmt.Sprintf("%s:%s", host, port)
 

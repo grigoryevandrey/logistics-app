@@ -3,9 +3,11 @@ package transport
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/auth/app"
 	"gopkg.in/validator.v2"
@@ -31,12 +33,16 @@ func Handler(service app.Service) *gin.Engine {
 	{
 		v1 := superGroup.Group("v1")
 		{
-			authGroup := v1.Group("auth")
-			{
-				authGroup.POST("/login", injectedHandler.login)
-				authGroup.DELETE("/logout", injectedHandler.logout)
+			authGroupPublic := v1.Group("auth")
+			authGroupPrivate := v1.Group("auth")
 
-				healthGroup := authGroup.Group("health")
+			authGroupPrivate.Use(auth.AuthMiddleware())
+			{
+				authGroupPublic.POST("/login", injectedHandler.login)
+				authGroupPublic.PUT("/refresh", injectedHandler.refresh)
+				authGroupPrivate.DELETE("/logout", injectedHandler.logout)
+
+				healthGroup := authGroupPublic.Group("health")
 				{
 					healthGroup.GET("/", injectedHandler.health)
 				}
@@ -76,16 +82,7 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 		return
 	}
 
-	var tokens *app.Tokens
-
-	switch strategy {
-	case ADMIN_STRATEGY:
-		tokens, err = handlerRef.Login(credentials, strategy)
-	case MANAGER_STRATEGY:
-		tokens, err = handlerRef.Login(credentials, strategy)
-	default:
-		log.Fatalln("Unknown strategy")
-	}
+	tokens, err := handlerRef.Login(credentials, strategy)
 
 	if err != nil {
 		if err == errors.Error401 {
@@ -95,6 +92,45 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 
 		if err == errors.Error404 {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "user with this login can not be found"})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, tokens)
+}
+
+func (handlerRef *handler) refresh(ctx *gin.Context) {
+	query := ctx.Request.URL.Query()
+	strategy := query.Get("strategy")
+
+	if strategy != ADMIN_STRATEGY && strategy != MANAGER_STRATEGY {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad strategy"})
+		return
+	}
+
+	authHeader := ctx.Request.Header.Get("Authorization")
+
+	splittedAuthHeader := strings.Fields(authHeader)
+	if len(splittedAuthHeader) < 2 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad auth header"})
+		return
+	}
+
+	refreshToken := splittedAuthHeader[1]
+
+	tokens, err := handlerRef.Refresh(refreshToken, strategy)
+
+	if err != nil {
+		if err == errors.Error401 {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "bad credentials"})
+			return
+		}
+
+		if err == errors.Error404 {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "can not find this refresh token"})
 			return
 		}
 

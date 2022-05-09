@@ -82,14 +82,85 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 
 	switch strategy {
 	case transport.ADMIN_STRATEGY:
-		updateQuery = "UPDATE admins SET refresh_token = $1"
+		updateQuery = "UPDATE admins SET refresh_token = $1 WHERE admin_login = $2"
 	case transport.MANAGER_STRATEGY:
-		updateQuery = "UPDATE managers SET refresh_token = $1"
+		updateQuery = "UPDATE managers SET refresh_token = $1 WHERE manager_login = $2"
 	default:
 		log.Fatalln("Unknown strategy")
 	}
 
-	_, err = s.db.Query(updateQuery, refreshToken)
+	_, err = s.db.Query(updateQuery, refreshToken, creds.Login)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &tokens, nil
+}
+
+func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, error) {
+	var tokens app.Tokens
+
+	refreshKeySecret := viper.GetString("REFRESH_TOKEN_SECRET")
+
+	token, err := jwt.ParseWithClaims(refreshToken, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(refreshKeySecret), nil
+	})
+
+	if err != nil {
+		return nil, errors.Error401
+	}
+
+	login := token.Claims.(*customClaims).customerInfo.Name
+	role := token.Claims.(*customClaims).customerInfo.Role
+
+	switch strategy {
+	case transport.ADMIN_STRATEGY:
+		query := "SELECT admin_login FROM admins WHERE admin_login = $1 AND admin_role = $2 AND refresh_token = $3"
+		err = s.db.QueryRow(query, login, role, refreshToken).Scan(&login)
+	case transport.MANAGER_STRATEGY:
+		query := "SELECT manager_login FROM managers WHERE manager_login = $1 AND refresh_token = $2"
+		err = s.db.QueryRow(query, login, refreshToken).Scan(&login)
+	default:
+		log.Fatalln("Unknown strategy")
+	}
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.Error404
+		}
+
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, errors.Error401
+	}
+
+	accessToken, err := createAccessToken(login, role)
+	if err != nil {
+		return nil, err
+	}
+
+	newRefreshToken, err := createRefreshToken(login, role)
+	if err != nil {
+		return nil, err
+	}
+
+	tokens = app.Tokens{AccessToken: accessToken, RefreshToken: newRefreshToken}
+
+	var updateQuery string
+
+	switch strategy {
+	case transport.ADMIN_STRATEGY:
+		updateQuery = "UPDATE admins SET refresh_token = $1 WHERE admin_login = $2"
+	case transport.MANAGER_STRATEGY:
+		updateQuery = "UPDATE managers SET refresh_token = $1 WHERE manager_login = $2"
+	default:
+		log.Fatalln("Unknown strategy")
+	}
+
+	_, err = s.db.Query(updateQuery, refreshToken, login)
 
 	if err != nil {
 		return nil, err
@@ -109,20 +180,6 @@ func (s *service) Logout(refreshToken string, strategy string) error {
 	default:
 		log.Fatalln("Unknown strategy")
 	}
-
-	var answ string
-
-	err := s.db.QueryRow(query, refreshToken).Scan(&answ)
-
-	if err == sql.ErrNoRows {
-		return errors.Error404
-	}
-
-	return err
-}
-
-func (s *service) LogoutAdmin(refreshToken string) error {
-	query := "UPDATE admins SET refresh_token = NULL WHERE refresh_token = $1 RETURNING admin_login"
 
 	var answ string
 

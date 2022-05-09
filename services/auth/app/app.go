@@ -2,6 +2,7 @@ package app
 
 type Service interface {
 	Login(creds LoginCredentials, strategy string) (*Tokens, error)
+	Refresh(token string, strategy string) (*Tokens, error)
 	Logout(token string, strategy string) error
 }
 
