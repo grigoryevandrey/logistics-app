@@ -6,9 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/restrictions"
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 	"gopkg.in/validator.v2"
 )
@@ -36,7 +38,14 @@ func Handler(service app.Service) *gin.Engine {
 				addressesGroup.GET("/", injectedHandler.getAddresses)
 				addressesGroup.POST("/", injectedHandler.addAddress)
 				addressesGroup.PUT("/", injectedHandler.updateAddress)
-				addressesGroup.DELETE("/", injectedHandler.deleteAddress)
+
+			}
+
+			restrictedGroup := v1.Group("addresses")
+			restrictedGroup.Use(auth.AuthMiddleware())
+			restrictedGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
+			{
+				restrictedGroup.DELETE("/", injectedHandler.deleteAddress)
 			}
 
 			healthGroup := v1.Group("health")

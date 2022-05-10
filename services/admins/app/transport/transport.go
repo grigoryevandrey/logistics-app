@@ -6,9 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/restrictions"
 	"github.com/grigoryevandrey/logistics-app/services/admins/app"
 	"gopkg.in/validator.v2"
 )
@@ -32,6 +34,8 @@ func Handler(service app.Service) *gin.Engine {
 		{
 			adminsGroup := v1.Group("admins")
 			adminsGroup.Use(auth.AuthMiddleware())
+			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
+			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.ADMIN_ROLE_REGULAR))
 			{
 				adminsGroup.GET("/", injectedHandler.getAdmins)
 				adminsGroup.POST("/", injectedHandler.addAdmin)

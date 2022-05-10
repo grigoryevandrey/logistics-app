@@ -6,11 +6,12 @@ go_library(
     importpath = "github.com/grigoryevandrey/logistics-app/services/managers/app/transport",
     visibility = ["//visibility:public"],
     deps = [
+        "//lib/constants",
         "//lib/errors",
         "//lib/middlewares/auth",
         "//lib/middlewares/json",
+        "//lib/middlewares/restrictions",
         "//services/managers/app",
-        "//services/managers/app/middleware",
         "@com_github_gin_gonic_gin//:gin",
         "@in_gopkg_validator_v2//:validator_v2",
     ],
