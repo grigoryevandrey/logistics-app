@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/addresses/app"
 )
-
-const ADDRESSES_TABLE = "addresses"
 
 type service struct {
 	db *sql.DB
@@ -22,7 +21,7 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.AddressEntity, erro
 	var result []app.AddressEntity
 
 	query := fmt.Sprintf(
-		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", ADDRESSES_TABLE,
+		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", globalConstants.ADDRESSES_TABLE,
 		offset,
 		limit,
 	)
@@ -60,7 +59,7 @@ func (s *service) GetAddresses(offset int, limit int) ([]app.AddressEntity, erro
 func (s *service) AddAddress(address app.PostAddressDto) (*app.AddressEntity, error) {
 	var addressEntity app.AddressEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
+	query := fmt.Sprintf("INSERT INTO %s (address, latitude, longitude, is_disabled) VALUES ($1, $2, $3, $4) RETURNING id, address, latitude, longitude, is_disabled", globalConstants.ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,
@@ -86,7 +85,7 @@ func (s *service) AddAddress(address app.PostAddressDto) (*app.AddressEntity, er
 func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.AddressEntity, error) {
 	var addressEntity app.AddressEntity
 
-	query := fmt.Sprintf("UPDATE %s SET address = $1, latitude = $2, longitude = $3, is_disabled = $4 WHERE id = $5 RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
+	query := fmt.Sprintf("UPDATE %s SET address = $1, latitude = $2, longitude = $3, is_disabled = $4 WHERE id = $5 RETURNING id, address, latitude, longitude, is_disabled", globalConstants.ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,
@@ -116,7 +115,7 @@ func (s *service) UpdateAddress(address app.UpdateAddressDto) (*app.AddressEntit
 func (s *service) DeleteAddress(id int) (*app.AddressEntity, error) {
 	var addressEntity app.AddressEntity
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING id, address, latitude, longitude, is_disabled", ADDRESSES_TABLE)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING id, address, latitude, longitude, is_disabled", globalConstants.ADDRESSES_TABLE)
 
 	err := s.db.QueryRow(
 		query,

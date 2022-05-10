@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/admins/app"
 	"golang.org/x/crypto/bcrypt"
 )
 
-const HASHING_COST = 10
-const ADMINS_TABLE = "admins"
 const ENTITY_FIELDS = "id, admin_last_name, admin_first_name, admin_patronymic, admin_role, is_disabled"
 
 type service struct {
@@ -28,7 +27,7 @@ func (s *service) GetAdmins(offset int, limit int) ([]app.AdminEntity, error) {
 	query := fmt.Sprintf(
 		"SELECT %s FROM %s OFFSET %d LIMIT %d",
 		ENTITY_FIELDS,
-		ADMINS_TABLE,
+		globalConstants.ADMINS_TABLE,
 		offset,
 		limit,
 	)
@@ -69,11 +68,11 @@ func (s *service) AddAdmin(admin app.PostAdminDto) (*app.AdminEntity, error) {
 
 	query := fmt.Sprintf(
 		"INSERT INTO %s (admin_login, admin_password, admin_last_name, admin_first_name, admin_patronymic, admin_role, is_disabled) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING %s",
-		ADMINS_TABLE,
+		globalConstants.ADMINS_TABLE,
 		ENTITY_FIELDS,
 	)
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), HASHING_COST)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), globalConstants.HASHING_COST)
 
 	if err != nil {
 		return nil, err
@@ -111,9 +110,9 @@ func (s *service) AddAdmin(admin app.PostAdminDto) (*app.AdminEntity, error) {
 func (s *service) UpdateAdmin(admin app.UpdateAdminDto) (*app.AdminEntity, error) {
 	var adminEntity app.AdminEntity
 
-	query := fmt.Sprintf("UPDATE %s SET admin_login = $1, admin_password = $2, admin_last_name = $3, admin_first_name = $4, admin_patronymic = $5, admin_role = $6, is_disabled = $7 WHERE id = $8 RETURNING %s", ADMINS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET admin_login = $1, admin_password = $2, admin_last_name = $3, admin_first_name = $4, admin_patronymic = $5, admin_role = $6, is_disabled = $7 WHERE id = $8 RETURNING %s", globalConstants.ADMINS_TABLE, ENTITY_FIELDS)
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), HASHING_COST)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), globalConstants.HASHING_COST)
 
 	if err != nil {
 		return nil, err
@@ -153,7 +152,7 @@ func (s *service) UpdateAdmin(admin app.UpdateAdminDto) (*app.AdminEntity, error
 func (s *service) DeleteAdmin(id int) (*app.AdminEntity, error) {
 	var adminEntity app.AdminEntity
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", ADMINS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", globalConstants.ADMINS_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,

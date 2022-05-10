@@ -6,10 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/spf13/viper"
 )
-
-const TOKEN_TYPE_REFRESH = "refresh"
 
 type customerInfo struct {
 	Name      string
@@ -53,7 +52,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenType := token.Claims.(*customClaims).customerInfo.TokenType
 
-		if tokenType == TOKEN_TYPE_REFRESH {
+		if tokenType == globalConstants.TOKEN_TYPE_REFRESH {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "can not use refresh token for access"})
 			return
 		}

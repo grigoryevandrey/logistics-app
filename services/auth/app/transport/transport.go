@@ -10,11 +10,9 @@ import (
 	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/auth/app"
+	"github.com/grigoryevandrey/logistics-app/services/auth/app/constants"
 	"gopkg.in/validator.v2"
 )
-
-const ADMIN_STRATEGY = "admin"
-const MANAGER_STRATEGY = "manager"
 
 type handler struct {
 	app.Service
@@ -63,7 +61,7 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 	query := ctx.Request.URL.Query()
 	strategy := query.Get("strategy")
 
-	if strategy != ADMIN_STRATEGY && strategy != MANAGER_STRATEGY {
+	if strategy != constants.ADMIN_STRATEGY && strategy != constants.MANAGER_STRATEGY {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad strategy"})
 		return
 	}
@@ -106,7 +104,7 @@ func (handlerRef *handler) refresh(ctx *gin.Context) {
 	query := ctx.Request.URL.Query()
 	strategy := query.Get("strategy")
 
-	if strategy != ADMIN_STRATEGY && strategy != MANAGER_STRATEGY {
+	if strategy != constants.ADMIN_STRATEGY && strategy != constants.MANAGER_STRATEGY {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad strategy"})
 		return
 	}
@@ -147,7 +145,7 @@ func (handlerRef *handler) logout(ctx *gin.Context) {
 	query := ctx.Request.URL.Query()
 	strategy := query.Get("strategy")
 
-	if strategy != ADMIN_STRATEGY && strategy != MANAGER_STRATEGY {
+	if strategy != constants.ADMIN_STRATEGY && strategy != constants.MANAGER_STRATEGY {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad strategy"})
 		return
 	}
@@ -167,9 +165,9 @@ func (handlerRef *handler) logout(ctx *gin.Context) {
 	}
 
 	switch strategy {
-	case ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		err = handlerRef.Logout(tokens.RefreshToken, strategy)
-	case MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		err = handlerRef.Logout(tokens.RefreshToken, strategy)
 	default:
 		log.Fatalln("Unknown strategy")
