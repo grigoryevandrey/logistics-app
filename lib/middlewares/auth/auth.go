@@ -6,21 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth/models"
 	"github.com/spf13/viper"
 )
-
-const TOKEN_TYPE_REFRESH = "refresh"
-
-type customerInfo struct {
-	Name      string
-	Role      string
-	TokenType string
-}
-
-type customClaims struct {
-	*jwt.StandardClaims
-	customerInfo
-}
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -42,7 +31,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			}
 		}
 
-		token, err := jwt.ParseWithClaims(accessTokenString, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(accessTokenString, &models.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(accessKeySecret), nil
 		})
 
@@ -51,14 +40,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenType := token.Claims.(*customClaims).customerInfo.TokenType
+		tokenType := token.Claims.(*models.CustomClaims).CustomerInfo.TokenType
 
-		if tokenType == TOKEN_TYPE_REFRESH {
+		if tokenType == globalConstants.TOKEN_TYPE_REFRESH {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "can not use refresh token for access"})
 			return
 		}
 
-		ctx.Set("user", token.Claims.(*customClaims).customerInfo)
+		ctx.Set("user", token.Claims.(*models.CustomClaims).CustomerInfo)
 
 		ctx.Next()
 	}

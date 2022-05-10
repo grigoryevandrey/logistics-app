@@ -6,31 +6,28 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/auth/app"
-	"github.com/grigoryevandrey/logistics-app/services/auth/app/transport"
+	"github.com/grigoryevandrey/logistics-app/services/auth/app/constants"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const ACCESS_TOKEN_TTL = 15
 
-const TOKEN_TYPE_ACCESS = "access"
-const TOKEN_TYPE_REFRESH = "refresh"
-
-type service struct {
-	db *sql.DB
-}
-
-type customerInfo struct {
+type CustomerInfo struct {
 	Name      string
 	Role      string
 	TokenType string
 }
 
-type customClaims struct {
+type CustomClaims struct {
 	*jwt.StandardClaims
-	customerInfo
+	CustomerInfo
+}
+type service struct {
+	db *sql.DB
 }
 
 func New(db *sql.DB) app.Service {
@@ -45,13 +42,13 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 	var err error
 
 	switch strategy {
-	case transport.ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		query := "SELECT admin_password, admin_role FROM admins WHERE admin_login = $1"
 		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash, &role)
-	case transport.MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		query := "SELECT manager_password FROM managers WHERE manager_login = $1"
 		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash)
-		role = "manager"
+		role = globalConstants.MANAGER_ROLE
 	default:
 		log.Fatalln("Unknown strategy")
 	}
@@ -85,9 +82,9 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 	var updateQuery string
 
 	switch strategy {
-	case transport.ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		updateQuery = "UPDATE admins SET refresh_token = $1 WHERE admin_login = $2"
-	case transport.MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		updateQuery = "UPDATE managers SET refresh_token = $1 WHERE manager_login = $2"
 	default:
 		log.Fatalln("Unknown strategy")
@@ -107,7 +104,7 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 
 	refreshKeySecret := viper.GetString("REFRESH_TOKEN_SECRET")
 
-	token, err := jwt.ParseWithClaims(refreshToken, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(refreshKeySecret), nil
 	})
 
@@ -115,16 +112,16 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 		return nil, errors.Error401
 	}
 
-	login := token.Claims.(*customClaims).customerInfo.Name
-	role := token.Claims.(*customClaims).customerInfo.Role
+	login := token.Claims.(*CustomClaims).CustomerInfo.Name
+	role := token.Claims.(*CustomClaims).CustomerInfo.Role
 
 	var testVar string
 
 	switch strategy {
-	case transport.ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		query := "SELECT admin_login FROM admins WHERE admin_login = $1 AND admin_role = $2 AND refresh_token = $3"
 		err = s.db.QueryRow(query, login, role, refreshToken).Scan(&testVar)
-	case transport.MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		query := "SELECT manager_login FROM managers WHERE manager_login = $1 AND refresh_token = $2"
 		err = s.db.QueryRow(query, login, refreshToken).Scan(&testVar)
 	default:
@@ -158,9 +155,9 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 	var updateQuery string
 
 	switch strategy {
-	case transport.ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		updateQuery = "UPDATE admins SET refresh_token = $1 WHERE admin_login = $2"
-	case transport.MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		updateQuery = "UPDATE managers SET refresh_token = $1 WHERE manager_login = $2"
 	default:
 		log.Fatalln("Unknown strategy")
@@ -179,9 +176,9 @@ func (s *service) Logout(refreshToken string, strategy string) error {
 	var query string
 
 	switch strategy {
-	case transport.ADMIN_STRATEGY:
+	case constants.ADMIN_STRATEGY:
 		query = "UPDATE admins SET refresh_token = NULL WHERE refresh_token = $1 RETURNING admin_login"
-	case transport.MANAGER_STRATEGY:
+	case constants.MANAGER_STRATEGY:
 		query = "UPDATE managers SET refresh_token = NULL WHERE refresh_token = $1 RETURNING manager_login"
 	default:
 		log.Fatalln("Unknown strategy")
@@ -207,11 +204,11 @@ func createRefreshToken(user string, role string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &customClaims{
+	token.Claims = &CustomClaims{
 		&jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 		},
-		customerInfo{user, role, TOKEN_TYPE_REFRESH},
+		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_REFRESH},
 	}
 
 	return token.SignedString([]byte(signString))
@@ -226,11 +223,11 @@ func createAccessToken(user string, role string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &customClaims{
+	token.Claims = &CustomClaims{
 		&jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * ACCESS_TOKEN_TTL).Unix(),
 		},
-		customerInfo{user, role, TOKEN_TYPE_ACCESS},
+		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_ACCESS},
 	}
 
 	return token.SignedString([]byte(signString))

@@ -10,6 +10,7 @@ go_library(
         "//lib/middlewares/auth",
         "//lib/middlewares/json",
         "//services/auth/app",
+        "//services/auth/app/constants",
         "@com_github_gin_gonic_gin//:gin",
         "@in_gopkg_validator_v2//:validator_v2",
     ],

@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
+
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/vehicles/app"
 )
 
-const VEHICLES_TABLE = "vehicles"
 const ENTITY_FIELDS = "id, vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled"
 
 type service struct {
@@ -24,7 +25,7 @@ func (s *service) GetVehicles(offset int, limit int) ([]app.VehicleEntity, error
 
 	query := fmt.Sprintf(
 		"SELECT %s FROM %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
-		VEHICLES_TABLE,
+		globalConstants.VEHICLES_TABLE,
 		offset,
 		limit,
 	)
@@ -63,7 +64,7 @@ func (s *service) GetVehicles(offset int, limit int) ([]app.VehicleEntity, error
 func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, error) {
 	var vehicleEntity app.VehicleEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", VEHICLES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("INSERT INTO %s (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -91,7 +92,7 @@ func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, er
 func (s *service) UpdateVehicle(vehicle app.UpdateVehicleDto) (*app.VehicleEntity, error) {
 	var vehicleEntity app.VehicleEntity
 
-	query := fmt.Sprintf("UPDATE %s SET vehicle = $1, vehicle_car_number = $2, vehicle_tonnage = $3, vehicle_address_id = $4, is_disabled = $5 WHERE id = $6 RETURNING %s", VEHICLES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET vehicle = $1, vehicle_car_number = $2, vehicle_tonnage = $3, vehicle_address_id = $4, is_disabled = $5 WHERE id = $6 RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -123,7 +124,7 @@ func (s *service) UpdateVehicle(vehicle app.UpdateVehicleDto) (*app.VehicleEntit
 func (s *service) DeleteVehicle(id int) (*app.VehicleEntity, error) {
 	var vehicleEntity app.VehicleEntity
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", VEHICLES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,

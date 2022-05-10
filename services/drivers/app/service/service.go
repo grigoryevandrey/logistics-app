@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
+
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/drivers/app"
 )
 
-const DRIVERS_TABLE = "drivers"
 const ENTITY_FIELDS = "id, driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled"
 
 type service struct {
@@ -24,7 +25,7 @@ func (s *service) GetDrivers(offset int, limit int) ([]app.DriverEntity, error) 
 
 	query := fmt.Sprintf(
 		"SELECT %s FROM %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
-		DRIVERS_TABLE,
+		globalConstants.DRIVERS_TABLE,
 		offset,
 		limit,
 	)
@@ -63,7 +64,7 @@ func (s *service) GetDrivers(offset int, limit int) ([]app.DriverEntity, error) 
 func (s *service) AddDriver(driver app.PostDriverDto) (*app.DriverEntity, error) {
 	var driverEntity app.DriverEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", DRIVERS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("INSERT INTO %s (driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", globalConstants.DRIVERS_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -91,7 +92,7 @@ func (s *service) AddDriver(driver app.PostDriverDto) (*app.DriverEntity, error)
 func (s *service) UpdateDriver(driver app.UpdateDriverDto) (*app.DriverEntity, error) {
 	var driverEntity app.DriverEntity
 
-	query := fmt.Sprintf("UPDATE %s SET driver_last_name = $1, driver_first_name = $2, driver_patronymic = $3, driver_address_id = $4, is_disabled = $5 WHERE id = $6 RETURNING %s", DRIVERS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET driver_last_name = $1, driver_first_name = $2, driver_patronymic = $3, driver_address_id = $4, is_disabled = $5 WHERE id = $6 RETURNING %s", globalConstants.DRIVERS_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -123,7 +124,7 @@ func (s *service) UpdateDriver(driver app.UpdateDriverDto) (*app.DriverEntity, e
 func (s *service) DeleteDriver(id int) (*app.DriverEntity, error) {
 	var driverEntity app.DriverEntity
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", DRIVERS_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", globalConstants.DRIVERS_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,

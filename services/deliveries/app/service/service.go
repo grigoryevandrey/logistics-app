@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"time"
 
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
+
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
+	"github.com/grigoryevandrey/logistics-app/services/deliveries/app/constants"
 )
 
-const DELIVERIES_TABLE = "deliveries"
 const ENTITY_FIELDS = "id, vehicle_id, address_from, address_to, driver_id, manager_id, contents, eta, updated_at, status"
 const JOINED_ENTITY_FIELDS = "id, vehicle, vehicle_car_number, address_from, address_to, driver_last_name, driver_first_name, manager_first_name, manager_last_name, contents, eta, updated_at, status"
 
 const JOIN_QUERY = "SELECT deliveries.id, vehicles.vehicle, vehicles.vehicle_car_number, from_addr.address AS address_from, to_addr.address AS address_to, drivers.driver_last_name, drivers.driver_first_name, managers.manager_first_name, managers.manager_last_name, deliveries.contents, deliveries.eta, deliveries.updated_at, deliveries.status FROM deliveries LEFT JOIN vehicles ON vehicles.id = deliveries.vehicle_id LEFT JOIN addresses from_addr ON from_addr.id = deliveries.address_from LEFT JOIN addresses to_addr ON to_addr.id = deliveries.address_to LEFT JOIN drivers ON drivers.id = deliveries.driver_id LEFT JOIN managers ON managers.id = deliveries.manager_id"
-
-const IMMUTABLE_STATUS = "delivered"
 
 type service struct {
 	db *sql.DB
@@ -31,7 +31,7 @@ func (s *service) GetDelivery(id int) (*app.DeliveryEntity, error) {
 	query := fmt.Sprintf(
 		"SELECT %s FROM %s WHERE id = $1",
 		ENTITY_FIELDS,
-		DELIVERIES_TABLE,
+		globalConstants.DELIVERIES_TABLE,
 	)
 
 	err := s.db.QueryRow(
@@ -112,7 +112,7 @@ func (s *service) AddDelivery(delivery app.PostDeliveryDto) (*app.DeliveryEntity
 	updatedAt := time.Now()
 	var deliveryEntity app.DeliveryEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (vehicle_id, address_from, address_to, driver_id, manager_id, contents, eta, updated_at, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("INSERT INTO %s (vehicle_id, address_from, address_to, driver_id, manager_id, contents, eta, updated_at, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING %s", globalConstants.DELIVERIES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -149,7 +149,7 @@ func (s *service) UpdateDelivery(delivery app.UpdateDeliveryDto) (*app.DeliveryE
 	updatedAt := time.Now()
 	var deliveryEntity app.DeliveryEntity
 
-	query := fmt.Sprintf("UPDATE %s SET vehicle_id = $1, address_from = $2, address_to = $3, driver_id = $4, manager_id = $5, contents = $6, eta = $7, updated_at = $8, status = $9 WHERE id = $10 RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET vehicle_id = $1, address_from = $2, address_to = $3, driver_id = $4, manager_id = $5, contents = $6, eta = $7, updated_at = $8, status = $9 WHERE id = $10 RETURNING %s", globalConstants.DELIVERIES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -189,7 +189,7 @@ func (s *service) UpdateDelivery(delivery app.UpdateDeliveryDto) (*app.DeliveryE
 func (s *service) DeleteDelivery(id int) (*app.DeliveryEntity, error) {
 	var deliveryEntity app.DeliveryEntity
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1 RETURNING %s", globalConstants.DELIVERIES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
@@ -251,7 +251,7 @@ func (s *service) GetDeliveryStatuses() ([]string, error) {
 func (s *service) UpdateDeliveryStatus(delivery app.UpdateDeliveryStatusDto) (*app.DeliveryEntity, error) {
 	var currentStatus string
 
-	checkerQuery := fmt.Sprintf("SELECT status FROM %s WHERE id = $1", DELIVERIES_TABLE)
+	checkerQuery := fmt.Sprintf("SELECT status FROM %s WHERE id = $1", globalConstants.DELIVERIES_TABLE)
 
 	err := s.db.QueryRow(checkerQuery, delivery.Id).Scan(&currentStatus)
 
@@ -263,14 +263,14 @@ func (s *service) UpdateDeliveryStatus(delivery app.UpdateDeliveryStatusDto) (*a
 		return nil, err
 	}
 
-	if IMMUTABLE_STATUS == currentStatus {
+	if constants.IMMUTABLE_STATUS == currentStatus {
 		return nil, errors.Error409
 	}
 
 	updatedAt := time.Now()
 	var deliveryEntity app.DeliveryEntity
 
-	query := fmt.Sprintf("UPDATE %s SET updated_at = $1, status = $2 WHERE id = $3 RETURNING %s", DELIVERIES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET updated_at = $1, status = $2 WHERE id = $3 RETURNING %s", globalConstants.DELIVERIES_TABLE, ENTITY_FIELDS)
 
 	err = s.db.QueryRow(
 		query,

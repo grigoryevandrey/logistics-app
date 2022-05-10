@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "restrictions",
+    srcs = ["restrictions.go"],
+    importpath = "github.com/grigoryevandrey/logistics-app/lib/middlewares/restrictions",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//lib/middlewares/auth/models",
+        "@com_github_gin_gonic_gin//:gin",
+    ],
+)
