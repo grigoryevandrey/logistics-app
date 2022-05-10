@@ -12,7 +12,6 @@ type VehicleEntity struct {
 	Vehicle    string  `json:"vehicle"`
 	CarNumber  string  `json:"carNumber"`
 	Tonnage    float64 `json:"tonnage"`
-	AddressId  int     `json:"addressId"`
 	IsDisabled bool    `json:"isDisabled"`
 }
 
@@ -20,7 +19,6 @@ type PostVehicleDto struct {
 	Vehicle   string  `json:"vehicle" validate:"min=3,max=255,regexp=^[a-zA-Zа-яА-Я0-9 .:;]*$"`
 	CarNumber string  `json:"carNumber" validate:"min=3,max=31,regexp=^[a-zA-Zа-яА-Я0-9]*$"`
 	Tonnage   float64 `json:"tonnage" validate:"min=0,max=100,nonnil"`
-	AddressId float64 `json:"addressId" validate:"min=1"`
 }
 
 type UpdateVehicleDto struct {
@@ -28,6 +26,5 @@ type UpdateVehicleDto struct {
 	Vehicle    string  `json:"vehicle" validate:"min=3,max=255,regexp=^[a-zA-Zа-яА-Я0-9 .:;]*$"`
 	CarNumber  string  `json:"carNumber" validate:"min=3,max=31,regexp=^[a-zA-Zа-яА-Я0-9]*$"`
 	Tonnage    float64 `json:"tonnage" validate:"min=0,max=100,nonnil"`
-	AddressId  float64 `json:"addressId" validate:"min=1"`
 	IsDisabled bool    `json:"isDisabled" validate:"nonnil"`
 }

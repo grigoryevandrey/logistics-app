@@ -11,31 +11,31 @@ VALUES
 ('Склад в Казани', 55.865677, 49.096896, false),
 ('Склад в Саратове', 51.570165, 45.969615, false);
 
-INSERT INTO vehicles (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled)
+INSERT INTO vehicles (vehicle, vehicle_car_number, vehicle_tonnage, is_disabled)
 VALUES 
-('Volvo', 'Н015ОТ', 10, 1, false),
-('Volvo FL', 'О521ТТ', 7, 3, false),
-('Mercedes Atego', 'О707ОХ', 7, 2, false),
-('MAN TGL', 'К678ОН', 10, 5, false),
-('Mercedes Atego', 'У087МТ', 7, 7, false),
-('Mercedes Actros', 'А514МХ', 10, 6, false),
-('Hyundai Porter', 'Н741ХА', 1, 9, false),
-('Volvo FL', 'Е386РУ', 7, 8, false),
-('MAN TGL', 'Р194ХР', 10, 4, false),
-('Volvo', 'Х699ТВ', 10, 5, false);
+('Volvo', 'Н015ОТ', 10, false),
+('Volvo FL', 'О521ТТ', 7, false),
+('Mercedes Atego', 'О707ОХ', 7, false),
+('MAN TGL', 'К678ОН', 10, false),
+('Mercedes Atego', 'У087МТ', 7, false),
+('Mercedes Actros', 'А514МХ', 10, false),
+('Hyundai Porter', 'Н741ХА', 1, false),
+('Volvo FL', 'Е386РУ', 7, false),
+('MAN TGL', 'Р194ХР', 10, false),
+('Volvo', 'Х699ТВ', 10, false);
 
-INSERT INTO drivers (driver_last_name, driver_first_name, driver_patronymic, driver_address_id, is_disabled)
+INSERT INTO drivers (driver_last_name, driver_first_name, driver_patronymic, is_disabled)
 VALUES 
-('Свешников', 'Юрий', 'Максимович', 5, false),
-('Филиппова', 'София', 'Ивановна', 2, false),
-('Киселева', 'Алёна', 'Константиновна', 3, false),
-('Киселева', 'Мария', 'Артёмовна', 4, false),
-('Костин', 'Кирилл', 'Егорович', 5, false),
-('Ефимова', 'Арина', 'Александровна', 6, false),
-('Березин', 'Клим', 'Эмирович', 8, false),
-('Яковлев', 'Давид', 'Львович', 2, false),
-('Киселева', 'Мария', 'Викторовна', 3, false),
-('Борисова', 'Сафия', 'Глебовна', 4, false);
+('Свешников', 'Юрий', 'Максимович', false),
+('Филиппова', 'София', 'Ивановна', false),
+('Киселева', 'Алёна', 'Константиновна', false),
+('Киселева', 'Мария', 'Артёмовна', false),
+('Костин', 'Кирилл', 'Егорович', false),
+('Ефимова', 'Арина', 'Александровна', false),
+('Березин', 'Клим', 'Эмирович', false),
+('Яковлев', 'Давид', 'Львович', false),
+('Киселева', 'Мария', 'Викторовна', false),
+('Борисова', 'Сафия', 'Глебовна', false);
 
 INSERT INTO admins (admin_login, admin_password, admin_last_name, admin_first_name, admin_patronymic, admin_role, is_disabled)
 VALUES 

@@ -10,7 +10,7 @@ import (
 	"github.com/grigoryevandrey/logistics-app/services/vehicles/app"
 )
 
-const ENTITY_FIELDS = "id, vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled"
+const ENTITY_FIELDS = "id, vehicle, vehicle_car_number, vehicle_tonnage, is_disabled"
 
 type service struct {
 	db *sql.DB
@@ -45,7 +45,6 @@ func (s *service) GetVehicles(offset int, limit int) ([]app.VehicleEntity, error
 			&vehicleEntity.Vehicle,
 			&vehicleEntity.CarNumber,
 			&vehicleEntity.Tonnage,
-			&vehicleEntity.AddressId,
 			&vehicleEntity.IsDisabled,
 		); err != nil {
 			return nil, err
@@ -64,21 +63,19 @@ func (s *service) GetVehicles(offset int, limit int) ([]app.VehicleEntity, error
 func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, error) {
 	var vehicleEntity app.VehicleEntity
 
-	query := fmt.Sprintf("INSERT INTO %s (vehicle, vehicle_car_number, vehicle_tonnage, vehicle_address_id, is_disabled) VALUES ($1, $2, $3, $4, $5) RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("INSERT INTO %s (vehicle, vehicle_car_number, vehicle_tonnage, is_disabled) VALUES ($1, $2, $3, $4) RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
 		vehicle.Vehicle,
 		vehicle.CarNumber,
 		vehicle.Tonnage,
-		vehicle.AddressId,
 		false,
 	).Scan(
 		&vehicleEntity.Id,
 		&vehicleEntity.Vehicle,
 		&vehicleEntity.CarNumber,
 		&vehicleEntity.Tonnage,
-		&vehicleEntity.AddressId,
 		&vehicleEntity.IsDisabled,
 	)
 
@@ -92,14 +89,13 @@ func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, er
 func (s *service) UpdateVehicle(vehicle app.UpdateVehicleDto) (*app.VehicleEntity, error) {
 	var vehicleEntity app.VehicleEntity
 
-	query := fmt.Sprintf("UPDATE %s SET vehicle = $1, vehicle_car_number = $2, vehicle_tonnage = $3, vehicle_address_id = $4, is_disabled = $5 WHERE id = $6 RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
+	query := fmt.Sprintf("UPDATE %s SET vehicle = $1, vehicle_car_number = $2, vehicle_tonnage = $3, is_disabled = $4 WHERE id = $5 RETURNING %s", globalConstants.VEHICLES_TABLE, ENTITY_FIELDS)
 
 	err := s.db.QueryRow(
 		query,
 		vehicle.Vehicle,
 		vehicle.CarNumber,
 		vehicle.Tonnage,
-		vehicle.AddressId,
 		vehicle.IsDisabled,
 		vehicle.Id,
 	).Scan(
@@ -107,7 +103,6 @@ func (s *service) UpdateVehicle(vehicle app.UpdateVehicleDto) (*app.VehicleEntit
 		&vehicleEntity.Vehicle,
 		&vehicleEntity.CarNumber,
 		&vehicleEntity.Tonnage,
-		&vehicleEntity.AddressId,
 		&vehicleEntity.IsDisabled,
 	)
 
@@ -134,7 +129,6 @@ func (s *service) DeleteVehicle(id int) (*app.VehicleEntity, error) {
 		&vehicleEntity.Vehicle,
 		&vehicleEntity.CarNumber,
 		&vehicleEntity.Tonnage,
-		&vehicleEntity.AddressId,
 		&vehicleEntity.IsDisabled,
 	)
 
