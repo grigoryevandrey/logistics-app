@@ -80,7 +80,7 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (handlerRef *handler) getAdmins(ctx *gin.Context) {
