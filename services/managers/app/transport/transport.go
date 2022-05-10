@@ -10,6 +10,7 @@ import (
 	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/managers/app"
+	"github.com/grigoryevandrey/logistics-app/services/managers/app/middleware"
 	"gopkg.in/validator.v2"
 )
 
@@ -32,6 +33,7 @@ func Handler(service app.Service) *gin.Engine {
 		{
 			managersGroup := v1.Group("managers")
 			managersGroup.Use(auth.AuthMiddleware())
+			managersGroup.Use(middleware.RestrictionsMiddleware())
 			{
 				managersGroup.GET("/:id", injectedHandler.getManager)
 				managersGroup.GET("/", injectedHandler.getManagers)

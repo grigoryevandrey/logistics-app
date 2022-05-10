@@ -7,8 +7,10 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//lib/errors",
+        "//lib/middlewares/auth",
         "//lib/middlewares/json",
         "//services/managers/app",
+        "//services/managers/app/middleware",
         "@com_github_gin_gonic_gin//:gin",
         "@in_gopkg_validator_v2//:validator_v2",
     ],
