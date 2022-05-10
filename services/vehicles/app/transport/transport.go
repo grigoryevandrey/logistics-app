@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/vehicles/app"
 	"gopkg.in/validator.v2"
@@ -30,16 +31,17 @@ func Handler(service app.Service) *gin.Engine {
 		v1 := superGroup.Group("v1")
 		{
 			vehiclesGroup := v1.Group("vehicles")
+			vehiclesGroup.Use(auth.AuthMiddleware())
 			{
 				vehiclesGroup.GET("/", injectedHandler.getVehicles)
 				vehiclesGroup.POST("/", injectedHandler.addVehicle)
 				vehiclesGroup.PUT("/", injectedHandler.updateVehicle)
 				vehiclesGroup.DELETE("/", injectedHandler.deleteVehicle)
+			}
 
-				healthGroup := vehiclesGroup.Group("health")
-				{
-					healthGroup.GET("/", injectedHandler.health)
-				}
+			healthGroup := v1.Group("health")
+			{
+				healthGroup.GET("/", injectedHandler.health)
 			}
 		}
 	}

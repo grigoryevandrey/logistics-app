@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grigoryevandrey/logistics-app/lib/errors"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth"
 	jsonmw "github.com/grigoryevandrey/logistics-app/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/services/deliveries/app"
 	"gopkg.in/validator.v2"
@@ -30,6 +31,7 @@ func Handler(service app.Service) *gin.Engine {
 		v1 := superGroup.Group("v1")
 		{
 			deliveriesGroup := v1.Group("deliveries")
+			deliveriesGroup.Use(auth.AuthMiddleware())
 			{
 				deliveriesGroup.GET("/:id", injectedHandler.getDelivery)
 				deliveriesGroup.GET("/", injectedHandler.getDeliveries)
@@ -37,17 +39,17 @@ func Handler(service app.Service) *gin.Engine {
 				deliveriesGroup.PUT("/", injectedHandler.updateDelivery)
 				deliveriesGroup.DELETE("/", injectedHandler.deleteDelivery)
 
-				healthGroup := deliveriesGroup.Group("health")
-				{
-					healthGroup.GET("/", injectedHandler.health)
-				}
-
 				statusesGroup := deliveriesGroup.Group("statuses")
 				{
 					statusesGroup.GET("/", injectedHandler.getDeliveryStatuses)
 
 					statusesGroup.PUT("/", injectedHandler.updateDeliveryStatus)
 				}
+			}
+
+			healthGroup := v1.Group("health")
+			{
+				healthGroup.GET("/", injectedHandler.health)
 			}
 		}
 	}

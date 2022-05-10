@@ -41,11 +41,11 @@ func Handler(service app.Service) *gin.Engine {
 				authGroupPublic.POST("/login", injectedHandler.login)
 				authGroupPublic.PUT("/refresh", injectedHandler.refresh)
 				authGroupPrivate.DELETE("/logout", injectedHandler.logout)
+			}
 
-				healthGroup := authGroupPublic.Group("health")
-				{
-					healthGroup.GET("/", injectedHandler.health)
-				}
+			healthGroup := v1.Group("health")
+			{
+				healthGroup.GET("/", injectedHandler.health)
 			}
 		}
 	}
