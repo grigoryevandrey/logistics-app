@@ -3,6 +3,10 @@ package globalConstants
 const TOKEN_TYPE_REFRESH = "refresh"
 const TOKEN_TYPE_ACCESS = "access"
 
+const MANAGER_ROLE = "manager"
+const ADMIN_ROLE_REGULAR = "regular"
+const ADMIN_ROLE_SUPER = "super"
+
 const ADDRESSES_TABLE = "addresses"
 const ADMINS_TABLE = "admins"
 const DELIVERIES_TABLE = "deliveries"

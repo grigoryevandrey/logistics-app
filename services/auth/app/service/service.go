@@ -16,19 +16,18 @@ import (
 
 const ACCESS_TOKEN_TTL = 15
 
-type service struct {
-	db *sql.DB
-}
-
-type customerInfo struct {
+type CustomerInfo struct {
 	Name      string
 	Role      string
 	TokenType string
 }
 
-type customClaims struct {
+type CustomClaims struct {
 	*jwt.StandardClaims
-	customerInfo
+	CustomerInfo
+}
+type service struct {
+	db *sql.DB
 }
 
 func New(db *sql.DB) app.Service {
@@ -49,7 +48,7 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 	case constants.MANAGER_STRATEGY:
 		query := "SELECT manager_password FROM managers WHERE manager_login = $1"
 		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash)
-		role = "manager"
+		role = globalConstants.MANAGER_ROLE
 	default:
 		log.Fatalln("Unknown strategy")
 	}
@@ -105,7 +104,7 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 
 	refreshKeySecret := viper.GetString("REFRESH_TOKEN_SECRET")
 
-	token, err := jwt.ParseWithClaims(refreshToken, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(refreshKeySecret), nil
 	})
 
@@ -113,8 +112,8 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 		return nil, errors.Error401
 	}
 
-	login := token.Claims.(*customClaims).customerInfo.Name
-	role := token.Claims.(*customClaims).customerInfo.Role
+	login := token.Claims.(*CustomClaims).CustomerInfo.Name
+	role := token.Claims.(*CustomClaims).CustomerInfo.Role
 
 	var testVar string
 
@@ -205,11 +204,11 @@ func createRefreshToken(user string, role string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &customClaims{
+	token.Claims = &CustomClaims{
 		&jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 		},
-		customerInfo{user, role, globalConstants.TOKEN_TYPE_REFRESH},
+		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_REFRESH},
 	}
 
 	return token.SignedString([]byte(signString))
@@ -224,11 +223,11 @@ func createAccessToken(user string, role string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &customClaims{
+	token.Claims = &CustomClaims{
 		&jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * ACCESS_TOKEN_TTL).Unix(),
 		},
-		customerInfo{user, role, globalConstants.TOKEN_TYPE_ACCESS},
+		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_ACCESS},
 	}
 
 	return token.SignedString([]byte(signString))

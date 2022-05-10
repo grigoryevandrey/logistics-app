@@ -5,5 +5,9 @@ go_library(
     srcs = ["middleware.go"],
     importpath = "github.com/grigoryevandrey/logistics-app/services/managers/app/middleware",
     visibility = ["//visibility:public"],
-    deps = ["@com_github_gin_gonic_gin//:gin"],
+    deps = [
+        "//lib/constants",
+        "//lib/middlewares/auth/models",
+        "@com_github_gin_gonic_gin//:gin",
+    ],
 )

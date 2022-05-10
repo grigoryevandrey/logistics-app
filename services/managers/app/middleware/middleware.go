@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	globalConstants "github.com/grigoryevandrey/logistics-app/lib/constants"
+	"github.com/grigoryevandrey/logistics-app/lib/middlewares/auth/models"
 )
 
 func RestrictionsMiddleware() gin.HandlerFunc {
@@ -16,7 +17,12 @@ func RestrictionsMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		log.Println(user)
+		role := user.(models.CustomerInfo).Role
+
+		if role != globalConstants.ADMIN_ROLE_REGULAR && role != globalConstants.ADMIN_ROLE_SUPER {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "endpoint is forbidden for user"})
+			return
+		}
 
 		ctx.Next()
 	}
