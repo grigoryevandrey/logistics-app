@@ -9,9 +9,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const TOKEN_TYPE_REFRESH = "refresh"
+
 type customerInfo struct {
-	Name string
-	Role string
+	Name      string
+	Role      string
+	TokenType string
 }
 
 type customClaims struct {
@@ -32,16 +35,30 @@ func AuthMiddleware() gin.HandlerFunc {
 		accessKeySecret := viper.GetString("ACCESS_TOKEN_SECRET")
 		accessTokenString := splittedAuthHeader[1]
 
+		if accessTokenString == "" {
+			if len(splittedAuthHeader) < 2 {
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token is empty"})
+				return
+			}
+		}
+
 		token, err := jwt.ParseWithClaims(accessTokenString, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(accessKeySecret), nil
 		})
 
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "can not verify token"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token is invalid", "message": err.Error()})
 			return
 		}
 
-		ctx.Set("user", token.Claims.(*customClaims))
+		tokenType := token.Claims.(*customClaims).customerInfo.TokenType
+
+		if tokenType == TOKEN_TYPE_REFRESH {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "can not use refresh token for access"})
+			return
+		}
+
+		ctx.Set("user", token.Claims.(*customClaims).customerInfo)
 
 		ctx.Next()
 	}

@@ -15,13 +15,17 @@ import (
 
 const ACCESS_TOKEN_TTL = 15
 
+const TOKEN_TYPE_ACCESS = "access"
+const TOKEN_TYPE_REFRESH = "refresh"
+
 type service struct {
 	db *sql.DB
 }
 
 type customerInfo struct {
-	Name string
-	Role string
+	Name      string
+	Role      string
+	TokenType string
 }
 
 type customClaims struct {
@@ -114,13 +118,15 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 	login := token.Claims.(*customClaims).customerInfo.Name
 	role := token.Claims.(*customClaims).customerInfo.Role
 
+	var testVar string
+
 	switch strategy {
 	case transport.ADMIN_STRATEGY:
 		query := "SELECT admin_login FROM admins WHERE admin_login = $1 AND admin_role = $2 AND refresh_token = $3"
-		err = s.db.QueryRow(query, login, role, refreshToken).Scan(&login)
+		err = s.db.QueryRow(query, login, role, refreshToken).Scan(&testVar)
 	case transport.MANAGER_STRATEGY:
 		query := "SELECT manager_login FROM managers WHERE manager_login = $1 AND refresh_token = $2"
-		err = s.db.QueryRow(query, login, refreshToken).Scan(&login)
+		err = s.db.QueryRow(query, login, refreshToken).Scan(&testVar)
 	default:
 		log.Fatalln("Unknown strategy")
 	}
@@ -160,7 +166,7 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 		log.Fatalln("Unknown strategy")
 	}
 
-	_, err = s.db.Query(updateQuery, refreshToken, login)
+	_, err = s.db.Query(updateQuery, newRefreshToken, login)
 
 	if err != nil {
 		return nil, err
@@ -205,7 +211,7 @@ func createRefreshToken(user string, role string) (string, error) {
 		&jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 		},
-		customerInfo{user, role},
+		customerInfo{user, role, TOKEN_TYPE_REFRESH},
 	}
 
 	return token.SignedString([]byte(signString))
@@ -224,7 +230,7 @@ func createAccessToken(user string, role string) (string, error) {
 		&jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * ACCESS_TOKEN_TTL).Unix(),
 		},
-		customerInfo{user, role},
+		customerInfo{user, role, TOKEN_TYPE_ACCESS},
 	}
 
 	return token.SignedString([]byte(signString))
