@@ -17,11 +17,12 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAddresses(offset int, limit int) ([]app.AddressEntity, error) {
+func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.AddressEntity, error) {
 	var result []app.AddressEntity
 
 	query := fmt.Sprintf(
-		"SELECT id, address, latitude, longitude, is_disabled FROM %s OFFSET %d LIMIT %d", globalConstants.ADDRESSES_TABLE,
+		"SELECT id, address, latitude, longitude, is_disabled FROM %s %s OFFSET %d LIMIT %d", globalConstants.ADDRESSES_TABLE,
+		sort,
 		offset,
 		limit,
 	)

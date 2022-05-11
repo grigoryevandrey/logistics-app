@@ -20,12 +20,14 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetDrivers(offset int, limit int) ([]app.DriverEntity, error) {
+func (s *service) GetDrivers(offset int, limit int, sort string) ([]app.DriverEntity, error) {
 	var result []app.DriverEntity
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
+		"SELECT %s FROM %s %s OFFSET %d LIMIT %d",
+		ENTITY_FIELDS,
 		globalConstants.DRIVERS_TABLE,
+		sort,
 		offset,
 		limit,
 	)

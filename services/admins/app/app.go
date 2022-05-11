@@ -1,7 +1,16 @@
 package app
 
+const DEFAULT_SORTING_STRATEGY = "name_asc"
+
+var SortingStrategies = map[string]string{
+	"name_desc":  "ORDER BY admin_last_name DESC, admin_first_name DESC, admin_patronymic DESC",
+	"name_asc":   "ORDER BY admin_last_name ASC, admin_first_name ASC, admin_patronymic ASC",
+	"login_desc": "ORDER BY admin_login DESC",
+	"login_asc":  "ORDER BY admin_login ASC",
+}
+
 type Service interface {
-	GetAdmins(offset int, limit int) ([]AdminEntity, error)
+	GetAdmins(offset int, limit int, sort string) ([]AdminEntity, error)
 	AddAdmin(admin PostAdminDto) (*AdminEntity, error)
 	UpdateAdmin(admin UpdateAdminDto) (*AdminEntity, error)
 	DeleteAdmin(id int) (*AdminEntity, error)

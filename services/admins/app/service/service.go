@@ -21,13 +21,14 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAdmins(offset int, limit int) ([]app.AdminEntity, error) {
+func (s *service) GetAdmins(offset int, limit int, sort string) ([]app.AdminEntity, error) {
 	var result []app.AdminEntity
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s OFFSET %d LIMIT %d",
+		"SELECT %s FROM %s %s OFFSET %d LIMIT %d",
 		ENTITY_FIELDS,
 		globalConstants.ADMINS_TABLE,
+		sort,
 		offset,
 		limit,
 	)

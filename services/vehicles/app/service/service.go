@@ -20,12 +20,14 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetVehicles(offset int, limit int) ([]app.VehicleEntity, error) {
+func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.VehicleEntity, error) {
 	var result []app.VehicleEntity
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
+		"SELECT %s FROM %s %s OFFSET %d LIMIT %d",
+		ENTITY_FIELDS,
 		globalConstants.VEHICLES_TABLE,
+		sort,
 		offset,
 		limit,
 	)

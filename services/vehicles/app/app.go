@@ -1,7 +1,16 @@
 package app
 
+const DEFAULT_SORTING_STRATEGY = "vehicle_asc"
+
+var SortingStrategies = map[string]string{
+	"vehicle_desc": "ORDER BY vehicle DESC",
+	"vehicle_asc":  "ORDER BY vehicle ASC",
+	"tonnage_desc": "ORDER BY vehicle_tonnage DESC",
+	"tonnage_asc":  "ORDER BY vehicle_tonnage ASC",
+}
+
 type Service interface {
-	GetVehicles(offset int, limit int) ([]VehicleEntity, error)
+	GetVehicles(offset int, limit int, sort string) ([]VehicleEntity, error)
 	AddVehicle(vehicle PostVehicleDto) (*VehicleEntity, error)
 	UpdateVehicle(vehicle UpdateVehicleDto) (*VehicleEntity, error)
 	DeleteVehicle(id int) (*VehicleEntity, error)

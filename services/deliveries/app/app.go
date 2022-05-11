@@ -2,9 +2,24 @@ package app
 
 import "time"
 
+const DEFAULT_SORTING_STRATEGY = "updated_asc"
+
+var SortingStrategies = map[string]string{
+	"updated_desc": "ORDER BY updated_at DESC",
+	"updated_asc":  "ORDER BY updated_at ASC",
+	"eta_desc":     "ORDER BY eta DESC",
+	"eta_asc":      "ORDER BY eta ASC",
+	"manager_desc": "ORDER BY manager_last_name DESC, manager_first_name DESC",
+	"manager_asc":  "ORDER BY manager_last_name ASC, manager_first_name ASC",
+	"driver_desc":  "ORDER BY driver_last_name DESC, driver_first_name DESC",
+	"driver_asc":   "ORDER BY driver_last_name ASC, driver_first_name ASC",
+	"addr_desc":    "ORDER BY address_from DESC, address_to DESC",
+	"addr_asc":     "ORDER BY address_from ASC, address_to ASC",
+}
+
 type Service interface {
 	GetDelivery(id int) (*DeliveryEntity, error)
-	GetDeliveries(offset int, limit int) ([]DeliveryJoinedEntity, error)
+	GetDeliveries(offset int, limit int, sort string) ([]DeliveryJoinedEntity, error)
 	AddDelivery(delivery PostDeliveryDto) (*DeliveryEntity, error)
 	UpdateDelivery(delivery UpdateDeliveryDto) (*DeliveryEntity, error)
 	DeleteDelivery(id int) (*DeliveryEntity, error)
@@ -12,12 +27,6 @@ type Service interface {
 	GetDeliveryStatuses() ([]string, error)
 	UpdateDeliveryStatus(delivery UpdateDeliveryStatusDto) (*DeliveryEntity, error)
 }
-
-// Check if from and to is not the same
-
-// EDITING: As always, send id of each referenced entity
-// EDITING/DELETING RETURN: Joined entity
-
 type DeliveryJoinedEntity struct {
 	Id               int       `json:"id"`
 	Vehicle          string    `json:"vehicle"`
