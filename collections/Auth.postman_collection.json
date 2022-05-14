@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "70810d22-0fef-47c9-a509-51a706d83d7c",
+		"name": "Auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/health",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { accessToken, refreshToken } = jsonData",
+							"",
+							"if (accessToken) postman.setEnvironmentVariable(\"accessToken\", accessToken);",
+							"if (refreshToken) postman.setEnvironmentVariable(\"refreshToken\", refreshToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test\",\n    \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/auth/login?strategy=admin",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"auth",
+						"login"
+					],
+					"query": [
+						{
+							"key": "strategy",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { accessToken, refreshToken } = jsonData",
+							"",
+							"if (accessToken) postman.setEnvironmentVariable(\"accessToken\", accessToken);",
+							"if (refreshToken) postman.setEnvironmentVariable(\"refreshToken\", refreshToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{refreshToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/auth/refresh?strategy=admin",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"auth",
+						"refresh"
+					],
+					"query": [
+						{
+							"key": "strategy",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accessToken\": \"{{accessToken}}\",\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/auth/logout?strategy=admin",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"auth",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "strategy",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servicePort",
+			"value": "3006",
+			"type": "string"
+		}
+	]
+}

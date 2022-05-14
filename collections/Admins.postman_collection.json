@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "64b06ebd-da75-483b-9e8f-49936b6239bd",
+		"name": "Admins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/health",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admins",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/admins?offset=0&limit=10&sort=login_asc",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"admins"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "login_asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { id } = jsonData",
+							"",
+							"if (id) postman.setEnvironmentVariable(\"adminId\", id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test123\",\n    \"password\": \"123456\",\n    \"lastName\": \"Смирнов\",\n    \"firstName\": \"Семен\",\n    \"patronymic\": \"Геннадиевич\",\n    \"role\": \"regular\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/admins",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{adminId}},\n    \"login\": \"test2\",\n    \"password\": \"123456\",\n    \"lastName\": \"Смирнов\",\n    \"firstName\": \"Семен\",\n    \"patronymic\": \"Геннадиевич\",\n    \"role\": \"regular\",\n    \"isDisabled\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/admins",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/admins?id={{adminId}}",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"admins"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{adminId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servicePort",
+			"value": "3004",
+			"type": "string"
+		}
+	]
+}
