@@ -63,14 +63,31 @@ auth-run: ## run auth service
 build:  ## build all services binaries
 	bazel build //services/addresses
 	bazel build //services/vehicles
+	bazel build //services/drivers
+	bazel build //services/managers
+	bazel build //services/admins
+	bazel build //services/deliveries
+	bazel build //services/auth
 
 .PHONY: build-docker
 build-docker: ## build all services as a docker image with bazel
-	bazel run //services/addresses:image
+	bazel run //services/addresses:docker
+	bazel run //services/vehicles:docker
+	bazel run //services/drivers:docker
+	bazel run //services/managers:docker
+	bazel run //services/admins:docker
+	bazel run //services/deliveries:docker
+	bazel run //services/auth:docker
 
 .PHONY: rebuild-docker
 rebuild-docker: ## delete old docker image, then rebuild it
-	docker image rm -f 2436ebf538e1
+	docker image rm -f bazel/services/addresses
+	docker image rm -f bazel/services/vehicles
+	docker image rm -f bazel/services/drivers
+	docker image rm -f bazel/services/managers
+	docker image rm -f bazel/services/admins
+	docker image rm -f bazel/services/deliveries
+	docker image rm -f bazel/services/auth
 	make build-docker
 
 # ========================= Linting =========================================
@@ -121,7 +138,15 @@ migrate-reset: ## reset database and re-run all migrations
 	@echo "Running all database migrations..."
 	@$(MIGRATE) up
 
-.PHONY: testdata
-testdata: ## populate the database with test data
+.PHONY: db-populate
+db-populate: ## populate the database with test data
 	@echo "Populating test data..."
 	@docker exec -it postgres psql "$(DATABASE_CONNECTION_STRING)" -f /database/testdata/testdata.sql
+
+
+# ============================ Backend ==============================
+
+.PHONY: server
+server: ## start server using docker-compose
+	make rebuild-docker
+	docker-compose up -d
