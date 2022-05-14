@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -73,6 +74,7 @@ func (handlerRef *handler) getDelivery(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -86,6 +88,7 @@ func (handlerRef *handler) getDelivery(ctx *gin.Context) {
 	delivery, err := handlerRef.GetDelivery(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find delivery with id: %d", id)
 
@@ -105,12 +108,14 @@ func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
@@ -154,6 +159,7 @@ func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
 
 	deliveries, totalRows, err := handlerRef.GetDeliveries(offset, limit, sortString, filterString)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -167,6 +173,7 @@ func (handlerRef *handler) addDelivery(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&delivery)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -174,13 +181,20 @@ func (handlerRef *handler) addDelivery(ctx *gin.Context) {
 	err = validator.Validate(delivery)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if delivery.AddressFrom == delivery.AddressTo {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "address from and to can not be the same"})
 		return
 	}
 
 	response, err := handlerRef.AddDelivery(delivery)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -193,6 +207,7 @@ func (handlerRef *handler) updateDelivery(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&delivery)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -200,13 +215,20 @@ func (handlerRef *handler) updateDelivery(ctx *gin.Context) {
 	err = validator.Validate(delivery)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if delivery.AddressFrom == delivery.AddressTo {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "address from and to can not be the same"})
 		return
 	}
 
 	response, err := handlerRef.UpdateDelivery(delivery)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find delivery with id: %d", delivery.Id)
 
@@ -227,6 +249,7 @@ func (handlerRef *handler) deleteDelivery(ctx *gin.Context) {
 	id, err := strconv.Atoi(query.Get("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -240,6 +263,7 @@ func (handlerRef *handler) deleteDelivery(ctx *gin.Context) {
 	response, err := handlerRef.DeleteDelivery(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find delivery with id: %d", id)
 
@@ -258,6 +282,7 @@ func (handlerRef *handler) getDeliveryStatuses(ctx *gin.Context) {
 	response, err := handlerRef.GetDeliveryStatuses()
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -270,6 +295,7 @@ func (handlerRef *handler) updateDeliveryStatus(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&delivery)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -277,6 +303,7 @@ func (handlerRef *handler) updateDeliveryStatus(ctx *gin.Context) {
 	err = validator.Validate(delivery)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -284,6 +311,7 @@ func (handlerRef *handler) updateDeliveryStatus(ctx *gin.Context) {
 	response, err := handlerRef.UpdateDeliveryStatus(delivery)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find delivery with id: %d", delivery.Id)
 

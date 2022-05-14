@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -67,6 +68,7 @@ func (handlerRef *handler) addVehicle(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&vehicle)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -74,6 +76,7 @@ func (handlerRef *handler) addVehicle(ctx *gin.Context) {
 	err = validator.Validate(vehicle)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -81,6 +84,7 @@ func (handlerRef *handler) addVehicle(ctx *gin.Context) {
 	response, err := handlerRef.AddVehicle(vehicle)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -93,12 +97,14 @@ func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
@@ -130,6 +136,7 @@ func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 
 	vehicles, totalRows, err := handlerRef.GetVehicles(offset, limit, sortString)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -142,6 +149,7 @@ func (handlerRef *handler) updateVehicle(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&vehicle)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -149,6 +157,7 @@ func (handlerRef *handler) updateVehicle(ctx *gin.Context) {
 	err = validator.Validate(vehicle)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -156,6 +165,7 @@ func (handlerRef *handler) updateVehicle(ctx *gin.Context) {
 	response, err := handlerRef.UpdateVehicle(vehicle)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find vehicle with id: %d", vehicle.Id)
 
@@ -176,6 +186,7 @@ func (handlerRef *handler) deleteVehicle(ctx *gin.Context) {
 	id, err := strconv.Atoi(query.Get("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -189,6 +200,7 @@ func (handlerRef *handler) deleteVehicle(ctx *gin.Context) {
 	response, err := handlerRef.DeleteVehicle(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find vehicle with id: %d", id)
 

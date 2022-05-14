@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -63,6 +64,7 @@ func (handlerRef *handler) addManager(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&manager)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -70,6 +72,7 @@ func (handlerRef *handler) addManager(ctx *gin.Context) {
 	err = validator.Validate(manager)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -77,6 +80,7 @@ func (handlerRef *handler) addManager(ctx *gin.Context) {
 	response, err := handlerRef.AddManager(manager)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error409 {
 			ctx.JSON(http.StatusConflict, gin.H{"error": "user with this login already exists."})
 			return
@@ -100,6 +104,7 @@ func (handlerRef *handler) getManager(ctx *gin.Context) {
 	manager, err := handlerRef.GetManager(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find manager with id: %s", id)
 
@@ -119,12 +124,14 @@ func (handlerRef *handler) getManagers(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
@@ -156,6 +163,7 @@ func (handlerRef *handler) getManagers(ctx *gin.Context) {
 
 	managers, totalRows, err := handlerRef.GetManagers(offset, limit, sortString)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -168,6 +176,7 @@ func (handlerRef *handler) updateManager(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&manager)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -175,6 +184,7 @@ func (handlerRef *handler) updateManager(ctx *gin.Context) {
 	err = validator.Validate(manager)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -182,6 +192,7 @@ func (handlerRef *handler) updateManager(ctx *gin.Context) {
 	response, err := handlerRef.UpdateManager(manager)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find manager with id: %d", manager.Id)
 
@@ -208,6 +219,7 @@ func (handlerRef *handler) deleteManager(ctx *gin.Context) {
 	id, err := strconv.Atoi(query.Get("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -221,6 +233,7 @@ func (handlerRef *handler) deleteManager(ctx *gin.Context) {
 	response, err := handlerRef.DeleteManager(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find manager with id: %d", id)
 
