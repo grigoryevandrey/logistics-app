@@ -89,7 +89,7 @@ func (handlerRef *handler) addVehicle(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (handlerRef *handler) getVehicles(ctx *gin.Context) {

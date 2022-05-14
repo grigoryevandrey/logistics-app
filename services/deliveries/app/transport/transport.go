@@ -199,7 +199,7 @@ func (handlerRef *handler) addDelivery(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (handlerRef *handler) updateDelivery(ctx *gin.Context) {

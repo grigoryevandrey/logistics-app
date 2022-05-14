@@ -90,7 +90,7 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (handlerRef *handler) getAddresses(ctx *gin.Context) {
