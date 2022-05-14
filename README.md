@@ -1,27 +1,23 @@
 # logistics-app
-1. Install bazel `brew install bazel`
-2. Install gazelle (optional?) `go install github.com/bazelbuild/bazel-gazelle/cmd/gazelle@latest`
-3. Prefix with gazelle (optional?) `gazelle -go_prefix github.com/grigoryevandrey/logistics-app`
-4. Run bazel `bazel run //:gazelle`
+
+A client - server application for managing logistics
 
 ## Makefile
 
 Most of the commands can be runned with a makefile. Get list of available commands by running `make help`
 
-## Updating files 
-`gazelle update-repos --from_file=go.mod -to_macro=go_third_party.bzl%go_deps`
+## Server
 
-## Build
-`bazel build //services/initial`
+### Local Installation
 
-## Run 
-`bazel run //services/initial`
+For this repo to setup, you need to have bazel, go, docker-compose and gazelle preinstalled.
 
-## Build image
-`docker system prune -a -f --volumes && sudo bazel run //services/initial:image`
+1. Clone this repo
+2. Export environment variables, which are listed in `.env.template`
+3. Run `make server`
+4. If everything is fine, all apis will be available on the respective ports, use `/health` endpoints to check it
+5. Run migrations for db `make migrate`
+6. If needed, populate db with test data `make db-populate`
+### Shutting down server
 
-[Troubleshooting](https://www.tweag.io/blog/2021-09-08-rules_go-gazelle/)
-
-[Images troubleshooting](https://stackoverflow.com/questions/68273018/starting-container-process-caused-exec-bin-bash-stat-bin-bash-no-such-fi)
-
-[Container image bazel config](https://github.com/bazelbuild/rules_docker/blob/master/docs/container.md#container_image)
+To shut server down, run `make shutdown`
