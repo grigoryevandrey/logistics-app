@@ -9,8 +9,16 @@ var SortingStrategies = map[string]string{
 	"login_asc":  "ORDER BY admin_login ASC",
 }
 
+const DEFAULT_FILTERING_STRATEGY = "default"
+
+var FilteringStrategies = map[string]string{
+	"default": "",
+	"regular": "WHERE admin_role = 'regular'",
+	"super":   "WHERE admin_role = 'super'",
+}
+
 type Service interface {
-	GetAdmins(offset int, limit int, sort string) ([]AdminEntity, error)
+	GetAdmins(offset int, limit int, sort string, filter string) ([]AdminEntity, error)
 	AddAdmin(admin PostAdminDto) (*AdminEntity, error)
 	UpdateAdmin(admin UpdateAdminDto) (*AdminEntity, error)
 	DeleteAdmin(id int) (*AdminEntity, error)
