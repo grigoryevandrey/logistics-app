@@ -71,9 +71,9 @@ CREATE TABLE deliveries
     updated_at          TIMESTAMP NOT NULL,
     status              delivery_status NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (vehicle_id) REFERENCES vehicles (id),
-    FOREIGN KEY (address_from) REFERENCES addresses (id),
-    FOREIGN KEY (address_to) REFERENCES addresses (id),
-    FOREIGN KEY (driver_id) REFERENCES drivers (id),
-    FOREIGN KEY (manager_id) REFERENCES managers (id)
+    FOREIGN KEY (vehicle_id) REFERENCES vehicles (id) ON DELETE CASCADE,
+    FOREIGN KEY (address_from) REFERENCES addresses (id) ON DELETE CASCADE,
+    FOREIGN KEY (address_to) REFERENCES addresses (id) ON DELETE CASCADE,
+    FOREIGN KEY (driver_id) REFERENCES drivers (id) ON DELETE CASCADE,
+    FOREIGN KEY (manager_id) REFERENCES managers (id) ON DELETE CASCADE
 );

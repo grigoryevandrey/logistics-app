@@ -1,16 +1,102 @@
 version: '3.2'
 services:
-  initial:
-    container_name: initial
-    image: bazel/services/initial:image
-    ports: 
-    - "8080:8080"
+
+  addresses:
+    container_name: addresses
+    image: bazel/services/addresses:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      ADDRESSES_PORT: '${ADDRESSES_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${ADDRESSES_PORT}:${ADDRESSES_PORT}'
+    networks:
+    - mainnet
+
+  admins:
+    container_name: admins
+    image: bazel/services/admins:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      ADMINS_PORT: '${ADMINS_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${ADMINS_PORT}:${ADMINS_PORT}'
+    networks:
+    - mainnet
+
+  auth:
+    container_name: auth
+    image: bazel/services/auth:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      AUTH_PORT: '${AUTH_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${AUTH_PORT}:${AUTH_PORT}'
+    networks:
+    - mainnet
+
+  deliveries:
+    container_name: deliveries
+    image: bazel/services/deliveries:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      DELIVERIES_PORT: '${DELIVERIES_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${DELIVERIES_PORT}:${DELIVERIES_PORT}'
+    networks:
+    - mainnet
+
+  drivers:
+    container_name: drivers
+    image: bazel/services/drivers:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      DRIVERS_PORT: '${DRIVERS_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${DRIVERS_PORT}:${DRIVERS_PORT}'
+    networks:
+    - mainnet
+
+  managers:
+    container_name: managers
+    image: bazel/services/managers:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      MANAGERS_PORT: '${MANAGERS_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${MANAGERS_PORT}:${MANAGERS_PORT}'
+    networks:
+    - mainnet
+
+  vehicles:
+    container_name: vehicles
+    image: bazel/services/vehicles:docker
+    environment:
+      PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
+      VEHICLES_PORT: '${VEHICLES_PORT}'
+      ACCESS_TOKEN_SECRET: '${ACCESS_TOKEN_SECRET}'
+      REFRESH_TOKEN_SECRET: '${REFRESH_TOKEN_SECRET}'
+    ports:
+    - '${VEHICLES_PORT}:${VEHICLES_PORT}'
+    networks:
+    - mainnet
 
   postgres:
     container_name: postgres
     image: postgres:14
     environment:
-      POSTGRES_HOST: '${PG_HOST}'
+      POSTGRES_HOST: postgres
       POSTGRES_PORT: '${PG_PORT}'
       POSTGRES_USER: '${PG_USER}'
       POSTGRES_PASSWORD: '${PG_PASSWORD}'
@@ -18,5 +104,11 @@ services:
     ports:
     - "${PG_PORT}:${PG_PORT}"
     volumes:
-    - ${shell pwd}/database:/database
-    - $(shell pwd)/database/postgres:/var/lib/postgresql/data
+    - '${PWD}/database:/database'
+    - '${PWD}/database/postgres:/var/lib/postgresql/data'
+    networks:
+    - mainnet
+
+networks:
+  mainnet:
+    driver: bridge

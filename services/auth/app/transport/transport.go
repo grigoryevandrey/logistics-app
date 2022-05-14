@@ -69,6 +69,7 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&credentials)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -76,6 +77,7 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 	err = validator.Validate(credentials)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -83,6 +85,7 @@ func (handlerRef *handler) login(ctx *gin.Context) {
 	tokens, err := handlerRef.Login(credentials, strategy)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error401 {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "bad credentials"})
 			return
@@ -122,6 +125,7 @@ func (handlerRef *handler) refresh(ctx *gin.Context) {
 	tokens, err := handlerRef.Refresh(refreshToken, strategy)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error401 {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "bad credentials"})
 			return
@@ -153,6 +157,7 @@ func (handlerRef *handler) logout(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&tokens)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -160,6 +165,7 @@ func (handlerRef *handler) logout(ctx *gin.Context) {
 	err = validator.Validate(tokens)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -174,6 +180,7 @@ func (handlerRef *handler) logout(ctx *gin.Context) {
 	}
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "can not find this active refresh token"})
 			return

@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -68,6 +69,7 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&address)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -75,6 +77,7 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 	err = validator.Validate(address)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -82,11 +85,12 @@ func (handlerRef *handler) addAddress(ctx *gin.Context) {
 	response, err := handlerRef.AddAddress(address)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 func (handlerRef *handler) getAddresses(ctx *gin.Context) {
@@ -94,12 +98,14 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
@@ -129,13 +135,14 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 		return
 	}
 
-	addresses, err := handlerRef.GetAddresses(offset, limit, sortString)
+	addresses, totalRows, err := handlerRef.GetAddresses(offset, limit, sortString)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"addresses": addresses, "total": len(addresses), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"addresses": addresses, "count": len(addresses), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateAddress(ctx *gin.Context) {
@@ -143,6 +150,7 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&address)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -150,6 +158,7 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 	err = validator.Validate(address)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -157,6 +166,7 @@ func (handlerRef *handler) updateAddress(ctx *gin.Context) {
 	response, err := handlerRef.UpdateAddress(address)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find address with id: %d", address.Id)
 
@@ -177,6 +187,7 @@ func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
 	id, err := strconv.Atoi(query.Get("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -190,6 +201,7 @@ func (handlerRef *handler) deleteAddress(ctx *gin.Context) {
 	response, err := handlerRef.DeleteAddress(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find address with id: %d", id)
 

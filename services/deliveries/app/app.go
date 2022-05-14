@@ -29,7 +29,7 @@ var FilteringStrategies = map[string]string{
 
 type Service interface {
 	GetDelivery(id int) (*DeliveryEntity, error)
-	GetDeliveries(offset int, limit int, sort string, filter string) ([]DeliveryJoinedEntity, error)
+	GetDeliveries(offset int, limit int, sort string, filter string) ([]DeliveryJoinedEntity, *int, error)
 	AddDelivery(delivery PostDeliveryDto) (*DeliveryEntity, error)
 	UpdateDelivery(delivery UpdateDeliveryDto) (*DeliveryEntity, error)
 	DeleteDelivery(id int) (*DeliveryEntity, error)

@@ -2,6 +2,7 @@ package transport
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -63,6 +64,7 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&admin)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -70,6 +72,7 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 	err = validator.Validate(admin)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -77,6 +80,7 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 	response, err := handlerRef.AddAdmin(admin)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error409 {
 			ctx.JSON(http.StatusConflict, gin.H{"error": "user with this login already exists."})
 			return
@@ -94,12 +98,14 @@ func (handlerRef *handler) getAdmins(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(query.Get("limit"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong limit param"})
 		return
 	}
 
 	offset, err := strconv.Atoi(query.Get("offset"))
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "wrong offset param"})
 		return
 	}
@@ -141,13 +147,14 @@ func (handlerRef *handler) getAdmins(ctx *gin.Context) {
 		return
 	}
 
-	admins, err := handlerRef.GetAdmins(offset, limit, sortString, filterString)
+	admins, totalRows, err := handlerRef.GetAdmins(offset, limit, sortString, filterString)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"admins": admins, "total": len(admins), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"admins": admins, "count": len(admins), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateAdmin(ctx *gin.Context) {
@@ -155,6 +162,7 @@ func (handlerRef *handler) updateAdmin(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&admin)
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -162,6 +170,7 @@ func (handlerRef *handler) updateAdmin(ctx *gin.Context) {
 	err = validator.Validate(admin)
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -169,6 +178,7 @@ func (handlerRef *handler) updateAdmin(ctx *gin.Context) {
 	response, err := handlerRef.UpdateAdmin(admin)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find admin with id: %d", admin.Id)
 
@@ -195,6 +205,7 @@ func (handlerRef *handler) deleteAdmin(ctx *gin.Context) {
 	id, err := strconv.Atoi(query.Get("id"))
 
 	if err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -208,6 +219,7 @@ func (handlerRef *handler) deleteAdmin(ctx *gin.Context) {
 	response, err := handlerRef.DeleteAdmin(id)
 
 	if err != nil {
+		log.Println(err)
 		if err == errors.Error404 {
 			message := fmt.Sprintf("Can not find admin with id: %d", id)
 

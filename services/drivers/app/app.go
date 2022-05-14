@@ -8,7 +8,7 @@ var SortingStrategies = map[string]string{
 }
 
 type Service interface {
-	GetDrivers(offset int, limit int, sort string) ([]DriverEntity, error)
+	GetDrivers(offset int, limit int, sort string) ([]DriverEntity, *int, error)
 	AddDriver(driver PostDriverDto) (*DriverEntity, error)
 	UpdateDriver(driver UpdateDriverDto) (*DriverEntity, error)
 	DeleteDriver(id int) (*DriverEntity, error)

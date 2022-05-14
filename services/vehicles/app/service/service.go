@@ -20,11 +20,12 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.VehicleEntity, error) {
+func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.VehicleEntity, *int, error) {
 	var result []app.VehicleEntity
+	var totalRows int
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s %s OFFSET %d LIMIT %d",
+		"SELECT %s, count(*) OVER() AS total_rows  FROM %s %s OFFSET %d LIMIT %d",
 		ENTITY_FIELDS,
 		globalConstants.VEHICLES_TABLE,
 		sort,
@@ -34,7 +35,7 @@ func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.Vehicle
 
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
@@ -48,18 +49,19 @@ func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.Vehicle
 			&vehicleEntity.CarNumber,
 			&vehicleEntity.Tonnage,
 			&vehicleEntity.IsDisabled,
+			&totalRows,
 		); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		result = append(result, vehicleEntity)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	return result, &totalRows, nil
 }
 
 func (s *service) AddVehicle(vehicle app.PostVehicleDto) (*app.VehicleEntity, error) {
