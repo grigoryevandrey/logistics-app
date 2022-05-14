@@ -140,7 +140,19 @@ func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
 		return
 	}
 
-	deliveries, err := handlerRef.GetDeliveries(offset, limit, sortString)
+	filter := query.Get("filter")
+	if filter == "" {
+		filter = app.DEFAULT_FILTERING_STRATEGY
+	}
+
+	filterString, ok := app.FilteringStrategies[filter]
+
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad filter param"})
+		return
+	}
+
+	deliveries, err := handlerRef.GetDeliveries(offset, limit, sortString, filterString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

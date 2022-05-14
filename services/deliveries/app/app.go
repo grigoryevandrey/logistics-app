@@ -17,9 +17,19 @@ var SortingStrategies = map[string]string{
 	"addr_asc":     "ORDER BY address_from ASC, address_to ASC",
 }
 
+const DEFAULT_FILTERING_STRATEGY = "default"
+
+var FilteringStrategies = map[string]string{
+	"default":     "",
+	"not_started": "WHERE status = 'not started'",
+	"on_the_way":  "WHERE status = 'on the way'",
+	"delivered":   "WHERE status = 'delivered'",
+	"cancelled":   "WHERE status = 'cancelled'",
+}
+
 type Service interface {
 	GetDelivery(id int) (*DeliveryEntity, error)
-	GetDeliveries(offset int, limit int, sort string) ([]DeliveryJoinedEntity, error)
+	GetDeliveries(offset int, limit int, sort string, filter string) ([]DeliveryJoinedEntity, error)
 	AddDelivery(delivery PostDeliveryDto) (*DeliveryEntity, error)
 	UpdateDelivery(delivery UpdateDeliveryDto) (*DeliveryEntity, error)
 	DeleteDelivery(id int) (*DeliveryEntity, error)

@@ -60,12 +60,13 @@ func (s *service) GetDelivery(id int) (*app.DeliveryEntity, error) {
 	}
 }
 
-func (s *service) GetDeliveries(offset int, limit int, sort string) ([]app.DeliveryJoinedEntity, error) {
+func (s *service) GetDeliveries(offset int, limit int, sort string, filter string) ([]app.DeliveryJoinedEntity, error) {
 	var result []app.DeliveryJoinedEntity
 
 	query := fmt.Sprintf(
-		"%s %s OFFSET %d LIMIT %d",
+		"%s %s %s OFFSET %d LIMIT %d",
 		JOIN_QUERY,
+		filter,
 		sort,
 		offset,
 		limit,
