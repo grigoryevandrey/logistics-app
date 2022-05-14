@@ -11,7 +11,7 @@ var SortingStrategies = map[string]string{
 
 type Service interface {
 	GetManager(id string) (*ManagerEntity, error)
-	GetManagers(offset int, limit int, sort string) ([]ManagerEntity, error)
+	GetManagers(offset int, limit int, sort string) ([]ManagerEntity, *int, error)
 	AddManager(manager PostManagerDto) (*ManagerEntity, error)
 	UpdateManager(manager UpdateManagerDto) (*ManagerEntity, error)
 	DeleteManager(id int) (*ManagerEntity, error)

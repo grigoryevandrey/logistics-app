@@ -152,13 +152,13 @@ func (handlerRef *handler) getDeliveries(ctx *gin.Context) {
 		return
 	}
 
-	deliveries, err := handlerRef.GetDeliveries(offset, limit, sortString, filterString)
+	deliveries, totalRows, err := handlerRef.GetDeliveries(offset, limit, sortString, filterString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"deliveries": deliveries, "total": len(deliveries), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"deliveries": deliveries, "count": len(deliveries), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) addDelivery(ctx *gin.Context) {

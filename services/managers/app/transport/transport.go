@@ -154,13 +154,13 @@ func (handlerRef *handler) getManagers(ctx *gin.Context) {
 		return
 	}
 
-	managers, err := handlerRef.GetManagers(offset, limit, sortString)
+	managers, totalRows, err := handlerRef.GetManagers(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"managers": managers, "total": len(managers), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"managers": managers, "count": len(managers), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateManager(ctx *gin.Context) {

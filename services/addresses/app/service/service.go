@@ -17,11 +17,12 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.AddressEntity, error) {
+func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.AddressEntity, *int, error) {
 	var result []app.AddressEntity
+	var totalRows int
 
 	query := fmt.Sprintf(
-		"SELECT id, address, latitude, longitude, is_disabled FROM %s %s OFFSET %d LIMIT %d", globalConstants.ADDRESSES_TABLE,
+		"SELECT id, address, latitude, longitude, is_disabled, count(*) OVER() AS total_rows FROM %s %s OFFSET %d LIMIT %d", globalConstants.ADDRESSES_TABLE,
 		sort,
 		offset,
 		limit,
@@ -29,7 +30,7 @@ func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.Addres
 
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
@@ -43,18 +44,19 @@ func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.Addres
 			&addressEntity.Latitude,
 			&addressEntity.Longitude,
 			&addressEntity.IsDisabled,
+			&totalRows,
 		); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		result = append(result, addressEntity)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	return result, &totalRows, nil
 }
 
 func (s *service) AddAddress(address app.PostAddressDto) (*app.AddressEntity, error) {

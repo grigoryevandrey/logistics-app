@@ -141,13 +141,13 @@ func (handlerRef *handler) getAdmins(ctx *gin.Context) {
 		return
 	}
 
-	admins, err := handlerRef.GetAdmins(offset, limit, sortString, filterString)
+	admins, totalRows, err := handlerRef.GetAdmins(offset, limit, sortString, filterString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"admins": admins, "total": len(admins), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"admins": admins, "count": len(admins), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateAdmin(ctx *gin.Context) {

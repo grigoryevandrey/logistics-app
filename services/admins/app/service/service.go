@@ -21,11 +21,12 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
-func (s *service) GetAdmins(offset int, limit int, sort string, filter string) ([]app.AdminEntity, error) {
+func (s *service) GetAdmins(offset int, limit int, sort string, filter string) ([]app.AdminEntity, *int, error) {
 	var result []app.AdminEntity
+	var totalRows int
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s %s %s OFFSET %d LIMIT %d",
+		"SELECT %s, count(*) OVER() AS total_rows  FROM %s %s %s OFFSET %d LIMIT %d",
 		ENTITY_FIELDS,
 		globalConstants.ADMINS_TABLE,
 		filter,
@@ -36,7 +37,7 @@ func (s *service) GetAdmins(offset int, limit int, sort string, filter string) (
 
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
@@ -51,18 +52,19 @@ func (s *service) GetAdmins(offset int, limit int, sort string, filter string) (
 			&adminEntity.Patronymic,
 			&adminEntity.Role,
 			&adminEntity.IsDisabled,
+			&totalRows,
 		); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		result = append(result, adminEntity)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	return result, &totalRows, nil
 }
 
 func (s *service) AddAdmin(admin app.PostAdminDto) (*app.AdminEntity, error) {

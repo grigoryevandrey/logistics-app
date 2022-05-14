@@ -128,13 +128,13 @@ func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 		return
 	}
 
-	vehicles, err := handlerRef.GetVehicles(offset, limit, sortString)
+	vehicles, totalRows, err := handlerRef.GetVehicles(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"vehicles": vehicles, "total": len(vehicles), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"vehicles": vehicles, "count": len(vehicles), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateVehicle(ctx *gin.Context) {

@@ -128,13 +128,13 @@ func (handlerRef *handler) getDrivers(ctx *gin.Context) {
 		return
 	}
 
-	drivers, err := handlerRef.GetDrivers(offset, limit, sortString)
+	drivers, totalRows, err := handlerRef.GetDrivers(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"drivers": drivers, "total": len(drivers), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"drivers": drivers, "count": len(drivers), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateDriver(ctx *gin.Context) {

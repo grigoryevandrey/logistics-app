@@ -53,11 +53,12 @@ func (s *service) GetManager(id string) (*app.ManagerEntity, error) {
 	}
 }
 
-func (s *service) GetManagers(offset int, limit int, sort string) ([]app.ManagerEntity, error) {
+func (s *service) GetManagers(offset int, limit int, sort string) ([]app.ManagerEntity, *int, error) {
 	var result []app.ManagerEntity
+	var totalRows int
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
+		"SELECT %s, count(*) OVER() AS total_rows FROM %s %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
 		globalConstants.MANAGERS_TABLE,
 		sort,
 		offset,
@@ -66,7 +67,7 @@ func (s *service) GetManagers(offset int, limit int, sort string) ([]app.Manager
 
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
@@ -81,18 +82,19 @@ func (s *service) GetManagers(offset int, limit int, sort string) ([]app.Manager
 			&managerEntity.FirstName,
 			&managerEntity.Patronymic,
 			&managerEntity.IsDisabled,
+			&totalRows,
 		); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		result = append(result, managerEntity)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return result, nil
+	return result, &totalRows, nil
 }
 
 func (s *service) AddManager(manager app.PostManagerDto) (*app.ManagerEntity, error) {

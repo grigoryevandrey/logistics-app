@@ -129,13 +129,13 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 		return
 	}
 
-	addresses, err := handlerRef.GetAddresses(offset, limit, sortString)
+	addresses, totalRows, err := handlerRef.GetAddresses(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"addresses": addresses, "total": len(addresses), "offset": offset})
+	ctx.JSON(http.StatusOK, gin.H{"addresses": addresses, "count": len(addresses), "totalRows": totalRows, "offset": offset})
 }
 
 func (handlerRef *handler) updateAddress(ctx *gin.Context) {
