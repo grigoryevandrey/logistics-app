@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "d2e7fa22-896f-4fcc-ac3e-3f7e4959afe2",
+		"name": "Deliveries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/health",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries/1",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deliveries",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries?offset=0&limit=10&sort=addr_desc",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "addr_desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery Statuses",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries/statuses",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries",
+						"statuses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { id } = jsonData",
+							"",
+							"if (id) postman.setEnvironmentVariable(\"deliveryId\", id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vehicleId\": 2,\n    \"addressFrom\": 2,\n    \"addressTo\": 1,\n    \"driverId\": 2,\n    \"managerId\": 1,\n    \"contents\": \"10 килограмм пшена\",\n    \"eta\": \"2022-05-07T10:10:25Z\",\n    \"status\": \"on the way\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{deliveryId}},\n    \"vehicleId\": 1,\n    \"addressFrom\": 5,\n    \"addressTo\": 1,\n    \"driverId\": 1,\n    \"managerId\": 1,\n    \"contents\": \"25 килограмм пшена\",\n    \"eta\": \"2022-05-07T10:10:25Z\",\n    \"status\": \"on the way\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery Status",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{deliveryId}},\n    \"status\": \"on the way\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries/statuses",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries",
+						"statuses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delivery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/deliveries?id={{deliveryId}}",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"deliveries"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{deliveryId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servicePort",
+			"value": "3005",
+			"type": "string"
+		}
+	]
+}

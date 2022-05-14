@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "a4e59cd2-41c4-4273-82a9-2430ed4ae5bc",
+		"name": "Drivers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/health",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Drivers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/drivers?limit=10&offset=0&sort=name_desc",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"drivers"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "sort",
+							"value": "name_desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Driver",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { id } = jsonData",
+							"",
+							"if (id) postman.setEnvironmentVariable(\"driverId\", id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"lastName\": \"Рябов\",\n    \"firstName\": \"Антон\",\n    \"patronymic\": \"Станиславович\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/drivers",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"drivers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Driver",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{driverId}},\n    \"lastName\": \"Васильев\",\n    \"firstName\": \"Антон\",\n    \"patronymic\": \"Станиславович\",\n    \"isDisabled\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/drivers",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"drivers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Driver",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/drivers?id={{driverId}}",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"drivers"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{driverId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servicePort",
+			"value": "3002",
+			"type": "string"
+		}
+	]
+}

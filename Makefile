@@ -150,3 +150,7 @@ db-populate: ## populate the database with test data
 server: ## start server using docker-compose
 	make rebuild-docker
 	docker-compose up -d
+
+.PHONY: shutdown
+shutdown: ## stop server
+	docker-compose down

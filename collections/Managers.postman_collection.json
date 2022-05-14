@@ -1,0 +1,261 @@
+{
+	"info": {
+		"_postman_id": "7bf470c2-a236-42b1-9c8f-3beda1b6d90d",
+		"name": "Managers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/health",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/managers/1",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"managers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Managers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/managers?limit=5&offset=0&sort=login_desc",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"managers"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "sort",
+							"value": "login_desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Manager",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody);",
+							"",
+							"const { id } = jsonData",
+							"",
+							"if (id) postman.setEnvironmentVariable(\"managerId\", id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test123\",\n    \"password\": \"123456\",\n    \"lastName\": \"Кудрявцев\",\n    \"firstName\": \"Карим\",\n    \"patronymic\": \"Сергеевич\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/managers",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"managers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{managerId}},\n    \"login\": \"test123\",\n    \"password\": \"123456\",\n    \"lastName\": \"Кудрявцев\",\n    \"firstName\": \"Карим\",\n    \"patronymic\": \"Сергеевич\",\n    \"isDisabled\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/managers",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"managers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseDomain}}:{{servicePort}}/{{baseSuffix}}/{{baseVersion}}/managers?id={{managerId}}",
+					"host": [
+						"{{baseDomain}}"
+					],
+					"port": "{{servicePort}}",
+					"path": [
+						"{{baseSuffix}}",
+						"{{baseVersion}}",
+						"managers"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{managerId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servicePort",
+			"value": "3003",
+			"type": "string"
+		}
+	]
+}
