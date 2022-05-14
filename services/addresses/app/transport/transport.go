@@ -104,6 +104,18 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 		return
 	}
 
+	sort := query.Get("sort")
+	if sort == "" {
+		sort = app.DEFAULT_SORTING_STRATEGY
+	}
+
+	sortString, ok := app.SortingStrategies[sort]
+
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad sort param"})
+		return
+	}
+
 	if offset < 0 {
 		offset = 0
 	}
@@ -117,7 +129,7 @@ func (handlerRef *handler) getAddresses(ctx *gin.Context) {
 		return
 	}
 
-	addresses, err := handlerRef.GetAddresses(offset, limit)
+	addresses, err := handlerRef.GetAddresses(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

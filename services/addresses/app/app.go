@@ -1,7 +1,14 @@
 package app
 
+const DEFAULT_SORTING_STRATEGY = "address_asc"
+
+var SortingStrategies = map[string]string{
+	"address_desc": "ORDER BY address DESC",
+	"address_asc":  "ORDER BY address ASC",
+}
+
 type Service interface {
-	GetAddresses(offset int, limit int) ([]AddressEntity, error)
+	GetAddresses(offset int, limit int, sort string) ([]AddressEntity, error)
 	AddAddress(address PostAddressDto) (*AddressEntity, error)
 	UpdateAddress(address UpdateAddressDto) (*AddressEntity, error)
 	DeleteAddress(id int) (*AddressEntity, error)

@@ -1,7 +1,16 @@
 package app
 
+const DEFAULT_SORTING_STRATEGY = "vehicle_asc"
+
+var SortingStrategies = map[string]string{
+	"vehicle_desc": "ORDER BY vehicle DESC",
+	"vehicle_asc":  "ORDER BY vehicle ASC",
+	"tonnage_desc": "ORDER BY vehicle_tonnage DESC",
+	"tonnage_asc":  "ORDER BY vehicle_tonnage ASC",
+}
+
 type Service interface {
-	GetVehicles(offset int, limit int) ([]VehicleEntity, error)
+	GetVehicles(offset int, limit int, sort string) ([]VehicleEntity, error)
 	AddVehicle(vehicle PostVehicleDto) (*VehicleEntity, error)
 	UpdateVehicle(vehicle UpdateVehicleDto) (*VehicleEntity, error)
 	DeleteVehicle(id int) (*VehicleEntity, error)
@@ -12,7 +21,6 @@ type VehicleEntity struct {
 	Vehicle    string  `json:"vehicle"`
 	CarNumber  string  `json:"carNumber"`
 	Tonnage    float64 `json:"tonnage"`
-	AddressId  int     `json:"addressId"`
 	IsDisabled bool    `json:"isDisabled"`
 }
 
@@ -20,7 +28,6 @@ type PostVehicleDto struct {
 	Vehicle   string  `json:"vehicle" validate:"min=3,max=255,regexp=^[a-zA-Zа-яА-Я0-9 .:;]*$"`
 	CarNumber string  `json:"carNumber" validate:"min=3,max=31,regexp=^[a-zA-Zа-яА-Я0-9]*$"`
 	Tonnage   float64 `json:"tonnage" validate:"min=0,max=100,nonnil"`
-	AddressId float64 `json:"addressId" validate:"min=1"`
 }
 
 type UpdateVehicleDto struct {
@@ -28,6 +35,5 @@ type UpdateVehicleDto struct {
 	Vehicle    string  `json:"vehicle" validate:"min=3,max=255,regexp=^[a-zA-Zа-яА-Я0-9 .:;]*$"`
 	CarNumber  string  `json:"carNumber" validate:"min=3,max=31,regexp=^[a-zA-Zа-яА-Я0-9]*$"`
 	Tonnage    float64 `json:"tonnage" validate:"min=0,max=100,nonnil"`
-	AddressId  float64 `json:"addressId" validate:"min=1"`
 	IsDisabled bool    `json:"isDisabled" validate:"nonnil"`
 }

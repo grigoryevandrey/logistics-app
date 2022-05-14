@@ -116,7 +116,19 @@ func (handlerRef *handler) getVehicles(ctx *gin.Context) {
 		return
 	}
 
-	vehicles, err := handlerRef.GetVehicles(offset, limit)
+	sort := query.Get("sort")
+	if sort == "" {
+		sort = app.DEFAULT_SORTING_STRATEGY
+	}
+
+	sortString, ok := app.SortingStrategies[sort]
+
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad sort param"})
+		return
+	}
+
+	vehicles, err := handlerRef.GetVehicles(offset, limit, sortString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

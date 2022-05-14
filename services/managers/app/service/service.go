@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const ENTITY_FIELDS = "id, manager_last_name, manager_first_name, manager_patronymic, is_disabled"
+const ENTITY_FIELDS = "id, manager_login, manager_last_name, manager_first_name, manager_patronymic, is_disabled"
 
 type service struct {
 	db *sql.DB
@@ -36,6 +36,7 @@ func (s *service) GetManager(id string) (*app.ManagerEntity, error) {
 		id,
 	).Scan(
 		&result.Id,
+		&result.Login,
 		&result.LastName,
 		&result.FirstName,
 		&result.Patronymic,
@@ -52,12 +53,13 @@ func (s *service) GetManager(id string) (*app.ManagerEntity, error) {
 	}
 }
 
-func (s *service) GetManagers(offset int, limit int) ([]app.ManagerEntity, error) {
+func (s *service) GetManagers(offset int, limit int, sort string) ([]app.ManagerEntity, error) {
 	var result []app.ManagerEntity
 
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
+		"SELECT %s FROM %s %s OFFSET %d LIMIT %d", ENTITY_FIELDS,
 		globalConstants.MANAGERS_TABLE,
+		sort,
 		offset,
 		limit,
 	)
@@ -74,6 +76,7 @@ func (s *service) GetManagers(offset int, limit int) ([]app.ManagerEntity, error
 
 		if err := rows.Scan(
 			&managerEntity.Id,
+			&managerEntity.Login,
 			&managerEntity.LastName,
 			&managerEntity.FirstName,
 			&managerEntity.Patronymic,
@@ -113,6 +116,7 @@ func (s *service) AddManager(manager app.PostManagerDto) (*app.ManagerEntity, er
 		false,
 	).Scan(
 		&managerEntity.Id,
+		&managerEntity.Login,
 		&managerEntity.LastName,
 		&managerEntity.FirstName,
 		&managerEntity.Patronymic,
@@ -152,6 +156,7 @@ func (s *service) UpdateManager(manager app.UpdateManagerDto) (*app.ManagerEntit
 		manager.Id,
 	).Scan(
 		&managerEntity.Id,
+		&managerEntity.Login,
 		&managerEntity.LastName,
 		&managerEntity.FirstName,
 		&managerEntity.Patronymic,
@@ -180,6 +185,7 @@ func (s *service) DeleteManager(id int) (*app.ManagerEntity, error) {
 		id,
 	).Scan(
 		&managerEntity.Id,
+		&managerEntity.Login,
 		&managerEntity.LastName,
 		&managerEntity.FirstName,
 		&managerEntity.Patronymic,

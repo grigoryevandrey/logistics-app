@@ -17,10 +17,8 @@ CREATE TABLE vehicles
     vehicle             VARCHAR(255) NOT NULL,
     vehicle_car_number  VARCHAR(31) NOT NULL,
     vehicle_tonnage     REAL NOT NULL,
-    vehicle_address_id  BIGINT NOT NULL,
     is_disabled         BOOLEAN NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (vehicle_address_id) REFERENCES addresses (id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE drivers
@@ -29,10 +27,8 @@ CREATE TABLE drivers
     driver_last_name    VARCHAR(255) NOT NULL,
     driver_first_name   VARCHAR(255) NOT NULL,
     driver_patronymic   VARCHAR(255),
-    driver_address_id   BIGINT NOT NULL,
     is_disabled         BOOLEAN NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (driver_address_id) REFERENCES addresses (id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE admins
