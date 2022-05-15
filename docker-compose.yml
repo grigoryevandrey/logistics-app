@@ -3,7 +3,7 @@ services:
 
   addresses:
     container_name: addresses
-    image: bazel/services/addresses:docker
+    image: bazel/backend/services/addresses:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       ADDRESSES_PORT: '${ADDRESSES_PORT}'
@@ -16,7 +16,7 @@ services:
 
   admins:
     container_name: admins
-    image: bazel/services/admins:docker
+    image: bazel/backend/services/admins:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       ADMINS_PORT: '${ADMINS_PORT}'
@@ -29,7 +29,7 @@ services:
 
   auth:
     container_name: auth
-    image: bazel/services/auth:docker
+    image: bazel/backend/services/auth:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       AUTH_PORT: '${AUTH_PORT}'
@@ -42,7 +42,7 @@ services:
 
   deliveries:
     container_name: deliveries
-    image: bazel/services/deliveries:docker
+    image: bazel/backend/services/deliveries:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       DELIVERIES_PORT: '${DELIVERIES_PORT}'
@@ -55,7 +55,7 @@ services:
 
   drivers:
     container_name: drivers
-    image: bazel/services/drivers:docker
+    image: bazel/backend/services/drivers:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       DRIVERS_PORT: '${DRIVERS_PORT}'
@@ -68,7 +68,7 @@ services:
 
   managers:
     container_name: managers
-    image: bazel/services/managers:docker
+    image: bazel/backend/services/managers:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       MANAGERS_PORT: '${MANAGERS_PORT}'
@@ -81,7 +81,7 @@ services:
 
   vehicles:
     container_name: vehicles
-    image: bazel/services/vehicles:docker
+    image: bazel/backend/services/vehicles:docker
     environment:
       PG_CONNECTION_STRING: '${PG_CONNECTION_STRING}'
       VEHICLES_PORT: '${VEHICLES_PORT}'
@@ -104,8 +104,8 @@ services:
     ports:
     - "${PG_PORT}:${PG_PORT}"
     volumes:
-    - '${PWD}/database:/database'
-    - '${PWD}/database/postgres:/var/lib/postgresql/data'
+    - '${PWD}/backend/database:/database'
+    - '${PWD}/backend/database/postgres:/var/lib/postgresql/data'
     networks:
     - mainnet
 
