@@ -1,8 +1,0 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-
-go_library(
-    name = "app",
-    srcs = ["app.go"],
-    importpath = "github.com/grigoryevandrey/logistics-app/services/auth/app",
-    visibility = ["//visibility:public"],
-)

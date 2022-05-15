@@ -4,6 +4,7 @@
 
 # Ignore all bazel-* symlinks. There is no full list since this can change
 # based on the name of the directory bazel is cloned into.
+/backend/bazel-*
 /bazel-*
 
 # Directories for the Bazel IntelliJ plugin containing the generated
@@ -49,7 +50,7 @@ go.work
 .env.staging
 
 # postgres data volume used by postgres server container for testing purpose
-database/postgres
+backend/database/postgres
 
 # Env
 .env.local
