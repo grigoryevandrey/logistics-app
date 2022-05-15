@@ -9,7 +9,7 @@
     "dev:electron": "cross-env NODE_ENV=development webpack --config frontend/webpack/electron.webpack.ts --mode=development && npm run start:electron",
     "dev:react": "cross-env NODE_ENV=development webpack serve --config frontend/webpack/react.webpack.ts --mode=development",
     "electron:serve": "wait-on http-get://localhost:4000/ && npm run dev:electron",
-    "start:electron": "electron .",
+    "start:electron": "electron ./frontend",
     "build": "npm-run-all build:electron build:react",
     "build:run": "npm-run-all build start:electron",
     "build:electron": "webpack --config frontend/webpack/electron.webpack.ts --mode=production",
@@ -61,7 +61,7 @@
     },
     "files": [
       "package.json",
-      "dist/**"
+      "./frontend/dist/**"
     ]
   },
   "engines": {
