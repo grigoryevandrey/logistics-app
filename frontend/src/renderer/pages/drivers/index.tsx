@@ -3,7 +3,7 @@ import { Dashboard } from '../../layouts';
 
 interface DriversPageProps {}
 
-export class DriversPage extends Component {
+export class DriversPage extends Component<DriversPageProps> {
   constructor(props: DriversPageProps) {
     super(props);
   }

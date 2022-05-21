@@ -1,5 +1,7 @@
 import { Box, Divider } from '@mui/material';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { AUTH_PATH } from '../../configuration';
 
 export class TopBar extends Component {
   public override render() {
@@ -12,6 +14,7 @@ export class TopBar extends Component {
           }}
         >
           TopBar
+          <Link to={AUTH_PATH}> Выход </Link>
         </Box>
         <Divider />
       </>

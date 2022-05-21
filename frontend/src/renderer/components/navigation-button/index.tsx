@@ -1,4 +1,4 @@
-import { Box, Divider } from '@mui/material';
+import { MenuItem } from '@mui/material';
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,14 +15,16 @@ export class NavigationButton extends Component<NavigationButtonProps> {
   public override render() {
     return (
       <Fragment key={this.props.label}>
-        <Box
+        <MenuItem
+          to={this.props.path}
+          component={Link}
           sx={{
+            fontSize: '2rem',
             padding: '2rem',
           }}
         >
-          <Link to={this.props.path}> {this.props.label}</Link>
-        </Box>
-        <Divider />
+          {this.props.label}
+        </MenuItem>
       </Fragment>
     );
   }

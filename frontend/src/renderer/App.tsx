@@ -1,9 +1,17 @@
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import theme from './theme';
-import { AddressesPage, DeliveriesPage, DriversPage, VehiclesPage } from './pages';
+import { AddressesPage, AdminsPage, AuthPage, DeliveriesPage, DriversPage, ManagersPage, VehiclesPage } from './pages';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ADDRESSES_PATH, DELIVERIES_PATH, DRIVERS_PATH, VEHICLES_PATH } from './configuration';
+import {
+  ADDRESSES_PATH,
+  ADMINS_PATH,
+  AUTH_PATH,
+  DELIVERIES_PATH,
+  DRIVERS_PATH,
+  MANAGERS_PATH,
+  VEHICLES_PATH,
+} from './configuration';
 
 export default function App(): JSX.Element {
   return (
@@ -24,7 +32,12 @@ export default function App(): JSX.Element {
             <Route path={DELIVERIES_PATH} element={<DeliveriesPage />} />
             <Route path={DRIVERS_PATH} element={<DriversPage />} />
 
-            <Route path="*" element={<DriversPage />} />
+            <Route path={MANAGERS_PATH} element={<ManagersPage />} />
+            <Route path={ADMINS_PATH} element={<AdminsPage />} />
+
+            <Route path={AUTH_PATH} element={<AuthPage />} />
+
+            <Route path="*" element={<DeliveriesPage />} />
           </Routes>
         </Router>
       </Box>

@@ -3,7 +3,7 @@ import { Dashboard } from '../../layouts';
 
 interface DeliveriesPageProps {}
 
-export class DeliveriesPage extends Component {
+export class DeliveriesPage extends Component<DeliveriesPageProps> {
   constructor(props: DeliveriesPageProps) {
     super(props);
   }

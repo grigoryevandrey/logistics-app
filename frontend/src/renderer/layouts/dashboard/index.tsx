@@ -1,6 +1,13 @@
 import { Box } from '@mui/material';
 import React, { Component } from 'react';
-import { ADDRESSES_PATH, DELIVERIES_PATH, DRIVERS_PATH, VEHICLES_PATH } from '../../configuration';
+import {
+  ADDRESSES_PATH,
+  ADMINS_PATH,
+  DELIVERIES_PATH,
+  DRIVERS_PATH,
+  MANAGERS_PATH,
+  VEHICLES_PATH,
+} from '../../configuration';
 import { AsideNav, MainContent, TopBar, NavigationButton } from '../../components';
 
 interface DashboardProps {
@@ -8,11 +15,15 @@ interface DashboardProps {
 }
 
 const managerButtons = [
-  <NavigationButton label="Deliveries" path={DELIVERIES_PATH} />,
-  <NavigationButton label="Addresses" path={ADDRESSES_PATH} />,
-  <NavigationButton label="Vehicles" path={VEHICLES_PATH} />,
-  <NavigationButton label="Drivers" path={DRIVERS_PATH} />,
+  <NavigationButton label="Заказы" path={DELIVERIES_PATH} />,
+  <NavigationButton label="Адреса" path={ADDRESSES_PATH} />,
+  <NavigationButton label="Транспорт" path={VEHICLES_PATH} />,
+  <NavigationButton label="Водители" path={DRIVERS_PATH} />,
 ];
+
+const regularAdminButtons = [...managerButtons, <NavigationButton label="Менеджеры" path={MANAGERS_PATH} />];
+
+const superAdminButtons = [...regularAdminButtons, <NavigationButton label="Администраторы" path={ADMINS_PATH} />];
 
 export class Dashboard extends Component<DashboardProps> {
   constructor(props: DashboardProps) {
@@ -37,7 +48,7 @@ export class Dashboard extends Component<DashboardProps> {
             display: 'flex',
           }}
         >
-          <AsideNav buttons={managerButtons} />
+          <AsideNav buttons={superAdminButtons} />
           <MainContent content={this.props.content} />
         </Box>
       </Box>

@@ -3,7 +3,7 @@ import { Dashboard } from '../../layouts';
 
 interface VehiclesPageProps {}
 
-export class VehiclesPage extends Component {
+export class VehiclesPage extends Component<VehiclesPageProps> {
   constructor(props: VehiclesPageProps) {
     super(props);
   }
