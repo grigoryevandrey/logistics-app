@@ -1,8 +1,10 @@
 import { Box, Divider } from '@mui/material';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 interface NavigationButtonProps {
   label: string;
+  path: string;
 }
 
 export class NavigationButton extends Component<NavigationButtonProps> {
@@ -12,16 +14,16 @@ export class NavigationButton extends Component<NavigationButtonProps> {
 
   public override render() {
     return (
-      <>
+      <Fragment key={this.props.label}>
         <Box
           sx={{
             padding: '2rem',
           }}
         >
-          {this.props.label}
+          <Link to={this.props.path}> {this.props.label}</Link>
         </Box>
         <Divider />
-      </>
+      </Fragment>
     );
   }
 }

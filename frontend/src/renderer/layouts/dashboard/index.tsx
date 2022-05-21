@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import React, { Component } from 'react';
+import { ADDRESSES_PATH, DELIVERIES_PATH, DRIVERS_PATH, VEHICLES_PATH } from '../../configuration';
 import { AsideNav, MainContent, TopBar, NavigationButton } from '../../components';
 
 interface DashboardProps {
@@ -7,10 +8,10 @@ interface DashboardProps {
 }
 
 const managerButtons = [
-  <NavigationButton label="deliveries" />,
-  <NavigationButton label="addresses" />,
-  <NavigationButton label="vehicles" />,
-  <NavigationButton label="drivers" />,
+  <NavigationButton label="Deliveries" path={DELIVERIES_PATH} />,
+  <NavigationButton label="Addresses" path={ADDRESSES_PATH} />,
+  <NavigationButton label="Vehicles" path={VEHICLES_PATH} />,
+  <NavigationButton label="Drivers" path={DRIVERS_PATH} />,
 ];
 
 export class Dashboard extends Component<DashboardProps> {

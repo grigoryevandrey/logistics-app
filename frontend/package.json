@@ -4,6 +4,7 @@
   "private": true,
   "description": "MVP of the logistics app.",
   "main": "./dist/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "npm-run-all -p dev:react electron:serve",
     "dev:electron": "cross-env NODE_ENV=development webpack --config webpack/electron.webpack.ts --mode=development && npm run start:electron",
@@ -26,9 +27,11 @@
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.7.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "nanoid": "^3.3.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-redux": "^8.0.1"
+    "react-redux": "^8.0.1",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.33",

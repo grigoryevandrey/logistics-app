@@ -10,7 +10,6 @@
     "jsx": "react",
     "sourceMap": true,
     "outDir": "./dist",
-    "declarationDir": "./types",
     "baseUrl": ".",
     "strict": true,
     "esModuleInterop": true,

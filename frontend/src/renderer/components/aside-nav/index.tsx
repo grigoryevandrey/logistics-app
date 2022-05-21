@@ -1,5 +1,6 @@
 import { Box, Divider } from '@mui/material';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { nanoid } from 'nanoid';
 
 interface AsideNavProps {
   buttons: any[];
@@ -20,7 +21,7 @@ export class AsideNav extends Component<AsideNavProps> {
           }}
         >
           {this.props.buttons.map((button) => {
-            return <>{button}</>;
+            return <Fragment key={nanoid()}>{button}</Fragment>;
           })}
           <Divider orientation="vertical" sx={{ position: 'absolute', right: '0', top: '0' }} />
         </Box>
