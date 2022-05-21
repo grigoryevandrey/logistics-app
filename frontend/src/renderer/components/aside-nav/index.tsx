@@ -13,19 +13,17 @@ export class AsideNav extends Component<AsideNavProps> {
 
   public override render() {
     return (
-      <>
-        <Box
-          sx={{
-            width: '25%',
-            position: 'relative',
-          }}
-        >
-          {this.props.buttons.map((button) => {
-            return <Fragment key={nanoid()}>{button}</Fragment>;
-          })}
-          <Divider orientation="vertical" sx={{ position: 'absolute', right: '0', top: '0' }} />
-        </Box>
-      </>
+      <Box
+        sx={{
+          width: '25%',
+          position: 'relative',
+        }}
+      >
+        {this.props.buttons.map((button) => {
+          return <Fragment key={nanoid()}>{button}</Fragment>;
+        })}
+        <Divider orientation="vertical" sx={{ position: 'absolute', right: '0', top: '0' }} />
+      </Box>
     );
   }
 }
