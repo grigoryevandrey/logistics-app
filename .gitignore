@@ -48,12 +48,11 @@ go.work
 .env
 .env.production
 .env.staging
+.env.local
+.env.docker.local
 
 # postgres data volume used by postgres server container for testing purpose
 backend/database/postgres
-
-# Env
-.env.local
 
 # Folder for ignored stuff
 /dump

@@ -1,23 +1,21 @@
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
-import theme from '../theme';
-import Greetings from './Greetings';
+import theme from './theme';
+import { AddressesPage } from './pages';
 
 export default function App(): JSX.Element {
   return (
-    // Setup theme and css baseline for the Material-UI app
-    // https://mui.com/customization/theming/
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box
         sx={{
           backgroundColor: (theme) => theme.palette.background.default,
+          display: 'flex',
+          flexFlow: 'column',
+          height: '100%',
         }}
       >
-        <main>
-          {/* This is where your app content should go */}
-          <Greetings />
-        </main>
+        <AddressesPage />
       </Box>
     </ThemeProvider>
   );

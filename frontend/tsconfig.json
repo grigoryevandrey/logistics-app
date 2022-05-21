@@ -1,5 +1,5 @@
 {
-  "exclude": ["bazel-bin", "bazel-logistics-app", "bazel-out", "bazel-testlogs", "backend", "node_modules", "dist"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -9,9 +9,9 @@
     "allowJs": true,
     "jsx": "react",
     "sourceMap": true,
-    "outDir": "./frontend/dist",
-    "declarationDir": "./frontend/types",
-    "baseUrl": "./frontend",
+    "outDir": "./dist",
+    "declarationDir": "./types",
+    "baseUrl": ".",
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
