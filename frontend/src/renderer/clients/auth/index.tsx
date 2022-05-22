@@ -1,7 +1,7 @@
 import { LoginStrategy } from '../../enums';
 import { HealthResponse, LoginCredentials, Tokens } from '../../dto';
 
-export class AddressesClient {
+export class AuthClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',

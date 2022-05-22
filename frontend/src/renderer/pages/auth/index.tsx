@@ -1,7 +1,5 @@
-import { Box } from '@mui/material';
 import React, { Component } from 'react';
-import { DELIVERIES_PATH } from '../../configuration';
-import { Link } from 'react-router-dom';
+import { AuthLayout } from '../../layouts';
 
 interface AuthPageProps {}
 
@@ -11,10 +9,6 @@ export class AuthPage extends Component<AuthPageProps> {
   }
 
   public override render() {
-    return (
-      <Box>
-        <Link to={DELIVERIES_PATH}> Вход </Link>
-      </Box>
-    );
+    return <AuthLayout />;
   }
 }
