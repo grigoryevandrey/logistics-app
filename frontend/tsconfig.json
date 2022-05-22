@@ -22,6 +22,7 @@
     "alwaysStrict": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
+    "strictPropertyInitialization": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictFunctionTypes": true,
