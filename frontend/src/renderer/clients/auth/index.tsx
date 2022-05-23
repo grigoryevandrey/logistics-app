@@ -28,3 +28,5 @@ export class AuthClient {
 
   public async logout(): Promise<void> {}
 }
+
+export default new AuthClient();
