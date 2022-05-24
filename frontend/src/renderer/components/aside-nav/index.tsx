@@ -19,9 +19,11 @@ export class AsideNav extends Component<AsideNavProps> {
           position: 'relative',
         }}
       >
-        {this.props.buttons.map((button) => {
-          return <Fragment key={nanoid()}>{button}</Fragment>;
-        })}
+        <Box>
+          {this.props.buttons.map((button) => {
+            return <Fragment key={nanoid()}>{button}</Fragment>;
+          })}
+        </Box>
         <Divider orientation="vertical" sx={{ position: 'absolute', right: '0', top: '0' }} />
       </Box>
     );

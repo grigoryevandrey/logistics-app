@@ -9,8 +9,11 @@ import {
   VEHICLES_PATH,
 } from '../../configuration';
 import { AsideNav, MainContent, TopBar, NavigationButton } from '../../components';
+import { UserRole } from '../../enums';
+import { RootState } from '../../store';
+import { connect, ConnectedProps } from 'react-redux';
 
-interface DashboardProps {
+interface DashboardProps extends PropsFromRedux {
   content: any;
 }
 
@@ -25,7 +28,14 @@ const regularAdminButtons = [...managerButtons, <NavigationButton label="Мен�
 
 const superAdminButtons = [...regularAdminButtons, <NavigationButton label="Администраторы" path={ADMINS_PATH} />];
 
-export class Dashboard extends Component<DashboardProps> {
+const navigationButtons = Object.freeze({
+  [UserRole.none]: [],
+  [UserRole.manager]: managerButtons,
+  [UserRole.regular]: regularAdminButtons,
+  [UserRole.super]: superAdminButtons,
+});
+
+export class DashboardLayout extends Component<DashboardProps> {
   constructor(props: DashboardProps) {
     super(props);
   }
@@ -48,10 +58,22 @@ export class Dashboard extends Component<DashboardProps> {
             display: 'flex',
           }}
         >
-          <AsideNav buttons={superAdminButtons} />
+          <AsideNav buttons={navigationButtons[this.props.role]} />
           <MainContent content={this.props.content} />
         </Box>
       </Box>
     );
   }
 }
+
+const mapStateToProps = (state: RootState) => {
+  const { role } = state.global.user;
+
+  return { role };
+};
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const Dashboard = connector(DashboardLayout);
