@@ -36,6 +36,7 @@ func Handler(service app.Service) *gin.Engine {
 			driversGroup := v1.Group("drivers")
 			driversGroup.Use(auth.AuthMiddleware())
 			{
+				driversGroup.GET("/:id", injectedHandler.getDriver)
 				driversGroup.GET("/", injectedHandler.getDrivers)
 				driversGroup.POST("/", injectedHandler.addDriver)
 				driversGroup.PUT("/", injectedHandler.updateDriver)
@@ -90,6 +91,32 @@ func (handlerRef *handler) addDriver(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func (handlerRef *handler) getDriver(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad id param"})
+		return
+	}
+
+	driver, err := handlerRef.GetDriver(id)
+
+	if err != nil {
+		log.Println(err)
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find driver with id: %s", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, driver)
 }
 
 func (handlerRef *handler) getDrivers(ctx *gin.Context) {

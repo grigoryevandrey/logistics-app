@@ -17,6 +17,35 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
+func (s *service) GetAddress(id string) (*app.AddressEntity, error) {
+	var result app.AddressEntity
+
+	query := fmt.Sprintf(
+		"SELECT id, address, latitude, longitude, is_disabled FROM %s WHERE id = $1",
+		globalConstants.ADDRESSES_TABLE,
+	)
+
+	err := s.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&result.Id,
+		&result.Address,
+		&result.Latitude,
+		&result.Longitude,
+		&result.IsDisabled,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errors.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &result, nil
+	}
+}
+
 func (s *service) GetAddresses(offset int, limit int, sort string) ([]app.AddressEntity, *int, error) {
 	var result []app.AddressEntity
 	var totalRows int

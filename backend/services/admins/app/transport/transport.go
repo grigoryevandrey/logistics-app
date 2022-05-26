@@ -38,6 +38,7 @@ func Handler(service app.Service) *gin.Engine {
 			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
 			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.ADMIN_ROLE_REGULAR))
 			{
+				adminsGroup.GET("/:id", injectedHandler.getAdmin)
 				adminsGroup.GET("/", injectedHandler.getAdmins)
 				adminsGroup.POST("/", injectedHandler.addAdmin)
 				adminsGroup.PUT("/", injectedHandler.updateAdmin)
@@ -91,6 +92,32 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func (handlerRef *handler) getAdmin(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad id param"})
+		return
+	}
+
+	admin, err := handlerRef.GetAdmin(id)
+
+	if err != nil {
+		log.Println(err)
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find admin with id: %s", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, admin)
 }
 
 func (handlerRef *handler) getAdmins(ctx *gin.Context) {

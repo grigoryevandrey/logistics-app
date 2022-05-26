@@ -17,9 +17,12 @@ import (
 const ACCESS_TOKEN_TTL = 15
 
 type CustomerInfo struct {
-	Name      string
-	Role      string
-	TokenType string
+	Login      string
+	FirstName  string
+	LastName   string
+	Patronymic string
+	Role       string
+	TokenType  string
 }
 
 type CustomClaims struct {
@@ -38,16 +41,19 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 	var tokens app.Tokens
 	var passwordHash string
 	var role string
+	var firstName string
+	var lastName string
+	var patronymic string
 
 	var err error
 
 	switch strategy {
 	case constants.ADMIN_STRATEGY:
-		query := "SELECT admin_password, admin_role FROM admins WHERE admin_login = $1"
-		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash, &role)
+		query := "SELECT admin_password, admin_role, admin_first_name, admin_last_name, admin_patronymic FROM admins WHERE admin_login = $1"
+		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash, &role, &firstName, &lastName, &patronymic)
 	case constants.MANAGER_STRATEGY:
-		query := "SELECT manager_password FROM managers WHERE manager_login = $1"
-		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash)
+		query := "SELECT manager_password, manager_first_name, manager_last_name, manager_patronymic FROM managers WHERE manager_login = $1"
+		err = s.db.QueryRow(query, creds.Login).Scan(&passwordHash, &firstName, &lastName, &patronymic)
 		role = globalConstants.MANAGER_ROLE
 	default:
 		log.Fatalln("Unknown strategy")
@@ -67,12 +73,12 @@ func (s *service) Login(creds app.LoginCredentials, strategy string) (*app.Token
 		return nil, errors.Error401
 	}
 
-	accessToken, err := createAccessToken(creds.Login, role)
+	accessToken, err := createAccessToken(creds.Login, role, firstName, lastName, patronymic)
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, err := createRefreshToken(creds.Login, role)
+	refreshToken, err := createRefreshToken(creds.Login, role, firstName, lastName, patronymic)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +110,7 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 
 	refreshKeySecret := viper.GetString("REFRESH_TOKEN_SECRET")
 
-	token, err := jwt.ParseWithClaims(refreshToken, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+	_, err := jwt.ParseWithClaims(refreshToken, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(refreshKeySecret), nil
 	})
 
@@ -112,18 +118,21 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 		return nil, errors.Error401
 	}
 
-	login := token.Claims.(*CustomClaims).CustomerInfo.Name
-	role := token.Claims.(*CustomClaims).CustomerInfo.Role
-
-	var testVar string
+	var login string
+	var role string
+	var firstName string
+	var lastName string
+	var patronymic string
 
 	switch strategy {
 	case constants.ADMIN_STRATEGY:
-		query := "SELECT admin_login FROM admins WHERE admin_login = $1 AND admin_role = $2 AND refresh_token = $3"
-		err = s.db.QueryRow(query, login, role, refreshToken).Scan(&testVar)
+		query := "SELECT admin_login, admin_role, admin_first_name, admin_last_name, admin_patronymic FROM admins WHERE refresh_token = $1"
+		err = s.db.QueryRow(query, refreshToken).Scan(&login, &role, &firstName, &lastName, &patronymic)
 	case constants.MANAGER_STRATEGY:
-		query := "SELECT manager_login FROM managers WHERE manager_login = $1 AND refresh_token = $2"
-		err = s.db.QueryRow(query, login, refreshToken).Scan(&testVar)
+		query := "SELECT manager_login, manager_first_name, manager_last_name, manager_patronymic FROM managers WHERE refresh_token = $1"
+		err = s.db.QueryRow(query, refreshToken).Scan(&login, &firstName, &lastName, &patronymic)
+
+		role = globalConstants.MANAGER_ROLE
 	default:
 		log.Fatalln("Unknown strategy")
 	}
@@ -140,12 +149,12 @@ func (s *service) Refresh(refreshToken string, strategy string) (*app.Tokens, er
 		return nil, errors.Error401
 	}
 
-	accessToken, err := createAccessToken(login, role)
+	accessToken, err := createAccessToken(login, role, firstName, lastName, patronymic)
 	if err != nil {
 		return nil, err
 	}
 
-	newRefreshToken, err := createRefreshToken(login, role)
+	newRefreshToken, err := createRefreshToken(login, role, firstName, lastName, patronymic)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +204,7 @@ func (s *service) Logout(refreshToken string, strategy string) error {
 	return err
 }
 
-func createRefreshToken(user string, role string) (string, error) {
+func createRefreshToken(login string, role string, firstName string, lastName string, patronymic string) (string, error) {
 	signString := viper.GetString("REFRESH_TOKEN_SECRET")
 
 	if signString == "" {
@@ -208,13 +217,13 @@ func createRefreshToken(user string, role string) (string, error) {
 		&jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 		},
-		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_REFRESH},
+		CustomerInfo{Login: login, FirstName: firstName, LastName: lastName, Patronymic: patronymic, Role: role, TokenType: globalConstants.TOKEN_TYPE_REFRESH},
 	}
 
 	return token.SignedString([]byte(signString))
 }
 
-func createAccessToken(user string, role string) (string, error) {
+func createAccessToken(login string, role string, firstName string, lastName string, patronymic string) (string, error) {
 	signString := viper.GetString("ACCESS_TOKEN_SECRET")
 
 	if signString == "" {
@@ -227,7 +236,7 @@ func createAccessToken(user string, role string) (string, error) {
 		&jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * ACCESS_TOKEN_TTL).Unix(),
 		},
-		CustomerInfo{user, role, globalConstants.TOKEN_TYPE_ACCESS},
+		CustomerInfo{Login: login, FirstName: firstName, LastName: lastName, Patronymic: patronymic, Role: role, TokenType: globalConstants.TOKEN_TYPE_ACCESS},
 	}
 
 	return token.SignedString([]byte(signString))
