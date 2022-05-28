@@ -1,8 +1,8 @@
 import AuthClient from './auth';
+import AddressesClient from './addresses';
 
-export { AuthClient };
+export { AuthClient, AddressesClient };
 
-export * from './addresses';
 export * from './admins';
 export * from './deliveries';
 export * from './drivers';

@@ -15,6 +15,7 @@ export class MainContent extends Component<MainContentProps> {
       <Box
         sx={{
           width: '75%',
+          padding: '2rem',
         }}
       >
         {this.props.content}

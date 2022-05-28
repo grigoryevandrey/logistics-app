@@ -7,7 +7,7 @@ import {
   UpdateAddressEntity,
 } from '../../dto';
 
-export class AddressesClient {
+class AddressesClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',
@@ -71,3 +71,5 @@ export class AddressesClient {
     };
   }
 }
+
+export default new AddressesClient();

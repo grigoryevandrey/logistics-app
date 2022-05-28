@@ -32,15 +32,15 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        html: {
-          fontSize: '62.5%',
-        },
+        // html: {
+        //   fontSize: '62.5%',
+        // },
         body: {
           margin: 0,
           padding: 0,
           boxSizing: 'border-box',
           height: '100%',
-          fontSize: '1.6rem',
+          // fontSize: '1.6rem',
         },
       },
     },

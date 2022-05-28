@@ -19,8 +19,8 @@ export class NavigationButton extends Component<NavigationButtonProps> {
           to={this.props.path}
           component={Link}
           sx={{
-            fontSize: '2rem',
             padding: '2rem',
+            fontSize: '1.2rem',
           }}
         >
           {this.props.label}

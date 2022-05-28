@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { globalReducer, loginFormReducer } from './reducers';
+import { globalReducer, loginFormReducer, addressesReducer } from './reducers';
 
 export const store = configureStore({
   reducer: {
     loginForm: loginFormReducer,
     global: globalReducer,
+    addresses: addressesReducer,
   },
 });
 

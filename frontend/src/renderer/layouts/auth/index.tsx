@@ -71,8 +71,8 @@ class Auth extends Component<AuthLayoutProps> {
       >
         <Card
           sx={{
-            height: '60rem',
-            width: '50rem',
+            height: '40rem',
+            width: '30rem',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -81,8 +81,8 @@ class Auth extends Component<AuthLayoutProps> {
         >
           <Box
             sx={{
-              height: '40rem',
-              width: '50rem',
+              height: '25rem',
+              width: '30rem',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -92,15 +92,9 @@ class Auth extends Component<AuthLayoutProps> {
             <TextField
               label="Логин"
               variant="standard"
-              InputLabelProps={{
-                sx: {
-                  fontSize: '2rem',
-                },
-              }}
               InputProps={{
                 sx: {
-                  width: '30rem',
-                  fontSize: '2rem',
+                  width: '20rem',
                 },
               }}
               value={this.props.login.data}
@@ -112,15 +106,9 @@ class Auth extends Component<AuthLayoutProps> {
             <TextField
               label="Пароль"
               variant="standard"
-              InputLabelProps={{
-                sx: {
-                  fontSize: '2rem',
-                },
-              }}
               InputProps={{
                 sx: {
-                  width: '30rem',
-                  fontSize: '2rem',
+                  width: '20rem',
                 },
               }}
               value={this.props.password.data}
@@ -133,8 +121,7 @@ class Auth extends Component<AuthLayoutProps> {
               <ToggleButton
                 value={LoginStrategy.manager}
                 sx={{
-                  width: '15rem',
-                  fontSize: '1.5rem',
+                  width: '10rem',
                 }}
                 onClick={() => this.props.setRoleData(LoginStrategy.manager)}
               >
@@ -143,8 +130,7 @@ class Auth extends Component<AuthLayoutProps> {
               <ToggleButton
                 value={LoginStrategy.admin}
                 sx={{
-                  width: '15rem',
-                  fontSize: '1.5rem',
+                  width: '10rem',
                 }}
                 onClick={() => this.props.setRoleData(LoginStrategy.admin)}
               >
@@ -153,8 +139,7 @@ class Auth extends Component<AuthLayoutProps> {
             </ToggleButtonGroup>
             <Button
               sx={{
-                width: '30rem',
-                fontSize: '2rem',
+                width: '20rem',
               }}
               variant="contained"
               onClick={() => this.authenticate()}
