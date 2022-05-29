@@ -10,6 +10,7 @@ import (
 	globalConstants "github.com/grigoryevandrey/logistics-app/backend/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/auth"
+	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/cors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/restrictions"
 	"github.com/grigoryevandrey/logistics-app/backend/services/addresses/app"
@@ -25,6 +26,7 @@ func Handler(service app.Service) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(jsonmw.JSONMiddleware())
+	router.Use(cors.CORSMiddleware())
 
 	injectedHandler := &handler{service}
 

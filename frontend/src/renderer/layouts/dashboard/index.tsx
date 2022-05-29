@@ -8,10 +8,11 @@ import {
   MANAGERS_PATH,
   VEHICLES_PATH,
 } from '../../configuration';
-import { AsideNav, MainContent, TopBar, NavigationButton } from '../../components';
+import { AsideNav, MainContent, NavigationButton } from '../../components';
 import { UserRole } from '../../enums';
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
+import { TopBar } from '../top-bar';
 
 interface DashboardProps extends PropsFromRedux {
   content: any;

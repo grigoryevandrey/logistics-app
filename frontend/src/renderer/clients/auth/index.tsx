@@ -1,32 +1,94 @@
-import { LoginStrategy } from '../../enums';
-import { HealthResponse, LoginCredentials, Tokens } from '../../dto';
+import axios from 'axios';
+import { LoginStrategy, UserRole } from '../../enums';
+import { HealthResponse, LoginCredentials } from '../../dto';
+import { setCredentials, deleteCredentials, setUser, resetUser } from '../../reducers';
+import { store } from '../../store';
+import jwt from 'jwt-decode';
 
+const BASE_URL = 'http://0.0.0.0:3006/api/v1/auth';
 export class AuthClient {
+  private readonly client = axios.create({
+    baseURL: BASE_URL,
+  });
+
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',
     };
   }
 
-  public async login(_credentials: LoginCredentials, _strategy: LoginStrategy): Promise<Tokens> {
-    return {
-      accessToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTMyMDIzMzksIk5hbWUiOiJ0ZXN0IiwiUm9sZSI6InN1cGVyIiwiVG9rZW5UeXBlIjoiYWNjZXNzIn0.7VyVUU3mzITfrCo-dBe8qDn7o8v1FA2tE7SRLUxZqGM',
-      refreshToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2NTMyMDE0MzksIk5hbWUiOiJ0ZXN0IiwiUm9sZSI6InN1cGVyIiwiVG9rZW5UeXBlIjoicmVmcmVzaCJ9.1KI-x5CaN5UIRcMwXCTU7glJEdjS-4g02a4jrog1Ljw',
-    };
+  public async login(credentials: LoginCredentials, strategy: LoginStrategy): Promise<void> {
+    const { data } = await this.client.post('/login', credentials, { params: { strategy } });
+
+    store.dispatch(setCredentials(data));
+
+    const user = jwt(data.accessToken) as any;
+    store.dispatch(
+      setUser({
+        login: user.Name,
+        role: user.Role,
+        firstName: user.FirstName,
+        lastName: user.LastName,
+        patronymic: user.Patronymic,
+      }),
+    );
   }
 
-  public async refreshToken(): Promise<Tokens> {
-    return {
-      accessToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTMyMDMzODUsIk5hbWUiOiJ0ZXN0IiwiUm9sZSI6InN1cGVyIiwiVG9rZW5UeXBlIjoiYWNjZXNzIn0.LqOYRLhn2lby4k_iguvPrpCKGHtc6IpcuyfGJFyma08',
-      refreshToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2NTMyMDI0ODUsIk5hbWUiOiJ0ZXN0IiwiUm9sZSI6InN1cGVyIiwiVG9rZW5UeXBlIjoicmVmcmVzaCJ9.IHWme8tLCAh7-A5ss0ZejtDoYKau_rMOjzAC1JcOCpU',
-    };
+  private getStrategyByRole(role: UserRole): LoginStrategy {
+    switch (role) {
+      case UserRole.manager: {
+        return LoginStrategy.manager;
+      }
+      case UserRole.regular:
+      case UserRole.super: {
+        return LoginStrategy.admin;
+      }
+      default: {
+        throw new Error(`Can not find login strategy for role ${role}`);
+      }
+    }
   }
 
-  public async logout(): Promise<void> {}
+  public async refreshToken(): Promise<void> {
+    const state = store.getState();
+
+    const role = state.global.user.role;
+
+    const strategy = this.getStrategyByRole(role);
+    const refreshToken = state.global.credentials.refreshToken;
+
+    const { data } = await this.client.put('/refresh', null, {
+      params: { strategy },
+      headers: { Authorization: refreshToken },
+    });
+
+    store.dispatch(setCredentials(data));
+
+    const user = jwt(data.accessToken) as any;
+    store.dispatch(
+      setUser({
+        login: user.Name,
+        role: user.Role,
+        firstName: user.FirstName,
+        lastName: user.LastName,
+        patronymic: user.Patronymic,
+      }),
+    );
+  }
+
+  public async logout(): Promise<void> {
+    const state = store.getState();
+
+    const role = state.global.user.role;
+
+    const strategy = this.getStrategyByRole(role);
+    const credentials = state.global.credentials;
+
+    await this.client.delete('/logout', { params: { strategy }, data: credentials });
+
+    store.dispatch(deleteCredentials());
+    store.dispatch(resetUser());
+  }
 }
 
 export default new AuthClient();

@@ -7,22 +7,31 @@ import {
   setAddressesOffset,
   setAddressesLimit,
   setAddressesSort,
+  setRedirectToId,
+  startCreatingNewElement,
 } from '../../reducers';
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
 import { Box } from '@mui/system';
 import { RepresentationalTable } from '../../components';
+import { AddressesSort } from '../../enums';
+import { SingleAddressPage } from './single';
+import { Button } from '@mui/material';
 
 interface AddressesPageProps extends PropsFromRedux {}
 
 const addressesTableHeaders = [
-  { label: 'Адрес', key: 'address' },
-  { label: 'ID', key: 'id' },
-  // { label: 'Широта', key: 'latitude' },
-  // { label: 'Долгота', key: 'longitude' },
+  {
+    label: 'Адрес',
+    key: 'address',
+    isSortable: true,
+    ascSortString: AddressesSort.address_asc,
+    descSortString: AddressesSort.address_desc,
+  },
+  { label: 'ID', key: 'id', isSortable: false },
 ];
 
-export class Addresses extends Component<AddressesPageProps> {
+class Addresses extends Component<AddressesPageProps> {
   constructor(props: AddressesPageProps) {
     super(props);
   }
@@ -43,7 +52,13 @@ export class Addresses extends Component<AddressesPageProps> {
     await this.props.setAddressesData(data);
   }
 
+  private async openAddress(id: number): Promise<void> {
+    await this.props.setRedirectToId(id);
+  }
+
   private get component(): JSX.Element {
+    if (this.props.redirectToId || this.props.isCreatingNewElement) return <SingleAddressPage />;
+
     return (
       <Box>
         <RepresentationalTable
@@ -58,7 +73,15 @@ export class Addresses extends Component<AddressesPageProps> {
           rows={(this.props.addressesTableData.addresses as any) || []}
           totalElements={this.props.addressesTableData.totalRows || 0}
           fetchTableData={this.fetchTableData.bind(this)}
+          onClick={this.openAddress.bind(this)}
         ></RepresentationalTable>
+        <Button
+          sx={{ margin: 2, height: '50px', width: '300px' }}
+          onClick={() => this.props.startCreatingNewElement()}
+          variant="contained"
+        >
+          Создать
+        </Button>
       </Box>
     );
   }
@@ -69,9 +92,25 @@ export class Addresses extends Component<AddressesPageProps> {
 }
 
 const mapStateToProps = (state: RootState) => {
-  const { addressesTableData, addressesOffset, addressesLimit, addressesSort, addressesPage } = state.addresses;
+  const {
+    addressesTableData,
+    addressesOffset,
+    addressesLimit,
+    addressesSort,
+    addressesPage,
+    redirectToId,
+    isCreatingNewElement,
+  } = state.addresses;
 
-  return { addressesTableData, addressesOffset, addressesLimit, addressesSort, addressesPage };
+  return {
+    addressesTableData,
+    addressesOffset,
+    addressesLimit,
+    addressesSort,
+    addressesPage,
+    redirectToId,
+    isCreatingNewElement,
+  };
 };
 
 const mapDispatchToProps = {
@@ -80,10 +119,12 @@ const mapDispatchToProps = {
   setAddressesOffset,
   setAddressesLimit,
   setAddressesSort,
+  setRedirectToId,
+  startCreatingNewElement,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const AllAddressesPage = connector(Addresses);
+export const AddressesPage = connector(Addresses);

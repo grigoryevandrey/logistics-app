@@ -7,6 +7,7 @@ import {
   TableCell,
   TablePagination,
   TableRow,
+  TableSortLabel,
 } from '@mui/material';
 import { nanoid } from 'nanoid';
 import React, { Component } from 'react';
@@ -18,6 +19,8 @@ type HeaderElement = {
   label: string;
   key: string;
   isSortable?: boolean;
+  ascSortString?: string;
+  descSortString?: string;
 };
 
 interface RepresentationalTableProps {
@@ -34,6 +37,7 @@ interface RepresentationalTableProps {
   setSort: Function;
   setFilter?: Function;
   fetchTableData: Function;
+  onClick: Function;
 }
 
 export class RepresentationalTable extends Component<RepresentationalTableProps> {
@@ -52,6 +56,12 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
     await this.props.fetchTableData();
   }
 
+  private async changeSort(asc?: string, desc?: string): Promise<void> {
+    const newSort = this.props.sort === asc ? desc : asc;
+    await this.props.setSort(newSort);
+    await this.props.fetchTableData();
+  }
+
   public override render() {
     return (
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -60,10 +70,21 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
             <TableHead>
               <TableRow>
                 {this.props.headerCells.map((header, index) => {
-                  return index === 0 ? (
-                    <TableCell key={header.key}>{header.label}</TableCell>
+                  const align = index === 0 ? 'left' : 'right';
+                  const active = header.ascSortString === this.props.sort || header.descSortString === this.props.sort;
+
+                  return header.isSortable ? (
+                    <TableCell align={align} key={header.key}>
+                      <TableSortLabel
+                        active={active}
+                        direction={this.props.sort === header.descSortString ? 'desc' : 'asc'}
+                        onClick={() => this.changeSort(header.ascSortString, header.descSortString)}
+                      >
+                        {header.label}
+                      </TableSortLabel>
+                    </TableCell>
                   ) : (
-                    <TableCell align="right" key={header.key}>
+                    <TableCell align={align} key={header.key}>
                       {header.label}
                     </TableCell>
                   );
@@ -79,6 +100,7 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
                     sx={{
                       cursor: 'pointer',
                     }}
+                    onClick={() => this.props.onClick(row.id)}
                   >
                     {this.props.headerCells.map((header, index) => {
                       return index === 0 ? (

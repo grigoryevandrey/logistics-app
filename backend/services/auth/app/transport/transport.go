@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/auth"
+	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/cors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/backend/services/auth/app"
 	"github.com/grigoryevandrey/logistics-app/backend/services/auth/app/constants"
@@ -23,6 +24,7 @@ func Handler(service app.Service) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(jsonmw.JSONMiddleware())
+	router.Use(cors.CORSMiddleware())
 
 	injectedHandler := &handler{service}
 

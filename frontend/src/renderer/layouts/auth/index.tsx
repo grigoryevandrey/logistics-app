@@ -1,6 +1,5 @@
 import { Box, Button, Card, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import React, { Component } from 'react';
-import jwt from 'jwt-decode';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../store';
 import {
@@ -12,10 +11,10 @@ import {
   resetLoginFormState,
   setUser,
   setRedirect,
+  setCredentials,
 } from '../../reducers';
 import { LoginStrategy } from '../../enums';
 import { AuthClient } from '../../clients';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../constants';
 import { Navigate } from 'react-router-dom';
 import { DELIVERIES_PATH } from '../../configuration';
 
@@ -39,13 +38,7 @@ class Auth extends Component<AuthLayoutProps> {
     const credentials = { login, password };
 
     try {
-      const serverResponse = await AuthClient.login(credentials, this.props.role);
-
-      const user = jwt(serverResponse.accessToken) as any;
-      this.props.setUser({ login: user.Name, role: user.Role });
-
-      localStorage.setItem(ACCESS_TOKEN_KEY, serverResponse.accessToken);
-      localStorage.setItem(REFRESH_TOKEN_KEY, serverResponse.refreshToken);
+      await AuthClient.login(credentials, this.props.role);
 
       await this.props.setRedirect();
 
@@ -95,6 +88,12 @@ class Auth extends Component<AuthLayoutProps> {
               InputProps={{
                 sx: {
                   width: '20rem',
+                  fontSize: '1.2rem',
+                },
+              }}
+              InputLabelProps={{
+                sx: {
+                  fontSize: '1.2rem',
                 },
               }}
               value={this.props.login.data}
@@ -106,9 +105,16 @@ class Auth extends Component<AuthLayoutProps> {
             <TextField
               label="Пароль"
               variant="standard"
+              type="password"
               InputProps={{
                 sx: {
                   width: '20rem',
+                  fontSize: '1.2rem',
+                },
+              }}
+              InputLabelProps={{
+                sx: {
+                  fontSize: '1.2rem',
                 },
               }}
               value={this.props.password.data}
@@ -140,6 +146,7 @@ class Auth extends Component<AuthLayoutProps> {
             <Button
               sx={{
                 width: '20rem',
+                fontSize: '1.2rem',
               }}
               variant="contained"
               onClick={() => this.authenticate()}
@@ -168,6 +175,7 @@ const mapDispatchToProps = {
   resetLoginFormState,
   setUser,
   setRedirect,
+  setCredentials,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
