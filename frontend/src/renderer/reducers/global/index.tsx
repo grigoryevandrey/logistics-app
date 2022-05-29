@@ -13,6 +13,7 @@ const initialState = {
     accessToken: '',
     refreshToken: '',
   },
+  isLoggingOut: false,
 };
 
 const globalSlice = createSlice({
@@ -42,9 +43,16 @@ const globalSlice = createSlice({
       };
       console.log('🚀 ~ file: index.tsx ~ line 40 ~ state.credentials', state.credentials);
     },
+    setIsLoggingOut: (state) => {
+      state.isLoggingOut = true;
+    },
+    resetIsLoggingOut: (state) => {
+      state.isLoggingOut = false;
+    },
   },
 });
 
-export const { setUser, resetUser, setCredentials, deleteCredentials } = globalSlice.actions;
+export const { setUser, resetUser, setCredentials, deleteCredentials, setIsLoggingOut, resetIsLoggingOut } =
+  globalSlice.actions;
 
 export const globalReducer = globalSlice.reducer;

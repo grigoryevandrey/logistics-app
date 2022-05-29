@@ -6,7 +6,9 @@ import { setSingleAddressData, clearSingleAddressData, resetRedirectToId, endCre
 import { AddressesClient } from '../../clients';
 import { Button, Paper, TextField } from '@mui/material';
 
-interface AddressPageProps extends PropsFromRedux {}
+interface AddressPageProps extends PropsFromRedux {
+  fetchTableData: Function;
+}
 
 class Address extends Component<AddressPageProps> {
   private readonly client = AddressesClient;
@@ -25,11 +27,13 @@ class Address extends Component<AddressPageProps> {
     const data = this.props.singleAddressData;
     const newData = await this.client.update(data);
     await this.props.setSingleAddressData(newData);
+    await this.props.fetchTableData();
   }
 
   private async createNew(): Promise<void> {
     const data = this.props.singleAddressData;
     await this.client.post(data);
+    await this.props.fetchTableData();
 
     this.props.endCreatingNewElement();
   }
@@ -38,6 +42,7 @@ class Address extends Component<AddressPageProps> {
     const id = this.props.singleAddressData.id;
     await this.client.delete(id);
     await this.props.resetRedirectToId();
+    await this.props.fetchTableData();
   }
 
   public override render(): JSX.Element {
@@ -45,8 +50,8 @@ class Address extends Component<AddressPageProps> {
       <Paper sx={{ width: '330px', mb: 2, display: 'flex', flexDirection: 'column' }}>
         <TextField
           sx={{ margin: 2, width: '300px' }}
-          variant="filled"
           label="Адрес"
+          InputLabelProps={{ shrink: true }}
           value={this.props.singleAddressData.address}
           onChange={(e) =>
             this.props.setSingleAddressData({ ...this.props.singleAddressData, address: e.target.value })
@@ -54,7 +59,7 @@ class Address extends Component<AddressPageProps> {
         />
         <TextField
           sx={{ margin: 2, width: '300px' }}
-          variant="filled"
+          InputLabelProps={{ shrink: true }}
           label="Широта"
           value={this.props.singleAddressData.latitude}
           onChange={(e) =>
@@ -63,8 +68,8 @@ class Address extends Component<AddressPageProps> {
         />
         <TextField
           sx={{ margin: 2, width: '300px' }}
-          variant="filled"
           label="Долгота"
+          InputLabelProps={{ shrink: true }}
           value={this.props.singleAddressData.longitude}
           onChange={(e) =>
             this.props.setSingleAddressData({ ...this.props.singleAddressData, longitude: e.target.value })

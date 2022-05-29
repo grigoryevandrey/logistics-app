@@ -55,6 +55,16 @@ const addressesSlice = createSlice({
       state.redirectToId = 0;
     },
     setSingleAddressData: (state, action) => {
+      action.payload.latitude =
+        parseFloat(action.payload.latitude) !== NaN
+          ? parseFloat(action.payload.latitude)
+          : state.singleAddressData.latitude;
+
+      action.payload.longitude =
+        parseFloat(action.payload.longitude) !== NaN
+          ? parseFloat(action.payload.longitude)
+          : state.singleAddressData.longitude;
+
       state.singleAddressData = action.payload;
     },
     clearSingleAddressData: (state) => {

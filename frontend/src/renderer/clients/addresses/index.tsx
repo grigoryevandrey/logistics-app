@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { AddressesSort } from '../../enums';
 import {
   AddressEntity,
@@ -6,69 +7,70 @@ import {
   PostAddressEntity,
   UpdateAddressEntity,
 } from '../../dto';
+import { store } from '../../store';
+
+const BASE_URL = 'http://0.0.0.0:3000/api/v1/addresses';
 
 class AddressesClient {
+  private readonly client = axios.create({
+    baseURL: BASE_URL,
+  });
+
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',
     };
   }
 
-  public async getOne(_id: number): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Тестовый',
-      latitude: 65,
-      longitude: 35.7,
-      isDisabled: false,
-    };
+  public async getOne(id: number): Promise<AddressEntity> {
+    // TODO: tokens into interceptors
+    const accessToken = store.getState().global.credentials.accessToken;
+    const { data } = await this.client.get(`/${id}`, { headers: { Authorization: `Bearer ${accessToken}` } });
+
+    return data;
   }
 
-  public async getAll(_limit: number, _offset: number, _sort?: AddressesSort): Promise<PaginatedAddressesResponse> {
-    return {
-      totalRows: 10,
-      offset: 0,
-      count: 10,
-      addresses: [
-        {
-          id: 6,
-          address: 'Склад в Ярославле',
-          latitude: 57.589493,
-          longitude: 39.90941,
-          isDisabled: false,
-        },
-      ],
-    };
+  public async getAll(limit: number, offset: number, sort?: AddressesSort): Promise<PaginatedAddressesResponse> {
+    const accessToken = store.getState().global.credentials.accessToken;
+    const { data } = await this.client.get('/', {
+      params: {
+        limit,
+        offset,
+        sort,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return data;
   }
 
-  public async post(_entity: PostAddressEntity): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Тестовый',
-      latitude: 65,
-      longitude: 35.7,
-      isDisabled: false,
-    };
+  public async post(entity: PostAddressEntity): Promise<AddressEntity> {
+    const accessToken = store.getState().global.credentials.accessToken;
+    const { data } = await this.client.post('/', entity, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return data;
   }
 
-  public async update(_entity: UpdateAddressEntity): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Хороший',
-      latitude: 67,
-      longitude: 35.7,
-      isDisabled: false,
-    };
+  public async update(entity: UpdateAddressEntity): Promise<AddressEntity> {
+    const accessToken = store.getState().global.credentials.accessToken;
+    const { data } = await this.client.put('/', entity, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return data;
   }
 
-  public async delete(_id: number): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Хороший',
-      latitude: 67,
-      longitude: 35.7,
-      isDisabled: false,
-    };
+  public async delete(id: number): Promise<AddressEntity> {
+    const accessToken = store.getState().global.credentials.accessToken;
+
+    const { data } = await this.client.delete('/', {
+      params: { id },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return data;
   }
 }
 

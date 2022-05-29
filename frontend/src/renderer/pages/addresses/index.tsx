@@ -44,8 +44,8 @@ class Addresses extends Component<AddressesPageProps> {
 
   private async fetchTableData(): Promise<void> {
     const data = await this.client.getAll(
-      this.props.addressesOffset,
       this.props.addressesLimit,
+      this.props.addressesOffset,
       this.props.addressesSort,
     );
 
@@ -57,7 +57,8 @@ class Addresses extends Component<AddressesPageProps> {
   }
 
   private get component(): JSX.Element {
-    if (this.props.redirectToId || this.props.isCreatingNewElement) return <SingleAddressPage />;
+    if (this.props.redirectToId || this.props.isCreatingNewElement)
+      return <SingleAddressPage fetchTableData={this.fetchTableData.bind(this)} />;
 
     return (
       <Box>

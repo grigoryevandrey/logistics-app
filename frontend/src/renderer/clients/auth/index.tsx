@@ -83,8 +83,13 @@ export class AuthClient {
 
     const strategy = this.getStrategyByRole(role);
     const credentials = state.global.credentials;
+    console.log('🚀 ~ file: index.tsx ~ line 86 ~ AuthClient ~ logout ~ credentials', credentials);
 
-    await this.client.delete('/logout', { params: { strategy }, data: credentials });
+    await this.client.delete('/logout', {
+      params: { strategy },
+      data: credentials,
+      headers: { Authorization: `Bearer ${credentials.accessToken}` },
+    });
 
     store.dispatch(deleteCredentials());
     store.dispatch(resetUser());

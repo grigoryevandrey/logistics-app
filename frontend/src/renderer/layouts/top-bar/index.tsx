@@ -1,49 +1,65 @@
-import { Box, Button, Divider } from '@mui/material';
+import { Box, Button, Divider, Paper } from '@mui/material';
 import React, { Component } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { RootState } from 'src/renderer/store';
-// import { Link } from 'react-router-dom';
-// import { AUTH_PATH } from '../../configuration';
+import { AuthClient } from '../../clients';
+import { RootState } from '../../store';
+import { setIsLoggingOut, resetIsLoggingOut } from '../../reducers';
+import { Navigate } from 'react-router-dom';
+import { AUTH_PATH } from '../../configuration';
 
 interface TopBarProps extends PropsFromRedux {}
 
 export class Bar extends Component<TopBarProps> {
+  private readonly authClient = AuthClient;
+
+  private async handleLogout() {
+    await this.authClient.logout();
+    await this.props.setIsLoggingOut();
+    await this.props.resetIsLoggingOut();
+  }
+
   public override render() {
+    if (this.props.isLoggingOut) return <Navigate to={AUTH_PATH} />;
+
     return (
       <>
-        <Box
-          sx={{
-            backgroundColor: (theme) => theme.palette.background.default,
-            flex: '0 1 5rem',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {/* <Link to={AUTH_PATH}> Выход </Link> */}
-          {this.props.user.lastName} {this.props.user.firstName}
-          <Button
-            variant="text"
+        <Paper>
+          <Box
             sx={{
-              marginLeft: 'auto',
-              marginRight: 3,
+              backgroundColor: (theme) => theme.palette.background.default,
+              flex: '0 1 5rem',
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
-            Выход
-          </Button>
-        </Box>
-        <Divider />
+            <Button
+              variant="text"
+              sx={{
+                marginLeft: 'auto',
+                marginRight: 3,
+              }}
+              onClick={this.handleLogout.bind(this)}
+            >
+              Выход
+            </Button>
+          </Box>
+          <Divider />
+        </Paper>
       </>
     );
   }
 }
 
 const mapStateToProps = (state: RootState) => {
-  const { user } = state.global;
+  const { user, isLoggingOut } = state.global;
 
-  return { user };
+  return { user, isLoggingOut };
 };
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setIsLoggingOut,
+  resetIsLoggingOut,
+};
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
