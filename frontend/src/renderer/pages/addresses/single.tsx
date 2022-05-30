@@ -2,7 +2,18 @@ import React from 'react';
 import { Component } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../store';
-import { setSingleAddressData, clearSingleAddressData, resetRedirectToId, endCreatingNewElement } from '../../reducers';
+import {
+  setSingleAddressData,
+  clearSingleAddressData,
+  resetRedirectToId,
+  endCreatingNewElement,
+  openSnackbar,
+  closeSnackbar,
+  openBackdrop,
+  closeBackdrop,
+  setDialog,
+  resetDialog,
+} from '../../reducers';
 import { AddressesClient } from '../../clients';
 import { Button, Paper, TextField } from '@mui/material';
 
@@ -24,10 +35,31 @@ class Address extends Component<AddressPageProps> {
   }
 
   private async updateData(): Promise<void> {
-    const data = this.props.singleAddressData;
-    const newData = await this.client.update(data);
-    await this.props.setSingleAddressData(newData);
-    await this.props.fetchTableData();
+    try {
+      await this.props.closeSnackbar();
+      const data = this.props.singleAddressData;
+      const newData = await this.client.update(data);
+
+      await this.props.openSnackbar({ message: 'Данные обновлены.', severity: 'success' });
+      await this.props.setSingleAddressData(newData);
+      await this.props.fetchTableData();
+    } catch (e: any) {
+      const message = e?.response?.data?.error || e?.message || 'Произошла ошибка.';
+
+      await this.props.openSnackbar({ message, severity: 'error' });
+    } finally {
+      await this.props.closeBackdrop();
+    }
+  }
+
+  private async openDeleteModal(): Promise<void> {
+    this.props.setDialog({
+      title: 'Подтвердите удаление',
+      text: `Вы уверены, что хотите удалить адрес c ID ${this.props.singleAddressData.id}? Все связанные заказы будут удалены. Это действие невозможно отменить.`,
+      open: true,
+      yesAction: this.delete.bind(this),
+      noAction: () => this.props.setDialog({ open: false }),
+    });
   }
 
   private async createNew(): Promise<void> {
@@ -39,6 +71,7 @@ class Address extends Component<AddressPageProps> {
   }
 
   private async delete(): Promise<void> {
+    await this.props.setDialog({ open: false });
     const id = this.props.singleAddressData.id;
     await this.client.delete(id);
     await this.props.resetRedirectToId();
@@ -96,7 +129,7 @@ class Address extends Component<AddressPageProps> {
         {!this.props.isCreatingNewElement ? (
           <Button
             sx={{ margin: 2, height: '50px', width: '300px' }}
-            onClick={this.delete.bind(this)}
+            onClick={this.openDeleteModal.bind(this)}
             variant="contained"
             color="error"
           >
@@ -110,8 +143,9 @@ class Address extends Component<AddressPageProps> {
 
 const mapStateToProps = (state: RootState) => {
   const { singleAddressData, redirectToId, isCreatingNewElement } = state.addresses;
+  const { dialog } = state.global;
 
-  return { singleAddressData, redirectToId, isCreatingNewElement };
+  return { singleAddressData, redirectToId, isCreatingNewElement, dialog };
 };
 
 const mapDispatchToProps = {
@@ -119,6 +153,12 @@ const mapDispatchToProps = {
   clearSingleAddressData,
   resetRedirectToId,
   endCreatingNewElement,
+  openSnackbar,
+  closeSnackbar,
+  openBackdrop,
+  closeBackdrop,
+  setDialog,
+  resetDialog,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

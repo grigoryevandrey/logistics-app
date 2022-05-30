@@ -14,6 +14,21 @@ const initialState = {
     refreshToken: '',
   },
   isLoggingOut: false,
+  snackbar: {
+    open: false,
+    message: '',
+    severity: 'success',
+  },
+  backdrop: {
+    open: false,
+  },
+  dialog: {
+    open: false,
+    title: '',
+    text: '',
+    yesAction: () => {},
+    noAction: () => {},
+  },
 };
 
 const globalSlice = createSlice({
@@ -34,14 +49,12 @@ const globalSlice = createSlice({
     },
     setCredentials: (state, action) => {
       state.credentials = action.payload;
-      console.log('🚀 ~ file: index.tsx ~ line 31 ~ state.credentials', state.credentials);
     },
     deleteCredentials: (state) => {
       state.credentials = {
         accessToken: '',
         refreshToken: '',
       };
-      console.log('🚀 ~ file: index.tsx ~ line 40 ~ state.credentials', state.credentials);
     },
     setIsLoggingOut: (state) => {
       state.isLoggingOut = true;
@@ -49,10 +62,56 @@ const globalSlice = createSlice({
     resetIsLoggingOut: (state) => {
       state.isLoggingOut = false;
     },
+    openSnackbar: (state, action) => {
+      state.snackbar = {
+        ...action.payload,
+        open: true,
+      };
+    },
+    closeSnackbar: (state) => {
+      state.snackbar = {
+        ...state.snackbar,
+        open: false,
+      };
+    },
+    openBackdrop: (state) => {
+      state.backdrop = {
+        open: true,
+      };
+    },
+    closeBackdrop: (state) => {
+      state.backdrop = {
+        open: false,
+      };
+    },
+    setDialog: (state, action) => {
+      state.dialog = { ...state.dialog, ...action.payload };
+    },
+    resetDialog: (state) => {
+      state.dialog = {
+        open: false,
+        title: '',
+        text: '',
+        yesAction: () => {},
+        noAction: () => {},
+      };
+    },
   },
 });
 
-export const { setUser, resetUser, setCredentials, deleteCredentials, setIsLoggingOut, resetIsLoggingOut } =
-  globalSlice.actions;
+export const {
+  setUser,
+  resetUser,
+  setCredentials,
+  deleteCredentials,
+  setIsLoggingOut,
+  resetIsLoggingOut,
+  openSnackbar,
+  closeSnackbar,
+  openBackdrop,
+  closeBackdrop,
+  setDialog,
+  resetDialog,
+} = globalSlice.actions;
 
 export const globalReducer = globalSlice.reducer;

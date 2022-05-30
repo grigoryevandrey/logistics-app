@@ -6,8 +6,9 @@ import {
   PostManagerEntity,
   UpdateManagerEntity,
 } from '../../dto';
+import { EntityClient } from '../../interfaces';
 
-export class ManagersClient {
+export class ManagersClient implements EntityClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',

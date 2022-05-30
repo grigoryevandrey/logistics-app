@@ -9,13 +9,17 @@ import {
   setAddressesSort,
   setRedirectToId,
   startCreatingNewElement,
+  setSingleAddressData,
+  clearSingleAddressData,
+  resetRedirectToId,
+  endCreatingNewElement,
 } from '../../reducers';
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
 import { Box } from '@mui/system';
 import { RepresentationalTable } from '../../components';
-import { AddressesSort } from '../../enums';
-import { SingleAddressPage } from './single';
+import { AddressesSort, EditableElementType } from '../../enums';
+import { EditablePage } from '../../components';
 import { Button } from '@mui/material';
 
 interface AddressesPageProps extends PropsFromRedux {}
@@ -58,7 +62,37 @@ class Addresses extends Component<AddressesPageProps> {
 
   private get component(): JSX.Element {
     if (this.props.redirectToId || this.props.isCreatingNewElement)
-      return <SingleAddressPage fetchTableData={this.fetchTableData.bind(this)} />;
+      return (
+        <EditablePage
+          fetchTableData={this.fetchTableData.bind(this)}
+          elements={[
+            {
+              type: EditableElementType.Input,
+              label: 'Адрес',
+              stateKey: 'address',
+            },
+            {
+              type: EditableElementType.Input,
+              label: 'Широта',
+              stateKey: 'latitude',
+            },
+            {
+              type: EditableElementType.Input,
+              label: 'Долгота',
+              stateKey: 'longitude',
+            },
+          ]}
+          isCreatingNewElement={this.props.isCreatingNewElement}
+          client={AddressesClient}
+          endCreatingNewElement={this.props.endCreatingNewElement}
+          currentId={this.props.redirectToId}
+          resetCurrentId={this.props.resetRedirectToId}
+          stateData={this.props.singleAddressData}
+          setStateData={this.props.setSingleAddressData}
+          clearStateData={this.props.clearSingleAddressData}
+        />
+      );
+    // return <SingleAddressPage fetchTableData={this.fetchTableData.bind(this)} />;
 
     return (
       <Box>
@@ -101,6 +135,7 @@ const mapStateToProps = (state: RootState) => {
     addressesPage,
     redirectToId,
     isCreatingNewElement,
+    singleAddressData,
   } = state.addresses;
 
   return {
@@ -111,6 +146,7 @@ const mapStateToProps = (state: RootState) => {
     addressesPage,
     redirectToId,
     isCreatingNewElement,
+    singleAddressData,
   };
 };
 
@@ -122,6 +158,10 @@ const mapDispatchToProps = {
   setAddressesSort,
   setRedirectToId,
   startCreatingNewElement,
+  setSingleAddressData,
+  clearSingleAddressData,
+  resetRedirectToId,
+  endCreatingNewElement,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

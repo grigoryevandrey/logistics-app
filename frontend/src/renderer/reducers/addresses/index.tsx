@@ -42,7 +42,9 @@ const addressesSlice = createSlice({
       state.addressesPage = state.addressesLimit ? Math.floor(state.addressesOffset / state.addressesLimit) : 0;
     },
     setAddressesLimit: (state, action) => {
+      state.addressesOffset = 0;
       state.addressesLimit = action.payload;
+
       state.addressesPage = state.addressesLimit ? Math.floor(state.addressesOffset / state.addressesLimit) : 0;
     },
     setAddressesSort: (state, action) => {
@@ -60,10 +62,14 @@ const addressesSlice = createSlice({
           ? parseFloat(action.payload.latitude)
           : state.singleAddressData.latitude;
 
+      action.payload.latitude = action.payload.latitude || 0;
+
       action.payload.longitude =
         parseFloat(action.payload.longitude) !== NaN
           ? parseFloat(action.payload.longitude)
           : state.singleAddressData.longitude;
+
+      action.payload.longitude = action.payload.longitude || 0;
 
       state.singleAddressData = action.payload;
     },

@@ -6,8 +6,9 @@ import {
   PostDriverEntity,
   UpdateDriverEntity,
 } from '../../dto';
+import { EntityClient } from '../../interfaces';
 
-export class DriversClient {
+export class DriversClient implements EntityClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',

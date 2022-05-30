@@ -6,8 +6,9 @@ import {
   PostDeliveryEntity,
   UpdateDeliveryEntity,
 } from '../../dto';
+import { EntityClient } from '../../interfaces';
 
-export class DeliveriesClient {
+export class DeliveriesClient implements EntityClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',

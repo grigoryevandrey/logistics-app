@@ -8,10 +8,11 @@ import {
   UpdateAddressEntity,
 } from '../../dto';
 import { store } from '../../store';
+import { EntityClient } from '../../interfaces';
 
 const BASE_URL = 'http://0.0.0.0:3000/api/v1/addresses';
 
-class AddressesClient {
+class AddressesClient implements EntityClient {
   private readonly client = axios.create({
     baseURL: BASE_URL,
   });

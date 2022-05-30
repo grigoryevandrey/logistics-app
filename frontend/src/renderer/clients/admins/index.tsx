@@ -1,7 +1,8 @@
 import { AdminRole, AdminsSort } from '../../enums';
 import { AdminEntity, HealthResponse, PaginatedAdminsResponse, PostAdminEntity, UpdateAdminEntity } from '../../dto';
+import { EntityClient } from '../../interfaces';
 
-export class AdminsClient {
+export class AdminsClient implements EntityClient {
   public async checkHealth(): Promise<HealthResponse> {
     return {
       status: 'UP',

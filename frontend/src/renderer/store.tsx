@@ -7,6 +7,7 @@ export const store = configureStore({
     global: globalReducer,
     addresses: addressesReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
