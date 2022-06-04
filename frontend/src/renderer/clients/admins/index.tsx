@@ -1,81 +1,35 @@
 import { AdminRole, AdminsSort } from '../../enums';
-import { AdminEntity, HealthResponse, PaginatedAdminsResponse, PostAdminEntity, UpdateAdminEntity } from '../../dto';
-import { EntityClient } from '../../interfaces';
+import { AdminEntity, PaginatedAdminsResponse, PostAdminEntity, UpdateAdminEntity } from '../../dto';
+import { BaseClient } from '../base.client';
+import { axiosInstance } from '../instance';
 
-export class AdminsClient implements EntityClient {
-  public async checkHealth(): Promise<HealthResponse> {
-    return {
-      status: 'UP',
-    };
-  }
+const BASE_URL = 'http://0.0.0.0:3004/api/v1';
+const PATH_PART = `admins`;
 
-  public async getOne(_id: number): Promise<AdminEntity> {
-    return {
-      id: 4,
-      lastName: 'Смирнов',
-      firstName: 'Семен',
-      patronymic: 'Геннадиевич',
-      role: AdminRole.regular,
-      isDisabled: false,
-    };
-  }
+class AdminsClient extends BaseClient<
+  AdminEntity,
+  AdminsSort,
+  PaginatedAdminsResponse,
+  PostAdminEntity,
+  UpdateAdminEntity
+> {
+  public override async getAll(
+    limit: number,
+    offset: number,
+    sort?: AdminsSort,
+    filter?: AdminRole,
+  ): Promise<PaginatedAdminsResponse> {
+    const { data } = await this.client.get(`${this.domain}/${this.pathPart}/`, {
+      params: {
+        limit,
+        offset,
+        sort,
+        filter,
+      },
+    });
 
-  public async getAll(_limit: number, _offset: number, _sort?: AdminsSort): Promise<PaginatedAdminsResponse> {
-    return {
-      admins: [
-        {
-          id: 1,
-          lastName: 'Лебедев',
-          firstName: 'Иван',
-          patronymic: 'Билалович',
-          role: AdminRole.super,
-          isDisabled: false,
-        },
-        {
-          id: 2,
-          lastName: 'Калмыкова',
-          firstName: 'Арина',
-          patronymic: 'Егоровна',
-          role: AdminRole.regular,
-          isDisabled: false,
-        },
-      ],
-      count: 2,
-      offset: 0,
-      totalRows: 2,
-    };
-  }
-
-  public async post(_entity: PostAdminEntity): Promise<AdminEntity> {
-    return {
-      id: 4,
-      lastName: 'Смирнов',
-      firstName: 'Семен',
-      patronymic: 'Геннадиевич',
-      role: AdminRole.regular,
-      isDisabled: false,
-    };
-  }
-
-  public async update(_entity: UpdateAdminEntity): Promise<AdminEntity> {
-    return {
-      id: 4,
-      lastName: 'Смирнов',
-      firstName: 'Семен',
-      patronymic: 'Геннадиевич',
-      role: AdminRole.regular,
-      isDisabled: true,
-    };
-  }
-
-  public async delete(_id: number): Promise<AdminEntity> {
-    return {
-      id: 4,
-      lastName: 'Смирнов',
-      firstName: 'Семен',
-      patronymic: 'Геннадиевич',
-      role: AdminRole.regular,
-      isDisabled: true,
-    };
+    return data;
   }
 }
+
+export default new AdminsClient(axiosInstance, BASE_URL, PATH_PART);

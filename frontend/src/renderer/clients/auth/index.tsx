@@ -1,24 +1,18 @@
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
 import { LoginStrategy, UserRole } from '../../enums';
-import { HealthResponse, LoginCredentials } from '../../dto';
+import { LoginCredentials } from '../../dto';
 import { setCredentials, deleteCredentials, setUser, resetUser } from '../../reducers';
 import { store } from '../../store';
 import jwt from 'jwt-decode';
+import { axiosInstance } from '../instance';
 
 const BASE_URL = 'http://0.0.0.0:3006/api/v1/auth';
-export class AuthClient {
-  private readonly client = axios.create({
-    baseURL: BASE_URL,
-  });
 
-  public async checkHealth(): Promise<HealthResponse> {
-    return {
-      status: 'UP',
-    };
-  }
+export class AuthClient {
+  constructor(private readonly client: AxiosInstance) {}
 
   public async login(credentials: LoginCredentials, strategy: LoginStrategy): Promise<void> {
-    const { data } = await this.client.post('/login', credentials, { params: { strategy } });
+    const { data } = await this.client.post(`${BASE_URL}/login`, credentials, { params: { strategy } });
 
     store.dispatch(setCredentials(data));
 
@@ -57,23 +51,27 @@ export class AuthClient {
     const strategy = this.getStrategyByRole(role);
     const refreshToken = state.global.credentials.refreshToken;
 
-    const { data } = await this.client.put('/refresh', null, {
-      params: { strategy },
-      headers: { Authorization: refreshToken },
-    });
+    try {
+      const { data } = await this.client.put(`${BASE_URL}/refresh`, null, {
+        params: { strategy },
+        headers: { Authorization: refreshToken },
+      });
 
-    store.dispatch(setCredentials(data));
+      store.dispatch(setCredentials(data));
 
-    const user = jwt(data.accessToken) as any;
-    store.dispatch(
-      setUser({
-        login: user.Name,
-        role: user.Role,
-        firstName: user.FirstName,
-        lastName: user.LastName,
-        patronymic: user.Patronymic,
-      }),
-    );
+      const user = jwt(data.accessToken) as any;
+      store.dispatch(
+        setUser({
+          login: user.Name,
+          role: user.Role,
+          firstName: user.FirstName,
+          lastName: user.LastName,
+          patronymic: user.Patronymic,
+        }),
+      );
+    } catch (e) {
+      console.error('Error refreshing token:', e);
+    }
   }
 
   public async logout(): Promise<void> {
@@ -83,9 +81,8 @@ export class AuthClient {
 
     const strategy = this.getStrategyByRole(role);
     const credentials = state.global.credentials;
-    console.log('🚀 ~ file: index.tsx ~ line 86 ~ AuthClient ~ logout ~ credentials', credentials);
 
-    await this.client.delete('/logout', {
+    await this.client.delete(`${BASE_URL}/logout`, {
       params: { strategy },
       data: credentials,
       headers: { Authorization: `Bearer ${credentials.accessToken}` },
@@ -96,4 +93,4 @@ export class AuthClient {
   }
 }
 
-export default new AuthClient();
+export default new AuthClient(axiosInstance);

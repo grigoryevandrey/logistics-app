@@ -1,78 +1,17 @@
-import axios from 'axios';
 import { AddressesSort } from '../../enums';
-import {
+import { AddressEntity, PaginatedAddressesResponse, PostAddressEntity, UpdateAddressEntity } from '../../dto';
+import { axiosInstance } from '../instance';
+import { BaseClient } from '../base.client';
+
+const BASE_URL = 'http://0.0.0.0:3000/api/v1';
+const PATH_PART = `addresses`;
+
+class AddressesClient extends BaseClient<
   AddressEntity,
-  HealthResponse,
+  AddressesSort,
   PaginatedAddressesResponse,
   PostAddressEntity,
-  UpdateAddressEntity,
-} from '../../dto';
-import { store } from '../../store';
-import { EntityClient } from '../../interfaces';
+  UpdateAddressEntity
+> {}
 
-const BASE_URL = 'http://0.0.0.0:3000/api/v1/addresses';
-
-class AddressesClient implements EntityClient {
-  private readonly client = axios.create({
-    baseURL: BASE_URL,
-  });
-
-  public async checkHealth(): Promise<HealthResponse> {
-    return {
-      status: 'UP',
-    };
-  }
-
-  public async getOne(id: number): Promise<AddressEntity> {
-    // TODO: tokens into interceptors
-    const accessToken = store.getState().global.credentials.accessToken;
-    const { data } = await this.client.get(`/${id}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-
-    return data;
-  }
-
-  public async getAll(limit: number, offset: number, sort?: AddressesSort): Promise<PaginatedAddressesResponse> {
-    const accessToken = store.getState().global.credentials.accessToken;
-    const { data } = await this.client.get('/', {
-      params: {
-        limit,
-        offset,
-        sort,
-      },
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    return data;
-  }
-
-  public async post(entity: PostAddressEntity): Promise<AddressEntity> {
-    const accessToken = store.getState().global.credentials.accessToken;
-    const { data } = await this.client.post('/', entity, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    return data;
-  }
-
-  public async update(entity: UpdateAddressEntity): Promise<AddressEntity> {
-    const accessToken = store.getState().global.credentials.accessToken;
-    const { data } = await this.client.put('/', entity, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    return data;
-  }
-
-  public async delete(id: number): Promise<AddressEntity> {
-    const accessToken = store.getState().global.credentials.accessToken;
-
-    const { data } = await this.client.delete('/', {
-      params: { id },
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    return data;
-  }
-}
-
-export default new AddressesClient();
+export default new AddressesClient(axiosInstance, BASE_URL, PATH_PART);
