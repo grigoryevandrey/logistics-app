@@ -17,9 +17,8 @@ import {
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
 import { Box } from '@mui/system';
-import { RepresentationalTable } from '../../components';
+import { RepresentationalTable, EditablePage } from '../../components';
 import { DriversSort, EditableElementType } from '../../enums';
-import { EditablePage } from '../../components';
 import { Button } from '@mui/material';
 
 interface DriversPageProps extends PropsFromRedux {}

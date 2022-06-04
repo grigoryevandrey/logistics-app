@@ -13,7 +13,7 @@ import { nanoid } from 'nanoid';
 import React, { Component } from 'react';
 import { ObjectLiteral } from '../../types';
 
-const rowsPerPageOptions = [2, 5, 10, 25, 50];
+const rowsPerPageOptions = [5, 10, 25, 50];
 
 type HeaderElement = {
   label: string;

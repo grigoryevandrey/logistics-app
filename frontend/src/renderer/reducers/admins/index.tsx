@@ -3,7 +3,7 @@ import { AdminFilter, AdminRole, AdminsSort } from '../../enums';
 import { PaginatedAdminsResponse, UpdateAdminEntity } from '../../dto';
 
 const initialState = {
-  adminTableData: {},
+  adminsTableData: {},
   singleAdminData: {
     login: '',
     password: '',
@@ -13,21 +13,21 @@ const initialState = {
     role: AdminRole.Regular,
     isDisabled: false,
   },
-  adminOffset: 0,
-  adminLimit: 5,
-  adminPage: 0,
-  adminSort: AdminsSort.NameAsc,
-  adminFilter: AdminFilter.None,
+  adminsOffset: 0,
+  adminsLimit: 5,
+  adminsPage: 0,
+  adminsSort: AdminsSort.NameAsc,
+  adminsFilter: AdminFilter.None,
   redirectToAdminId: 0,
   isCreatingNewAdmin: false,
 } as {
-  adminTableData: Partial<PaginatedAdminsResponse>;
+  adminsTableData: Partial<PaginatedAdminsResponse>;
   singleAdminData: UpdateAdminEntity;
-  adminOffset: number;
-  adminLimit: number;
-  adminSort: AdminsSort;
-  adminFilter: AdminFilter;
-  adminPage: number;
+  adminsOffset: number;
+  adminsLimit: number;
+  adminsSort: AdminsSort;
+  adminsFilter: AdminFilter;
+  adminsPage: number;
   redirectToAdminId: number;
   isCreatingNewAdmin: boolean;
 };
@@ -37,26 +37,26 @@ const adminSlice = createSlice({
   initialState,
   reducers: {
     setAdminsData: (state, action) => {
-      state.adminTableData = action.payload;
+      state.adminsTableData = action.payload;
     },
     resetAdminsData: (state) => {
-      state.adminTableData = {};
+      state.adminsTableData = {};
     },
     setAdminsOffset: (state, action) => {
-      state.adminOffset = action.payload;
-      state.adminPage = state.adminLimit ? Math.floor(state.adminOffset / state.adminLimit) : 0;
+      state.adminsOffset = action.payload;
+      state.adminsPage = state.adminsLimit ? Math.floor(state.adminsOffset / state.adminsLimit) : 0;
     },
     setAdminsLimit: (state, action) => {
-      state.adminOffset = 0;
-      state.adminLimit = action.payload;
+      state.adminsOffset = 0;
+      state.adminsLimit = action.payload;
 
-      state.adminPage = state.adminLimit ? Math.floor(state.adminOffset / state.adminLimit) : 0;
+      state.adminsPage = state.adminsLimit ? Math.floor(state.adminsOffset / state.adminsLimit) : 0;
     },
     setAdminsSort: (state, action) => {
-      state.adminSort = action.payload;
+      state.adminsSort = action.payload;
     },
     setAdminsFilter: (state, action) => {
-      state.adminFilter = action.payload;
+      state.adminsFilter = action.payload;
     },
     setRedirectToAdminId: (state, action) => {
       state.redirectToAdminId = action.payload;
