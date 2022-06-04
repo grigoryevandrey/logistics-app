@@ -17,7 +17,7 @@ const rowsPerPageOptions = [2, 5, 10, 25, 50];
 
 type HeaderElement = {
   label: string;
-  key: string;
+  key: string | string[];
   isSortable?: boolean;
   ascSortString?: string;
   descSortString?: string;
@@ -74,7 +74,7 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
                   const active = header.ascSortString === this.props.sort || header.descSortString === this.props.sort;
 
                   return header.isSortable ? (
-                    <TableCell align={align} key={header.key}>
+                    <TableCell align={align} key={Array.isArray(header.key) ? header.key.join(',') : header.key}>
                       <TableSortLabel
                         active={active}
                         direction={this.props.sort === header.descSortString ? 'desc' : 'asc'}
@@ -84,7 +84,7 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
                       </TableSortLabel>
                     </TableCell>
                   ) : (
-                    <TableCell align={align} key={header.key}>
+                    <TableCell align={align} key={Array.isArray(header.key) ? header.key.join(',') : header.key}>
                       {header.label}
                     </TableCell>
                   );
@@ -105,10 +105,12 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
                     {this.props.headerCells.map((header, index) => {
                       return index === 0 ? (
                         <TableCell component="th" scope="row" key={`${row.id}_${header.key}`}>
-                          {`${row[header.key]}`}
+                          {Array.isArray(header.key) ? header.key.map((key) => `${row[key]} `) : `${row[header.key]}`}
                         </TableCell>
                       ) : (
-                        <TableCell align="right" key={`${row.id}_${header.key}`}>{`${row[header.key]}`}</TableCell>
+                        <TableCell align="right" key={`${row.id}_${header.key}`}>
+                          {Array.isArray(header.key) ? header.key.map((key) => `${row[key]} `) : `${row[header.key]}`}
+                        </TableCell>
                       );
                     })}
                   </TableRow>

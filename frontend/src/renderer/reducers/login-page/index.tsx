@@ -10,7 +10,7 @@ const initialState = {
     data: '123456',
     error: false,
   },
-  role: LoginStrategy.manager,
+  role: LoginStrategy.Manager,
   redirect: false,
 };
 
@@ -46,7 +46,7 @@ const loginFormSlice = createSlice({
         error: false,
       };
 
-      state.role = LoginStrategy.manager;
+      state.role = LoginStrategy.Manager;
       state.redirect = false;
     },
     setRedirect: (state) => {

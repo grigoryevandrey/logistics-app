@@ -3,7 +3,7 @@ import { UserRole } from '../../enums';
 
 const initialState = {
   user: {
-    role: UserRole.none,
+    role: UserRole.None,
     login: '',
     firstName: '',
     lastName: '',
@@ -40,7 +40,7 @@ const globalSlice = createSlice({
     },
     resetUser: (state) => {
       state.user = {
-        role: UserRole.none,
+        role: UserRole.None,
         login: '',
         firstName: '',
         lastName: '',

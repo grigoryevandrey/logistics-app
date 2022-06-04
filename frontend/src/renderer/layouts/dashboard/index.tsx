@@ -46,10 +46,10 @@ const regularAdminButtons = [...managerButtons, <NavigationButton label="Мен�
 const superAdminButtons = [...regularAdminButtons, <NavigationButton label="Администраторы" path={ADMINS_PATH} />];
 
 const navigationButtons = Object.freeze({
-  [UserRole.none]: [],
-  [UserRole.manager]: managerButtons,
-  [UserRole.regular]: regularAdminButtons,
-  [UserRole.super]: superAdminButtons,
+  [UserRole.None]: [],
+  [UserRole.Manager]: managerButtons,
+  [UserRole.Regular]: regularAdminButtons,
+  [UserRole.Super]: superAdminButtons,
 });
 
 export class DashboardLayout extends Component<DashboardProps> {

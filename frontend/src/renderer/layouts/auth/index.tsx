@@ -125,20 +125,20 @@ class Auth extends Component<AuthLayoutProps> {
             />
             <ToggleButtonGroup exclusive value={this.props.role}>
               <ToggleButton
-                value={LoginStrategy.manager}
+                value={LoginStrategy.Manager}
                 sx={{
                   width: '10rem',
                 }}
-                onClick={() => this.props.setRoleData(LoginStrategy.manager)}
+                onClick={() => this.props.setRoleData(LoginStrategy.Manager)}
               >
                 Manager
               </ToggleButton>
               <ToggleButton
-                value={LoginStrategy.admin}
+                value={LoginStrategy.Admin}
                 sx={{
                   width: '10rem',
                 }}
-                onClick={() => this.props.setRoleData(LoginStrategy.admin)}
+                onClick={() => this.props.setRoleData(LoginStrategy.Admin)}
               >
                 Admin
               </ToggleButton>

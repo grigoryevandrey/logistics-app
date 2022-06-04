@@ -13,7 +13,7 @@ const initialState = {
   addressesOffset: 0,
   addressesLimit: 5,
   addressesPage: 0,
-  addressesSort: AddressesSort.address_asc,
+  addressesSort: AddressesSort.AddressAsc,
   redirectToId: 0,
   isCreatingNewElement: false,
 } as {
@@ -50,10 +50,10 @@ const addressesSlice = createSlice({
     setAddressesSort: (state, action) => {
       state.addressesSort = action.payload;
     },
-    setRedirectToId: (state, action) => {
+    setRedirectToAddressId: (state, action) => {
       state.redirectToId = action.payload;
     },
-    resetRedirectToId: (state) => {
+    resetRedirectToAddressId: (state) => {
       state.redirectToId = 0;
     },
     setSingleAddressData: (state, action) => {
@@ -81,10 +81,10 @@ const addressesSlice = createSlice({
         isDisabled: false,
       } as AddressEntity;
     },
-    startCreatingNewElement: (state) => {
+    startCreatingNewAddress: (state) => {
       state.isCreatingNewElement = true;
     },
-    endCreatingNewElement: (state) => {
+    endCreatingNewAddress: (state) => {
       state.isCreatingNewElement = false;
     },
   },
@@ -98,14 +98,14 @@ export const {
   setAddressesLimit,
   setAddressesSort,
 
-  setRedirectToId,
-  resetRedirectToId,
+  setRedirectToAddressId,
+  resetRedirectToAddressId,
 
   setSingleAddressData,
   clearSingleAddressData,
 
-  startCreatingNewElement,
-  endCreatingNewElement,
+  startCreatingNewAddress,
+  endCreatingNewAddress,
 } = addressesSlice.actions;
 
 export const addressesReducer = addressesSlice.reducer;

@@ -30,12 +30,12 @@ export class AuthClient {
 
   private getStrategyByRole(role: UserRole): LoginStrategy {
     switch (role) {
-      case UserRole.manager: {
-        return LoginStrategy.manager;
+      case UserRole.Manager: {
+        return LoginStrategy.Manager;
       }
-      case UserRole.regular:
-      case UserRole.super: {
-        return LoginStrategy.admin;
+      case UserRole.Regular:
+      case UserRole.Super: {
+        return LoginStrategy.Admin;
       }
       default: {
         throw new Error(`Can not find login strategy for role ${role}`);

@@ -7,12 +7,12 @@ import {
   setAddressesOffset,
   setAddressesLimit,
   setAddressesSort,
-  setRedirectToId,
-  startCreatingNewElement,
+  setRedirectToAddressId,
+  startCreatingNewAddress,
   setSingleAddressData,
   clearSingleAddressData,
-  resetRedirectToId,
-  endCreatingNewElement,
+  resetRedirectToAddressId,
+  endCreatingNewAddress,
 } from '../../reducers';
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
@@ -29,8 +29,8 @@ const addressesTableHeaders = [
     label: 'Адрес',
     key: 'address',
     isSortable: true,
-    ascSortString: AddressesSort.address_asc,
-    descSortString: AddressesSort.address_desc,
+    ascSortString: AddressesSort.AddressAsc,
+    descSortString: AddressesSort.AddressDesc,
   },
   { label: 'ID', key: 'id', isSortable: false },
 ];
@@ -57,7 +57,7 @@ class Addresses extends Component<AddressesPageProps> {
   }
 
   private async openAddress(id: number): Promise<void> {
-    await this.props.setRedirectToId(id);
+    await this.props.setRedirectToAddressId(id);
   }
 
   private get component(): JSX.Element {
@@ -84,15 +84,14 @@ class Addresses extends Component<AddressesPageProps> {
           ]}
           isCreatingNewElement={this.props.isCreatingNewElement}
           client={AddressesClient}
-          endCreatingNewElement={this.props.endCreatingNewElement}
+          endCreatingNewElement={this.props.endCreatingNewAddress}
           currentId={this.props.redirectToId}
-          resetCurrentId={this.props.resetRedirectToId}
+          resetCurrentId={this.props.resetRedirectToAddressId}
           stateData={this.props.singleAddressData}
           setStateData={this.props.setSingleAddressData}
           clearStateData={this.props.clearSingleAddressData}
         />
       );
-    // return <SingleAddressPage fetchTableData={this.fetchTableData.bind(this)} />;
 
     return (
       <Box>
@@ -112,7 +111,7 @@ class Addresses extends Component<AddressesPageProps> {
         ></RepresentationalTable>
         <Button
           sx={{ margin: 2, height: '50px', width: '300px' }}
-          onClick={() => this.props.startCreatingNewElement()}
+          onClick={() => this.props.startCreatingNewAddress()}
           variant="contained"
         >
           Создать
@@ -156,12 +155,12 @@ const mapDispatchToProps = {
   setAddressesOffset,
   setAddressesLimit,
   setAddressesSort,
-  setRedirectToId,
-  startCreatingNewElement,
+  setRedirectToAddressId,
+  startCreatingNewAddress,
   setSingleAddressData,
   clearSingleAddressData,
-  resetRedirectToId,
-  endCreatingNewElement,
+  resetRedirectToAddressId,
+  endCreatingNewAddress,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
