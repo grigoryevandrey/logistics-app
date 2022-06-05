@@ -10,6 +10,7 @@ var SortingStrategies = map[string]string{
 }
 
 type Service interface {
+	GetVehicle(id string) (*VehicleEntity, error)
 	GetVehicles(offset int, limit int, sort string) ([]VehicleEntity, *int, error)
 	AddVehicle(vehicle PostVehicleDto) (*VehicleEntity, error)
 	UpdateVehicle(vehicle UpdateVehicleDto) (*VehicleEntity, error)

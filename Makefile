@@ -143,7 +143,6 @@ db-populate: ## populate the database with test data
 	@echo "Populating test data..."
 	@docker exec -it postgres psql "$(DATABASE_CONNECTION_STRING)" -f /database/testdata/testdata.sql
 
-
 # ============================ Backend ==============================
 
 .PHONY: server

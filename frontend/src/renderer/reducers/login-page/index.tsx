@@ -3,14 +3,14 @@ import { LoginStrategy } from '../../enums';
 
 const initialState = {
   login: {
-    data: '',
+    data: 'test',
     error: false,
   },
   password: {
-    data: '',
+    data: '123456',
     error: false,
   },
-  role: LoginStrategy.manager,
+  role: LoginStrategy.Manager,
   redirect: false,
 };
 
@@ -37,16 +37,16 @@ const loginFormSlice = createSlice({
     },
     resetLoginFormState: (state) => {
       state.login = {
-        data: '',
+        data: 'test',
         error: false,
       };
 
       state.password = {
-        data: '',
+        data: '123456',
         error: false,
       };
 
-      state.role = LoginStrategy.manager;
+      state.role = LoginStrategy.Manager;
       state.redirect = false;
     },
     setRedirect: (state) => {

@@ -12,8 +12,14 @@ import {
   MANAGERS_PATH,
   VEHICLES_PATH,
 } from './configuration';
+import { store } from './store';
+import { PrivateRoute } from './utils';
 
 export default function App(): JSX.Element {
+  const credentialsExists =
+    store.getState().global.credentials.accessToken && store.getState().global.credentials.refreshToken;
+  console.log('🚀 ~ file: App.tsx ~ line 21 ~ App ~ credentialsExists', !!credentialsExists);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -27,17 +33,34 @@ export default function App(): JSX.Element {
       >
         <Router basename={'/'}>
           <Routes>
-            <Route path={ADDRESSES_PATH} element={<AddressesPage />} />
-            <Route path={VEHICLES_PATH} element={<VehiclesPage />} />
-            <Route path={DELIVERIES_PATH} element={<DeliveriesPage />} />
-            <Route path={DRIVERS_PATH} element={<DriversPage />} />
+            <Route path={ADDRESSES_PATH} element={<PrivateRoute />}>
+              <Route path={ADDRESSES_PATH} element={<AddressesPage />} />
+            </Route>
 
-            <Route path={MANAGERS_PATH} element={<ManagersPage />} />
-            <Route path={ADMINS_PATH} element={<AdminsPage />} />
+            <Route path={VEHICLES_PATH} element={<PrivateRoute />}>
+              <Route path={VEHICLES_PATH} element={<VehiclesPage />} />
+            </Route>
+
+            <Route path={DELIVERIES_PATH} element={<PrivateRoute />}>
+              <Route path={DELIVERIES_PATH} element={<DeliveriesPage />} />
+            </Route>
+
+            <Route path={DRIVERS_PATH} element={<PrivateRoute />}>
+              <Route path={DRIVERS_PATH} element={<DriversPage />} />
+            </Route>
+
+            <Route path={MANAGERS_PATH} element={<PrivateRoute />}>
+              <Route path={MANAGERS_PATH} element={<ManagersPage />} />
+            </Route>
+
+            <Route path={ADMINS_PATH} element={<PrivateRoute />}>
+              <Route path={ADMINS_PATH} element={<AdminsPage />} />
+            </Route>
 
             <Route path={AUTH_PATH} element={<AuthPage />} />
 
-            <Route path="*" element={<DeliveriesPage />} />
+            {/* TODO 404 page */}
+            <Route path="*" element={credentialsExists ? <DeliveriesPage /> : <AuthPage />} />
           </Routes>
         </Router>
       </Box>

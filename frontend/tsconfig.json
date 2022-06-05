@@ -20,7 +20,6 @@
     "incremental": true,
     "skipLibCheck": true,
     "alwaysStrict": true,
-    "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "strictPropertyInitialization": false,
     "noUnusedLocals": true,

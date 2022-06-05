@@ -8,6 +8,7 @@ go_library(
     deps = [
         "//backend/lib/errors",
         "//backend/lib/middlewares/auth",
+        "//backend/lib/middlewares/cors",
         "//backend/lib/middlewares/json",
         "//backend/services/auth/app",
         "//backend/services/auth/app/constants",

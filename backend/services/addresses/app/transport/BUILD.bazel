@@ -9,6 +9,7 @@ go_library(
         "//backend/lib/constants",
         "//backend/lib/errors",
         "//backend/lib/middlewares/auth",
+        "//backend/lib/middlewares/cors",
         "//backend/lib/middlewares/json",
         "//backend/lib/middlewares/restrictions",
         "//backend/services/addresses/app",

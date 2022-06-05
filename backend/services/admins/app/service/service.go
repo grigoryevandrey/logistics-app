@@ -21,6 +21,37 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
+func (s *service) GetAdmin(id string) (*app.AdminEntity, error) {
+	var result app.AdminEntity
+
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE id = $1",
+		ENTITY_FIELDS,
+		globalConstants.ADMINS_TABLE,
+	)
+
+	err := s.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&result.Id,
+		&result.LastName,
+		&result.FirstName,
+		&result.Patronymic,
+		&result.Role,
+		&result.IsDisabled,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errors.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &result, nil
+	}
+}
+
 func (s *service) GetAdmins(offset int, limit int, sort string, filter string) ([]app.AdminEntity, *int, error) {
 	var result []app.AdminEntity
 	var totalRows int

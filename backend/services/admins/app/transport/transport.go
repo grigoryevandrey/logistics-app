@@ -10,6 +10,7 @@ import (
 	globalConstants "github.com/grigoryevandrey/logistics-app/backend/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/auth"
+	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/cors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/restrictions"
 	"github.com/grigoryevandrey/logistics-app/backend/services/admins/app"
@@ -25,6 +26,7 @@ func Handler(service app.Service) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(jsonmw.JSONMiddleware())
+	router.Use(cors.CORSMiddleware())
 
 	injectedHandler := &handler{service}
 
@@ -38,6 +40,7 @@ func Handler(service app.Service) *gin.Engine {
 			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
 			adminsGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.ADMIN_ROLE_REGULAR))
 			{
+				adminsGroup.GET("/:id", injectedHandler.getAdmin)
 				adminsGroup.GET("/", injectedHandler.getAdmins)
 				adminsGroup.POST("/", injectedHandler.addAdmin)
 				adminsGroup.PUT("/", injectedHandler.updateAdmin)
@@ -91,6 +94,32 @@ func (handlerRef *handler) addAdmin(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func (handlerRef *handler) getAdmin(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad id param"})
+		return
+	}
+
+	admin, err := handlerRef.GetAdmin(id)
+
+	if err != nil {
+		log.Println(err)
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find admin with id: %s", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, admin)
 }
 
 func (handlerRef *handler) getAdmins(ctx *gin.Context) {

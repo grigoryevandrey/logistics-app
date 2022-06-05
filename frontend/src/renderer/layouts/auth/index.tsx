@@ -1,6 +1,5 @@
 import { Box, Button, Card, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import React, { Component } from 'react';
-import jwt from 'jwt-decode';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../store';
 import {
@@ -12,10 +11,10 @@ import {
   resetLoginFormState,
   setUser,
   setRedirect,
+  setCredentials,
 } from '../../reducers';
 import { LoginStrategy } from '../../enums';
 import { AuthClient } from '../../clients';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../constants';
 import { Navigate } from 'react-router-dom';
 import { DELIVERIES_PATH } from '../../configuration';
 
@@ -39,13 +38,7 @@ class Auth extends Component<AuthLayoutProps> {
     const credentials = { login, password };
 
     try {
-      const serverResponse = await AuthClient.login(credentials, this.props.role);
-
-      const user = jwt(serverResponse.accessToken) as any;
-      this.props.setUser({ login: user.Name, role: user.Role });
-
-      localStorage.setItem(ACCESS_TOKEN_KEY, serverResponse.accessToken);
-      localStorage.setItem(REFRESH_TOKEN_KEY, serverResponse.refreshToken);
+      await AuthClient.login(credentials, this.props.role);
 
       await this.props.setRedirect();
 
@@ -71,8 +64,8 @@ class Auth extends Component<AuthLayoutProps> {
       >
         <Card
           sx={{
-            height: '60rem',
-            width: '50rem',
+            height: '40rem',
+            width: '30rem',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -81,8 +74,8 @@ class Auth extends Component<AuthLayoutProps> {
         >
           <Box
             sx={{
-              height: '40rem',
-              width: '50rem',
+              height: '25rem',
+              width: '30rem',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -92,15 +85,15 @@ class Auth extends Component<AuthLayoutProps> {
             <TextField
               label="Логин"
               variant="standard"
-              InputLabelProps={{
-                sx: {
-                  fontSize: '2rem',
-                },
-              }}
               InputProps={{
                 sx: {
-                  width: '30rem',
-                  fontSize: '2rem',
+                  width: '20rem',
+                  fontSize: '1.2rem',
+                },
+              }}
+              InputLabelProps={{
+                sx: {
+                  fontSize: '1.2rem',
                 },
               }}
               value={this.props.login.data}
@@ -112,15 +105,16 @@ class Auth extends Component<AuthLayoutProps> {
             <TextField
               label="Пароль"
               variant="standard"
-              InputLabelProps={{
-                sx: {
-                  fontSize: '2rem',
-                },
-              }}
+              type="password"
               InputProps={{
                 sx: {
-                  width: '30rem',
-                  fontSize: '2rem',
+                  width: '20rem',
+                  fontSize: '1.2rem',
+                },
+              }}
+              InputLabelProps={{
+                sx: {
+                  fontSize: '1.2rem',
                 },
               }}
               value={this.props.password.data}
@@ -131,30 +125,28 @@ class Auth extends Component<AuthLayoutProps> {
             />
             <ToggleButtonGroup exclusive value={this.props.role}>
               <ToggleButton
-                value={LoginStrategy.manager}
+                value={LoginStrategy.Manager}
                 sx={{
-                  width: '15rem',
-                  fontSize: '1.5rem',
+                  width: '10rem',
                 }}
-                onClick={() => this.props.setRoleData(LoginStrategy.manager)}
+                onClick={() => this.props.setRoleData(LoginStrategy.Manager)}
               >
                 Manager
               </ToggleButton>
               <ToggleButton
-                value={LoginStrategy.admin}
+                value={LoginStrategy.Admin}
                 sx={{
-                  width: '15rem',
-                  fontSize: '1.5rem',
+                  width: '10rem',
                 }}
-                onClick={() => this.props.setRoleData(LoginStrategy.admin)}
+                onClick={() => this.props.setRoleData(LoginStrategy.Admin)}
               >
                 Admin
               </ToggleButton>
             </ToggleButtonGroup>
             <Button
               sx={{
-                width: '30rem',
-                fontSize: '2rem',
+                width: '20rem',
+                fontSize: '1.2rem',
               }}
               variant="contained"
               onClick={() => this.authenticate()}
@@ -183,6 +175,7 @@ const mapDispatchToProps = {
   resetLoginFormState,
   setUser,
   setRedirect,
+  setCredentials,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

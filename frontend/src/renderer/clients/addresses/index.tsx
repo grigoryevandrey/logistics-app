@@ -1,73 +1,17 @@
 import { AddressesSort } from '../../enums';
-import {
+import { AddressEntity, PaginatedAddressesResponse, PostAddressEntity, UpdateAddressEntity } from '../../dto';
+import { axiosInstance } from '../instance';
+import { BaseClient } from '../base.client';
+
+const BASE_URL = 'http://0.0.0.0:3000/api/v1';
+const PATH_PART = `addresses`;
+
+class AddressesClient extends BaseClient<
   AddressEntity,
-  HealthResponse,
+  AddressesSort,
   PaginatedAddressesResponse,
   PostAddressEntity,
-  UpdateAddressEntity,
-} from '../../dto';
+  UpdateAddressEntity
+> {}
 
-export class AddressesClient {
-  public async checkHealth(): Promise<HealthResponse> {
-    return {
-      status: 'UP',
-    };
-  }
-
-  public async getOne(_id: number): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Тестовый',
-      latitude: 65,
-      longitude: 35.7,
-      isDisabled: false,
-    };
-  }
-
-  public async getAll(_limit: number, _offset: number, _sort?: AddressesSort): Promise<PaginatedAddressesResponse> {
-    return {
-      totalRows: 10,
-      offset: 0,
-      count: 10,
-      addresses: [
-        {
-          id: 6,
-          address: 'Склад в Ярославле',
-          latitude: 57.589493,
-          longitude: 39.90941,
-          isDisabled: false,
-        },
-      ],
-    };
-  }
-
-  public async post(_entity: PostAddressEntity): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Тестовый',
-      latitude: 65,
-      longitude: 35.7,
-      isDisabled: false,
-    };
-  }
-
-  public async update(_entity: UpdateAddressEntity): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Хороший',
-      latitude: 67,
-      longitude: 35.7,
-      isDisabled: false,
-    };
-  }
-
-  public async delete(_id: number): Promise<AddressEntity> {
-    return {
-      id: 12,
-      address: 'Склад Хороший',
-      latitude: 67,
-      longitude: 35.7,
-      isDisabled: false,
-    };
-  }
-}
+export default new AddressesClient(axiosInstance, BASE_URL, PATH_PART);

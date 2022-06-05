@@ -63,7 +63,7 @@ type DeliveryEntity struct {
 	Contents    string    `json:"contents"`
 	Eta         time.Time `json:"eta"`
 	UpdatedAt   time.Time `json:"updatedAt"`
-	Status      string    `json:"role"`
+	Status      string    `json:"status"`
 }
 
 type PostDeliveryDto struct {

@@ -55,7 +55,7 @@ go.work
 backend/database/postgres
 
 # Folder for ignored stuff
-/dump
+dump
 
 ### macOS ###
 # General

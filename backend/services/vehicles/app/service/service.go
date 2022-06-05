@@ -20,6 +20,36 @@ func New(db *sql.DB) app.Service {
 	return &service{db: db}
 }
 
+func (s *service) GetVehicle(id string) (*app.VehicleEntity, error) {
+	var result app.VehicleEntity
+
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE id = $1",
+		ENTITY_FIELDS,
+		globalConstants.VEHICLES_TABLE,
+	)
+
+	err := s.db.QueryRow(
+		query,
+		id,
+	).Scan(
+		&result.Id,
+		&result.Vehicle,
+		&result.CarNumber,
+		&result.Tonnage,
+		&result.IsDisabled,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errors.Error404
+	case err != nil:
+		return nil, err
+	default:
+		return &result, nil
+	}
+}
+
 func (s *service) GetVehicles(offset int, limit int, sort string) ([]app.VehicleEntity, *int, error) {
 	var result []app.VehicleEntity
 	var totalRows int

@@ -10,6 +10,7 @@ import (
 	globalConstants "github.com/grigoryevandrey/logistics-app/backend/lib/constants"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/errors"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/auth"
+	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/cors"
 	jsonmw "github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/json"
 	"github.com/grigoryevandrey/logistics-app/backend/lib/middlewares/restrictions"
 	"github.com/grigoryevandrey/logistics-app/backend/services/vehicles/app"
@@ -25,6 +26,7 @@ func Handler(service app.Service) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(jsonmw.JSONMiddleware())
+	router.Use(cors.CORSMiddleware())
 
 	injectedHandler := &handler{service}
 
@@ -36,6 +38,7 @@ func Handler(service app.Service) *gin.Engine {
 			vehiclesGroup := v1.Group("vehicles")
 			vehiclesGroup.Use(auth.AuthMiddleware())
 			{
+				vehiclesGroup.GET("/:id", injectedHandler.getVehicle)
 				vehiclesGroup.GET("/", injectedHandler.getVehicles)
 				vehiclesGroup.POST("/", injectedHandler.addVehicle)
 				vehiclesGroup.PUT("/", injectedHandler.updateVehicle)
@@ -90,6 +93,32 @@ func (handlerRef *handler) addVehicle(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response)
+}
+
+func (handlerRef *handler) getVehicle(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "bad id param"})
+		return
+	}
+
+	vehicle, err := handlerRef.GetVehicle(id)
+
+	if err != nil {
+		log.Println(err)
+		if err == errors.Error404 {
+			message := fmt.Sprintf("Can not find vehicle with id: %s", id)
+
+			ctx.JSON(http.StatusNotFound, gin.H{"error": message})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, vehicle)
 }
 
 func (handlerRef *handler) getVehicles(ctx *gin.Context) {

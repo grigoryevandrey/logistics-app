@@ -18,6 +18,7 @@ var FilteringStrategies = map[string]string{
 }
 
 type Service interface {
+	GetAdmin(id string) (*AdminEntity, error)
 	GetAdmins(offset int, limit int, sort string, filter string) ([]AdminEntity, *int, error)
 	AddAdmin(admin PostAdminDto) (*AdminEntity, error)
 	UpdateAdmin(admin UpdateAdminDto) (*AdminEntity, error)
