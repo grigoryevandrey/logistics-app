@@ -57,7 +57,7 @@ const driversSlice = createSlice({
       state.redirectToDriverId = 0;
     },
     setSingleDriverData: (state, action) => {
-      state.singleDriverData = action.payload;
+      state.singleDriverData = { ...state.singleDriverData, ...action.payload };
     },
     clearSingleDriverData: (state) => {
       state.singleDriverData = {

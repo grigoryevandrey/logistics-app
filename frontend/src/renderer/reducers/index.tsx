@@ -5,3 +5,4 @@ export * from './drivers';
 export * from './vehicles';
 export * from './managers';
 export * from './admins';
+export * from './deliveries';

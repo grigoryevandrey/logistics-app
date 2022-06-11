@@ -18,7 +18,6 @@ import { PrivateRoute } from './utils';
 export default function App(): JSX.Element {
   const credentialsExists =
     store.getState().global.credentials.accessToken && store.getState().global.credentials.refreshToken;
-  console.log('🚀 ~ file: App.tsx ~ line 21 ~ App ~ credentialsExists', !!credentialsExists);
 
   return (
     <ThemeProvider theme={theme}>

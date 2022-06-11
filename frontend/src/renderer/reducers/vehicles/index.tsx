@@ -64,7 +64,7 @@ const vehiclesSlice = createSlice({
 
       action.payload.tonnage = action.payload.tonnage || 0;
 
-      state.singleVehicleData = action.payload;
+      state.singleVehicleData = { ...state.singleVehicleData, ...action.payload };
     },
     clearSingleVehicleData: (state) => {
       state.singleVehicleData = {
