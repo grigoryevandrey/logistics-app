@@ -59,9 +59,7 @@ const managersSlice = createSlice({
       state.redirectToManagerId = 0;
     },
     setSingleManagerData: (state, action) => {
-      action.payload.tonnage = action.payload.tonnage || 0;
-
-      state.singleManagerData = action.payload;
+      state.singleManagerData = { ...state.singleManagerData, ...action.payload };
     },
     clearSingleManagerData: (state) => {
       state.singleManagerData = {

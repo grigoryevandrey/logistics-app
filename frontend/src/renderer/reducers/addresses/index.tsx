@@ -71,7 +71,7 @@ const addressesSlice = createSlice({
 
       action.payload.longitude = action.payload.longitude || 0;
 
-      state.singleAddressData = action.payload;
+      state.singleAddressData = { ...state.singleAddressData, ...action.payload };
     },
     clearSingleAddressData: (state) => {
       state.singleAddressData = {

@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { LoginStrategy, UserRole } from '../../enums';
 import { LoginCredentials } from '../../dto';
 import { setCredentials, deleteCredentials, setUser, resetUser } from '../../reducers';
@@ -9,7 +9,7 @@ import { axiosInstance } from '../instance';
 const BASE_URL = 'http://0.0.0.0:3006/api/v1/auth';
 
 export class AuthClient {
-  constructor(private readonly client: AxiosInstance) {}
+  constructor(private readonly client: AxiosInstance, private readonly refreshClient: AxiosInstance) {}
 
   public async login(credentials: LoginCredentials, strategy: LoginStrategy): Promise<void> {
     const { data } = await this.client.post(`${BASE_URL}/login`, credentials, { params: { strategy } });
@@ -52,7 +52,7 @@ export class AuthClient {
     const refreshToken = state.global.credentials.refreshToken;
 
     try {
-      const { data } = await this.client.put(`${BASE_URL}/refresh`, null, {
+      const { data } = await this.refreshClient.put(`${BASE_URL}/refresh`, null, {
         params: { strategy },
         headers: { Authorization: refreshToken },
       });
@@ -93,4 +93,4 @@ export class AuthClient {
   }
 }
 
-export default new AuthClient(axiosInstance);
+export default new AuthClient(axiosInstance, axios.create());

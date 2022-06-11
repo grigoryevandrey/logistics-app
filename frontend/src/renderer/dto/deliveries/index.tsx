@@ -47,11 +47,11 @@ export class PostDeliveryEntity {
 
 export class UpdateDeliveryEntity {
   public readonly id: number;
-  public readonly vehicleId: number;
-  public readonly addressTo: number;
-  public readonly addressFrom: number;
-  public readonly driverId: number;
-  public readonly managerId: number;
+  public readonly vehicleId: number | null;
+  public readonly addressTo: number | null;
+  public readonly addressFrom: number | null;
+  public readonly driverId: number | null;
+  public readonly managerId: number | null;
   public readonly contents: string;
   public readonly eta: string;
   public readonly status: DeliveryStatus;

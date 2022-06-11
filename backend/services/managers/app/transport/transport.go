@@ -36,14 +36,20 @@ func Handler(service app.Service) *gin.Engine {
 		v1 := superGroup.Group("v1")
 		{
 			managersGroup := v1.Group("managers")
+
 			managersGroup.Use(auth.AuthMiddleware())
-			managersGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
 			{
 				managersGroup.GET("/:id", injectedHandler.getManager)
 				managersGroup.GET("/", injectedHandler.getManagers)
-				managersGroup.POST("/", injectedHandler.addManager)
-				managersGroup.PUT("/", injectedHandler.updateManager)
-				managersGroup.DELETE("/", injectedHandler.deleteManager)
+			}
+
+			managersPrivateGroup := v1.Group("managers")
+			managersPrivateGroup.Use(auth.AuthMiddleware())
+			managersPrivateGroup.Use(restrictions.RestrictionsMiddleware(globalConstants.MANAGER_ROLE))
+			{
+				managersPrivateGroup.POST("/", injectedHandler.addManager)
+				managersPrivateGroup.PUT("/", injectedHandler.updateManager)
+				managersPrivateGroup.DELETE("/", injectedHandler.deleteManager)
 			}
 
 			healthGroup := v1.Group("health")

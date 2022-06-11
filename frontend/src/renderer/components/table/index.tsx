@@ -21,6 +21,7 @@ type HeaderElement = {
   isSortable?: boolean;
   ascSortString?: string;
   descSortString?: string;
+  valueFromFunction?: any;
 };
 
 interface RepresentationalTableProps {
@@ -103,6 +104,16 @@ export class RepresentationalTable extends Component<RepresentationalTableProps>
                     onClick={() => this.props.onClick(row.id)}
                   >
                     {this.props.headerCells.map((header, index) => {
+                      if (!!header.valueFromFunction) {
+                        return !Array.isArray(header.key) ? (
+                          <TableCell align="right" key={`${row.id}_${header.key}`}>
+                            {header.valueFromFunction(row[header.key])}
+                          </TableCell>
+                        ) : (
+                          ''
+                        );
+                      }
+
                       return index === 0 ? (
                         <TableCell component="th" scope="row" key={`${row.id}_${header.key}`}>
                           {Array.isArray(header.key) ? header.key.map((key) => `${row[key]} `) : `${row[header.key]}`}

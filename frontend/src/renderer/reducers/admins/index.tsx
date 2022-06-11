@@ -65,9 +65,7 @@ const adminSlice = createSlice({
       state.redirectToAdminId = 0;
     },
     setSingleAdminData: (state, action) => {
-      action.payload.tonnage = action.payload.tonnage || 0;
-
-      state.singleAdminData = action.payload;
+      state.singleAdminData = { ...state.singleAdminData, ...action.payload };
     },
     clearSingleAdminData: (state) => {
       state.singleAdminData = {
@@ -76,6 +74,7 @@ const adminSlice = createSlice({
         lastName: '',
         firstName: '',
         patronymic: '',
+        role: AdminRole.Regular,
         isDisabled: false,
       } as UpdateAdminEntity;
     },

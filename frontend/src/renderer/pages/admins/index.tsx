@@ -18,7 +18,7 @@ import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
 import { Box } from '@mui/system';
 import { RepresentationalTable, EditablePage } from '../../components';
-import { AdminsSort, EditableElementType } from '../../enums';
+import { AdminRole, AdminsSort, EditableElementType } from '../../enums';
 import { Button } from '@mui/material';
 
 interface AdminsPageProps extends PropsFromRedux {}
@@ -85,6 +85,21 @@ class Admins extends Component<AdminsPageProps> {
               type: EditableElementType.Input,
               label: 'Отчество',
               stateKey: 'patronymic',
+            },
+            {
+              type: EditableElementType.Selectable,
+              label: 'Уровень доступа',
+              stateKey: 'role',
+              options: [
+                {
+                  value: AdminRole.Regular,
+                  text: 'Обычный',
+                },
+                {
+                  value: AdminRole.Super,
+                  text: 'Максимальный',
+                },
+              ],
             },
           ]}
           isCreatingNewElement={this.props.isCreatingNewAdmin}

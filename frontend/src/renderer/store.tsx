@@ -7,6 +7,7 @@ import {
   vehiclesReducer,
   managersReducer,
   adminsReducer,
+  deliveriesReducer,
 } from './reducers';
 
 export const store = configureStore({
@@ -18,6 +19,7 @@ export const store = configureStore({
     vehicles: vehiclesReducer,
     managers: managersReducer,
     admins: adminsReducer,
+    deliveries: deliveriesReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
