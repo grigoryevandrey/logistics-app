@@ -14,14 +14,31 @@ const initialState = {
     eta: '',
     status: DeliveryStatus.NotStarted,
   },
-  deliveriesAddresses: {
+  deliveriesAddressesFrom: {
     open: false,
     loading: false,
     data: [],
   },
-  deliveriesVehicles: {},
-  deliveriesDrivers: {},
-  deliveriesManagers: {},
+  deliveriesAddressesTo: {
+    open: false,
+    loading: false,
+    data: [],
+  },
+  deliveriesVehicles: {
+    open: false,
+    loading: false,
+    data: [],
+  },
+  deliveriesDrivers: {
+    open: false,
+    loading: false,
+    data: [],
+  },
+  deliveriesManagers: {
+    open: false,
+    loading: false,
+    data: [],
+  },
   deliveriesOffset: 0,
   deliveriesLimit: 5,
   deliveriesPage: 0,
@@ -32,14 +49,31 @@ const initialState = {
 } as {
   deliveriesTableData: Partial<PaginatedDeliveriesResponse>;
   singleDeliveryData: Partial<UpdateDeliveryEntity>;
-  deliveriesAddresses: {
+  deliveriesAddressesFrom: {
     open: boolean;
     loading: boolean;
     data: { id: number; address: string }[];
   };
-  deliveriesVehicles: { [id: number]: { vehicle: string; carNumber: string } };
-  deliveriesDrivers: { [id: number]: { lastName: string; firstName: string; patronymic: string } };
-  deliveriesManagers: { [id: number]: { lastName: string; firstName: string; patronymic: string } };
+  deliveriesAddressesTo: {
+    open: boolean;
+    loading: boolean;
+    data: { id: number; address: string }[];
+  };
+  deliveriesVehicles: {
+    open: boolean;
+    loading: boolean;
+    data: { id: number; vehicle: string; carNumber: string }[];
+  };
+  deliveriesDrivers: {
+    open: boolean;
+    loading: boolean;
+    data: { id: number; lastName: string; firstName: string; patronymic: string }[];
+  };
+  deliveriesManagers: {
+    open: boolean;
+    loading: boolean;
+    data: { id: number; lastName: string; firstName: string; patronymic: string }[];
+  };
   deliveriesOffset: number;
   deliveriesLimit: number;
   deliveriesSort: DeliveriesSort;
@@ -98,8 +132,11 @@ const deliverySlice = createSlice({
         status: DeliveryStatus.NotStarted,
       } as UpdateDeliveryEntity;
     },
-    setDeliveriesAddresses: (state, action) => {
-      state.deliveriesAddresses = { ...state.deliveriesAddresses, ...action.payload };
+    setDeliveriesAddressesFrom: (state, action) => {
+      state.deliveriesAddressesFrom = { ...state.deliveriesAddressesFrom, ...action.payload };
+    },
+    setDeliveriesAddressesTo: (state, action) => {
+      state.deliveriesAddressesTo = { ...state.deliveriesAddressesTo, ...action.payload };
     },
     setDeliveriesVehicles: (state, action) => {
       state.deliveriesVehicles = { ...state.deliveriesVehicles, ...action.payload };
@@ -111,14 +148,31 @@ const deliverySlice = createSlice({
       state.deliveriesManagers = { ...state.deliveriesManagers, ...action.payload };
     },
     clearDeliveriesSubData: (state) => {
-      state.deliveriesAddresses = {
+      state.deliveriesAddressesFrom = {
         open: false,
         loading: false,
         data: [],
       };
-      state.deliveriesVehicles = {};
-      state.deliveriesDrivers = {};
-      state.deliveriesManagers = {};
+      state.deliveriesAddressesTo = {
+        open: false,
+        loading: false,
+        data: [],
+      };
+      state.deliveriesVehicles = {
+        open: false,
+        loading: false,
+        data: [],
+      };
+      state.deliveriesDrivers = {
+        open: false,
+        loading: false,
+        data: [],
+      };
+      state.deliveriesManagers = {
+        open: false,
+        loading: false,
+        data: [],
+      };
     },
     startCreatingNewDelivery: (state) => {
       state.isCreatingNewDelivery = true;
@@ -147,7 +201,8 @@ export const {
   startCreatingNewDelivery,
   endCreatingNewDelivery,
 
-  setDeliveriesAddresses,
+  setDeliveriesAddressesFrom,
+  setDeliveriesAddressesTo,
   setDeliveriesVehicles,
   setDeliveriesManagers,
   setDeliveriesDrivers,

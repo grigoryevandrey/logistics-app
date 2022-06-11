@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Dashboard } from '../../layouts';
-import { AddressesClient, DeliveriesClient } from '../../clients';
+import { AddressesClient, DeliveriesClient, DriversClient, ManagersClient, VehiclesClient } from '../../clients';
 import {
   resetDeliveriesData,
   setDeliveriesData,
@@ -13,7 +13,12 @@ import {
   clearSingleDeliveryData,
   resetRedirectToDeliveryId,
   endCreatingNewDelivery,
-  setDeliveriesAddresses,
+  setDeliveriesVehicles,
+  setDeliveriesDrivers,
+  setDeliveriesManagers,
+  clearDeliveriesSubData,
+  setDeliveriesAddressesTo,
+  setDeliveriesAddressesFrom,
 } from '../../reducers';
 import { RootState } from '../../store';
 import { connect, ConnectedProps } from 'react-redux';
@@ -121,17 +126,6 @@ class Deliveries extends Component<DeliveriesPageProps> {
     await this.props.setRedirectToDeliveryId(id);
   }
 
-  // TODO refactor:
-  // TODO грузи все данные сразу же ебаный твой рот когда фетчишь и все остальные данные для сингла
-  // TODO это сделаешь и останется ток дату бахнуть и в принципе все готово
-  // private async openAddressFrom(): Promise<void> {
-  //   await this.props.setDeliveriesAddresses({ open: true, loading: true });
-
-  //   const data = await AddressesClient.getAll(50, 0);
-
-  //   await this.props.setDeliveriesAddresses({ open: true, loading: false, data: data.addresses });
-  // }
-
   private get component(): JSX.Element {
     if (this.props.redirectToDeliveryId || this.props.isCreatingNewDelivery)
       return (
@@ -172,9 +166,54 @@ class Deliveries extends Component<DeliveriesPageProps> {
               stateKey: 'addressFrom',
               dataGetter: () => AddressesClient.getAll(50, 0),
               getterKey: 'addresses',
-              state: this.props.deliveriesAddresses,
-              stateSetter: this.props.setDeliveriesAddresses,
+              state: this.props.deliveriesAddressesFrom,
+              stateSetter: this.props.setDeliveriesAddressesFrom,
               keyOrder: ['address'],
+            },
+            {
+              type: EditableElementType.Autocomplete,
+              label: 'В адрес',
+              stateKey: 'addressTo',
+              dataGetter: () => AddressesClient.getAll(50, 0),
+              getterKey: 'addresses',
+              state: this.props.deliveriesAddressesTo,
+              stateSetter: this.props.setDeliveriesAddressesTo,
+              keyOrder: ['address'],
+            },
+            {
+              type: EditableElementType.Autocomplete,
+              label: 'Транспорт',
+              stateKey: 'vehicleId',
+              dataGetter: () => VehiclesClient.getAll(50, 0),
+              getterKey: 'vehicles',
+              state: this.props.deliveriesVehicles,
+              stateSetter: this.props.setDeliveriesVehicles,
+              keyOrder: ['vehicle', 'carNumber'],
+            },
+            {
+              type: EditableElementType.Autocomplete,
+              label: 'Водитель',
+              stateKey: 'driverId',
+              dataGetter: () => DriversClient.getAll(50, 0),
+              getterKey: 'drivers',
+              state: this.props.deliveriesDrivers,
+              stateSetter: this.props.setDeliveriesDrivers,
+              keyOrder: ['lastName', 'firstName', 'patronymic'],
+            },
+            {
+              type: EditableElementType.Autocomplete,
+              label: 'Менеджер',
+              stateKey: 'managerId',
+              dataGetter: () => ManagersClient.getAll(50, 0),
+              getterKey: 'managers',
+              state: this.props.deliveriesManagers,
+              stateSetter: this.props.setDeliveriesManagers,
+              keyOrder: ['lastName', 'firstName', 'patronymic'],
+            },
+            {
+              type: EditableElementType.Date,
+              label: 'Время прибытия',
+              stateKey: 'eta',
             },
           ]}
           isCreatingNewElement={this.props.isCreatingNewDelivery}
@@ -185,6 +224,7 @@ class Deliveries extends Component<DeliveriesPageProps> {
           stateData={this.props.singleDeliveryData}
           setStateData={this.props.setSingleDeliveryData}
           clearStateData={this.props.clearSingleDeliveryData}
+          clearRelatedData={this.props.clearDeliveriesSubData}
         />
       );
 
@@ -230,7 +270,11 @@ const mapStateToProps = (state: RootState) => {
     redirectToDeliveryId,
     isCreatingNewDelivery,
     singleDeliveryData,
-    deliveriesAddresses,
+    deliveriesAddressesFrom,
+    deliveriesAddressesTo,
+    deliveriesVehicles,
+    deliveriesDrivers,
+    deliveriesManagers,
   } = state.deliveries;
 
   return {
@@ -242,7 +286,11 @@ const mapStateToProps = (state: RootState) => {
     redirectToDeliveryId,
     isCreatingNewDelivery,
     singleDeliveryData,
-    deliveriesAddresses,
+    deliveriesAddressesFrom,
+    deliveriesAddressesTo,
+    deliveriesVehicles,
+    deliveriesDrivers,
+    deliveriesManagers,
   };
 };
 
@@ -258,7 +306,12 @@ const mapDispatchToProps = {
   clearSingleDeliveryData,
   resetRedirectToDeliveryId,
   endCreatingNewDelivery,
-  setDeliveriesAddresses,
+  setDeliveriesAddressesFrom,
+  setDeliveriesAddressesTo,
+  setDeliveriesVehicles,
+  setDeliveriesDrivers,
+  setDeliveriesManagers,
+  clearDeliveriesSubData,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

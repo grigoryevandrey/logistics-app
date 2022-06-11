@@ -41,7 +41,13 @@ type AutocompleteElement = {
   keyOrder: string[];
 };
 
-type EditableElement = EditableInput | Selectable | AutocompleteElement;
+type DateElement = {
+  type: EditableElementType.Date;
+  label: string;
+  stateKey: string;
+};
+
+type EditableElement = EditableInput | Selectable | AutocompleteElement | DateElement;
 
 interface EditablePageProps extends PropsFromRedux {
   fetchTableData: Function;
@@ -54,19 +60,24 @@ interface EditablePageProps extends PropsFromRedux {
   stateData: any;
   setStateData: Function;
   clearStateData: Function;
+  clearRelatedData?: Function;
   customDeleteMessage?: string;
 }
 
 class Page extends Component<EditablePageProps> {
   public override async componentDidMount() {
     await this.props.clearStateData();
+    if (this.props.clearRelatedData) await this.props.clearRelatedData();
     if (!this.props.isCreatingNewElement) await this.fetchData();
+    await this.fetchSubData();
   }
 
   private async fetchData(): Promise<void> {
     const data = await this.props.client.getOne(this.props.currentId);
     await this.props.setStateData(data);
+  }
 
+  private async fetchSubData(): Promise<void> {
     await Promise.all(
       this.props.elements.map(async (element: EditableElement) => {
         if (element.type === EditableElementType.Autocomplete) {
@@ -195,7 +206,8 @@ class Page extends Component<EditablePageProps> {
                   onOpen={() => element.stateSetter({ open: true })}
                   onClose={() => element.stateSetter({ open: false })}
                   value={
-                    this.props.stateData[element.stateKey] && element.state.data[this.props.stateData[element.stateKey]]
+                    this.props.stateData[element.stateKey] &&
+                    element.state.data.filter((data: any) => data.id === this.props.stateData[element.stateKey])[0]
                   }
                   getOptionLabel={constructLabel}
                   options={element.state.data}
@@ -219,6 +231,26 @@ class Page extends Component<EditablePageProps> {
                       }}
                     />
                   )}
+                />
+              );
+            }
+            case EditableElementType.Date: {
+              return (
+                <TextField
+                  key={element.stateKey}
+                  label={element.label}
+                  type="datetime-local"
+                  value={this.props.stateData[element.stateKey].replace('Z', '')}
+                  onChange={(e) =>
+                    this.props.setStateData({
+                      ...this.props.stateData,
+                      [element.stateKey]: new Date(e.target.value).toISOString(),
+                    })
+                  }
+                  sx={{ margin: 2, width: '600px' }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               );
             }
